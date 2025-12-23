@@ -66,7 +66,9 @@ processResources {
     // Replace values in only mcmod.info.
     filesMatching('mcmod.info') {
         // Replace version and mcversion.
-        expand 'version':project.version, 'mcversion':project.minecraft.version
+        expand 'version':project.version,
+                'mcversion':project.minecraft.version,
+                'url': System.getenv("MOD_URL") ?: ""
     }
 }
 

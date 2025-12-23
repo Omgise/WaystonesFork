@@ -5,7 +5,7 @@
   "description": "Teleport back to activated waystones. For Survival, Adventure or Servers.",
   "version": "${version}",
   "mcversion": "${mcversion}",
-  "url": "",
+  "url": "${url}",
   "updateUrl": "",
   "authorList": ["BlayTheNinth"],
   "credits": "Developed by BlayTheNinth. Includes item icons by @JoeCreates released under CC-BY-SA 3.0",
