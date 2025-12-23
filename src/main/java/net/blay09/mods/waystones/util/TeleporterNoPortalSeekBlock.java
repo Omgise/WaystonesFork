@@ -1,11 +1,11 @@
 package net.blay09.mods.waystones.util;
 
-
 import net.minecraft.entity.Entity;
 import net.minecraft.world.Teleporter;
 import net.minecraft.world.WorldServer;
 
 public class TeleporterNoPortalSeekBlock extends Teleporter {
+
     private final WorldServer world;
 
     public TeleporterNoPortalSeekBlock(WorldServer p_i1963_1_) {
@@ -16,7 +16,8 @@ public class TeleporterNoPortalSeekBlock extends Teleporter {
     public void teleport(Entity entity, WorldServer world) {
 
         if (entity.isEntityAlive()) {
-            entity.setLocationAndAngles(entity.posX, entity.posY, entity.posZ, entity.rotationYaw, entity.rotationPitch);
+            entity
+                .setLocationAndAngles(entity.posX, entity.posY, entity.posZ, entity.rotationYaw, entity.rotationPitch);
             world.spawnEntityInWorld(entity);
             world.updateEntityWithOptionalForce(entity, false);
         }
@@ -30,21 +31,18 @@ public class TeleporterNoPortalSeekBlock extends Teleporter {
         x = (int) entityIn.posX;
         y = (int) entityIn.posY;
         z = (int) entityIn.posZ;
-        for(int yy = y; yy < world.getHeight(); yy++) {
-            if(world.isAirBlock(x,yy,z) && world.isAirBlock(x,yy+1,z)){
+        for (int yy = y; yy < world.getHeight(); yy++) {
+            if (world.isAirBlock(x, yy, z) && world.isAirBlock(x, yy + 1, z)) {
                 y = yy;
                 break;
             }
         }
-        entityIn.setLocationAndAngles(x,y,z, entityIn.rotationYaw, entityIn.rotationPitch);
+        entityIn.setLocationAndAngles(x, y, z, entityIn.rotationYaw, entityIn.rotationPitch);
         return true;
     }
 
     @Override
-    public void removeStalePortalLocations(long par1)
-    {
-    }
-
+    public void removeStalePortalLocations(long par1) {}
 
     @Override
     public boolean makePortal(Entity p_85188_1_) {

@@ -1,54 +1,68 @@
 package net.blay09.mods.waystones;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.PlayerEvent;
 import net.blay09.mods.waystones.block.TileWaystone;
 import net.blay09.mods.waystones.network.NetworkHandler;
 import net.blay09.mods.waystones.network.message.MessageConfig;
+import net.blay09.mods.waystones.worldgen.VillageWaystone;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.IChatComponent;
+import net.minecraft.world.gen.structure.MapGenStructureIO;
+
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.PlayerEvent;
+import cpw.mods.fml.common.registry.VillagerRegistry;
 
 public class CommonProxy {
 
-	public void preInit(FMLPreInitializationEvent event) {
-		FMLCommonHandler.instance().bus().register(this);
-	}
+    public void preInit(FMLPreInitializationEvent event) {
+        FMLCommonHandler.instance()
+            .bus()
+            .register(this);
+    }
 
-	public void addScheduledTask(Runnable runnable) {
-		runnable.run();
-	}
+    public void init(FMLInitializationEvent event) {
+        MapGenStructureIO.func_143031_a(VillageWaystone.class, Waystones.MOD_ID + ":VillageWaystone");
 
-	@SubscribeEvent
-	public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
-		NetworkHandler.channel.sendTo(new MessageConfig(Waystones.getConfig()), (EntityPlayerMP) event.player);
-		WaystoneManager.sendPlayerWaystones(event.player);
-	}
+        VillagerRegistry.instance()
+            .registerVillageCreationHandler(new VillageWaystone.CreationHandler());
+    }
 
-	@SubscribeEvent
-	public void onPlayerChangedDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
-		WaystoneManager.sendPlayerWaystones(event.player);
-	}
+    public void addScheduledTask(Runnable runnable) {
+        runnable.run();
+    }
 
-	@SubscribeEvent
-	public void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
-		WaystoneManager.sendPlayerWaystones(event.player);
-	}
+    @SubscribeEvent
+    public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
+        NetworkHandler.channel.sendTo(new MessageConfig(Waystones.getConfig()), (EntityPlayerMP) event.player);
+        WaystoneManager.sendPlayerWaystones(event.player);
+    }
 
-	public void openWaystoneNameEdit(TileWaystone tileEntity) {
+    @SubscribeEvent
+    public void onPlayerChangedDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
+        WaystoneManager.sendPlayerWaystones(event.player);
+    }
 
-	}
+    @SubscribeEvent
+    public void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
+        WaystoneManager.sendPlayerWaystones(event.player);
+    }
 
-	public void openWaystoneSelection(TileWaystone currentWaystone, boolean isFree) {
+    public void openWaystoneNameEdit(TileWaystone tileEntity) {
 
-	}
+    }
 
-	public void printChatMessage(int i, IChatComponent chatComponent) {
+    public void openWaystoneSelection(TileWaystone currentWaystone, boolean isFree) {
 
-	}
+    }
 
-	public void playSound(String soundName, float pitch) {
+    public void printChatMessage(int i, IChatComponent chatComponent) {
 
-	}
+    }
+
+    public void playSound(String soundName, float pitch) {
+
+    }
 }

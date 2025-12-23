@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "minVersion": "0.8.7-GTNH",
+  "package": "net.blay09.mods.waystones.mixins.mid",
+  "refmap": "mixins.waystones.refmap.json",
+  "target": "@env(DEFAULT)",
+  "compatibilityLevel": "JAVA_8",
+  "client" : [
+
+  ]
+}

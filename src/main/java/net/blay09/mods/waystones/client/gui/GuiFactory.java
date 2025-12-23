@@ -1,9 +1,7 @@
 package net.blay09.mods.waystones.client.gui;
 
-import com.google.common.collect.ImmutableList;
+import java.util.Set;
 
-import cpw.mods.fml.client.IModGuiFactory;
-import cpw.mods.fml.client.config.GuiConfig;
 import net.blay09.mods.waystones.WaystoneConfig;
 import net.blay09.mods.waystones.Waystones;
 import net.minecraft.client.Minecraft;
@@ -12,7 +10,10 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.common.config.ConfigElement;
 
-import java.util.Set;
+import com.google.common.collect.ImmutableList;
+
+import cpw.mods.fml.client.IModGuiFactory;
+import cpw.mods.fml.client.config.GuiConfig;
 
 @SuppressWarnings("unused")
 public class GuiFactory implements IModGuiFactory {
@@ -39,22 +40,22 @@ public class GuiFactory implements IModGuiFactory {
 
         public ConfigGui(GuiScreen parentScreen) {
             super(
-                    parentScreen,
-                    ImmutableList.of(
-                            new ConfigElement(
-                                    WaystoneConfig.getRawConfig()
-                                            .getCategory(WaystoneConfig.Categories.general)),
-                            new ConfigElement(
-                                    WaystoneConfig.getRawConfig()
-                                            .getCategory(WaystoneConfig.Categories.client)),
-                            new ConfigElement(
-                                    WaystoneConfig.getRawConfig()
-                                            .getCategory(WaystoneConfig.Categories.generated))),
-                    Waystones.MOD_ID,
-                    Waystones.MOD_ID,
-                    false,
-                    false,
-                    I18n.format("gui.waystones:configTitle"));
+                parentScreen,
+                ImmutableList.of(
+                    new ConfigElement(
+                        WaystoneConfig.getRawConfig()
+                            .getCategory(WaystoneConfig.Categories.general)),
+                    new ConfigElement(
+                        WaystoneConfig.getRawConfig()
+                            .getCategory(WaystoneConfig.Categories.client)),
+                    new ConfigElement(
+                        WaystoneConfig.getRawConfig()
+                            .getCategory(WaystoneConfig.Categories.generated))),
+                Waystones.MOD_ID,
+                Waystones.MOD_ID,
+                false,
+                false,
+                I18n.format("gui.waystones:configTitle"));
         }
 
         @Override
@@ -74,7 +75,8 @@ public class GuiFactory implements IModGuiFactory {
             /* "Done" button */
             if (b.id == 2000) {
                 /* Syncing config */
-                Waystones.getConfig().reloadLocal(Waystones.configuration);
+                Waystones.getConfig()
+                    .reloadLocal(Waystones.configuration);
                 Waystones.configuration.save();
             }
         }
