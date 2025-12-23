@@ -9,7 +9,7 @@
   "updateUrl": "",
   "authorList": ["BlayTheNinth"],
   "credits": "Developed by BlayTheNinth. Includes item icons by @JoeCreates released under CC-BY-SA 3.0",
-  "logoFile": "",
+  "logoFile": "assets/waystones/logo.png",
   "screenshots": [],
   "dependencies": []
 }
