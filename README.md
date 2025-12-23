@@ -18,3 +18,5 @@ VERSION=debug BUILD_NUMBER="" JAVA_HOME=/usr/lib/jvm/java-8-openjdk/ ./gradlew b
 * It is now impossible to have two global Waystones with the same name, or two non-global ones with the same name. Global and non global is allowed.
 * If a player exits the Waystone creation menu without properly naming it, the creation/naming menu will be shown upon next interaction (instead of creating an empty-named Waystone)
 * GUI Config
+* Configurable worldgen inside of Villages
+* Automatic activation upon naming

@@ -35,6 +35,7 @@ public class WaystoneConfig {
     public boolean globalInterDimension;
 
     public static boolean showNametag;
+    public static boolean enableWorldgen;
 
     public static class Categories {
 
@@ -161,6 +162,9 @@ public class WaystoneConfig {
             Categories.client,
             false,
             "If true, show a floating nametag with the Waystone's name, above it.");
+
+        enableWorldgen = config
+            .getBoolean("Enable Worldgen", Categories.general, true, "If true, generate a Waystone in each village.");
     }
 
     public static void storeServerWaystones(Configuration config, Collection<WaystoneEntry> entries) {
@@ -202,6 +206,7 @@ public class WaystoneConfig {
         config.creativeModeOnly = buf.readBoolean();
         config.setSpawnPoint = buf.readBoolean();
         config.showNametag = buf.readBoolean();
+        config.enableWorldgen = buf.readBoolean();
         return config;
     }
 
@@ -215,6 +220,7 @@ public class WaystoneConfig {
         buf.writeBoolean(creativeModeOnly);
         buf.writeBoolean(setSpawnPoint);
         buf.writeBoolean(showNametag);
+        buf.writeBoolean(enableWorldgen);
     }
 
     public static Configuration getRawConfig() {

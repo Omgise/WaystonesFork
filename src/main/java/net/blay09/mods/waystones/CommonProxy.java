@@ -22,13 +22,17 @@ public class CommonProxy {
             .bus()
             .register(this);
 
-        MapGenStructureIO
-            .func_143031_a(VillageWaystone.VillageWaystonePiece.class, Waystones.MODID + ":VillageWaystone");
+        if (WaystoneConfig.enableWorldgen) {
+            MapGenStructureIO
+                .func_143031_a(VillageWaystone.VillageWaystonePiece.class, Waystones.MODID + ":VillageWaystone");
+        }
     }
 
     public void init(FMLInitializationEvent event) {
-        VillagerRegistry.instance()
-            .registerVillageCreationHandler(new VillageWaystone.CreationHandler());
+        if (WaystoneConfig.enableWorldgen) {
+            VillagerRegistry.instance()
+                .registerVillageCreationHandler(new VillageWaystone.CreationHandler());
+        }
     }
 
     public void addScheduledTask(Runnable runnable) {
