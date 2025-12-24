@@ -20,3 +20,5 @@ VERSION=debug BUILD_NUMBER="" JAVA_HOME=/usr/lib/jvm/java-8-openjdk/ ./gradlew b
 * GUI Config
 * Configurable worldgen inside of Villages
 * Automatic activation upon naming
+* Configurable Village Names mod compat
+* Configurable teleport cost. Flat cost, distance cost, flat cross-dim cost.
