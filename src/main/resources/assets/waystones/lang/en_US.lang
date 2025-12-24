@@ -20,6 +20,7 @@ gui.waystones:editWaystone.enterName=Enter waystone name:
 gui.waystones:editWaystone.isGlobal=is Global
 gui.waystones:nameTaken=A waystone with this name already exists
 gui.waystones:configTitle=Waystones Config
+gui.waystones:notEnoughXp=You need %s experience levels to teleport to that location
 
 tooltip.waystones:cooldownLeft=Cooldown: %d seconds
 tooltip.waystones:boundTo=Bound to: %s

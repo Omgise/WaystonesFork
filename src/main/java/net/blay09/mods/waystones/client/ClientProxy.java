@@ -4,7 +4,6 @@ import java.util.List;
 
 import net.blay09.mods.waystones.CommonProxy;
 import net.blay09.mods.waystones.PlayerWaystoneData;
-import net.blay09.mods.waystones.WaystoneManager;
 import net.blay09.mods.waystones.Waystones;
 import net.blay09.mods.waystones.block.TileWaystone;
 import net.blay09.mods.waystones.client.gui.GuiButtonWarp;
@@ -135,18 +134,7 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public void openWaystoneSelection(TileWaystone currentWaystone, boolean isFree) {
-        WaystoneEntry[] playerWaystones = PlayerWaystoneData.fromPlayer(
-            FMLClientHandler.instance()
-                .getClientPlayerEntity())
-            .getWaystones();
-        WaystoneEntry[] combinedWaystones = new WaystoneEntry[WaystoneManager.getServerWaystones()
-            .size() + playerWaystones.length];
-        int i = 0;
-        for (WaystoneEntry entry : WaystoneManager.getServerWaystones()) {
-            combinedWaystones[i] = entry;
-            i++;
-        }
-        System.arraycopy(playerWaystones, 0, combinedWaystones, i, playerWaystones.length);
+        WaystoneEntry[] combinedWaystones = WaystoneEntry.getCombinedWaystones();
         Minecraft.getMinecraft()
             .displayGuiScreen(new GuiWarpStone(currentWaystone, combinedWaystones, isFree));
     }

@@ -1,8 +1,11 @@
 package net.blay09.mods.waystones.util;
 
+import net.blay09.mods.waystones.PlayerWaystoneData;
+import net.blay09.mods.waystones.WaystoneManager;
 import net.blay09.mods.waystones.block.TileWaystone;
 import net.minecraft.nbt.NBTTagCompound;
 
+import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import io.netty.buffer.ByteBuf;
 
@@ -84,5 +87,21 @@ public class WaystoneEntry {
         int result = dimensionId;
         result = 31 * result + pos.hashCode();
         return result;
+    }
+
+    public static WaystoneEntry[] getCombinedWaystones() {
+        WaystoneEntry[] playerWaystones = PlayerWaystoneData.fromPlayer(
+            FMLClientHandler.instance()
+                .getClientPlayerEntity())
+            .getWaystones();
+        WaystoneEntry[] combinedWaystones = new WaystoneEntry[WaystoneManager.getServerWaystones()
+            .size() + playerWaystones.length];
+        int i = 0;
+        for (WaystoneEntry entry : WaystoneManager.getServerWaystones()) {
+            combinedWaystones[i] = entry;
+            i++;
+        }
+        System.arraycopy(playerWaystones, 0, combinedWaystones, i, playerWaystones.length);
+        return combinedWaystones;
     }
 }

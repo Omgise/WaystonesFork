@@ -2,11 +2,13 @@ package net.blay09.mods.waystones.client.gui;
 
 import java.util.Iterator;
 
+import net.blay09.mods.waystones.WaystoneConfig;
 import net.blay09.mods.waystones.WaystoneManager;
 import net.blay09.mods.waystones.block.TileWaystone;
 import net.blay09.mods.waystones.network.NetworkHandler;
 import net.blay09.mods.waystones.network.message.MessageWarpStone;
 import net.blay09.mods.waystones.util.WaystoneEntry;
+import net.blay09.mods.waystones.util.WaystoneXpCost;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -72,16 +74,32 @@ public class GuiWarpStone extends GuiScreen {
         for (int i = 0; i < buttonsPerPage; i++) {
             int entryIndex = pageOffset * buttonsPerPage + i;
             if (entryIndex >= 0 && entryIndex < entries.length) {
+                int xpCost = -1;
+                if (!Minecraft.getMinecraft().thePlayer.capabilities.isCreativeMode) {
+                    xpCost = WaystoneXpCost.getXpCost(currentWaystone, entries[entryIndex]);
+                }
                 GuiButtonWaystone btnWaystone = new GuiButtonWaystone(
                     2 + i,
                     width / 2 - 100,
                     height / 2 - 60 + y,
-                    entries[entryIndex]);
-                if (entries[entryIndex].getDimensionId() != Minecraft.getMinecraft().theWorld.provider.dimensionId) {
-                    if (!WaystoneManager.isDimensionWarpAllowed(entries[entryIndex])) {
-                        btnWaystone.enabled = false;
+                    entries[entryIndex],
+                    xpCost);
+
+                if (!Minecraft.getMinecraft().thePlayer.capabilities.isCreativeMode) {
+                    if (entries[entryIndex].getDimensionId()
+                        != Minecraft.getMinecraft().theWorld.provider.dimensionId) {
+                        if (!WaystoneManager.isDimensionWarpAllowed(entries[entryIndex])) {
+                            btnWaystone.enabled = false;
+                        }
+                    }
+
+                    if (WaystoneConfig.xpBaseCost > -1) {
+                        if (Minecraft.getMinecraft().thePlayer.experienceLevel < xpCost) {
+                            btnWaystone.enabled = false;
+                        }
                     }
                 }
+
                 buttonList.add(btnWaystone);
                 y += 22;
             }

@@ -38,6 +38,10 @@ public class WaystoneConfig {
     public static boolean enableWorldgen;
     public static boolean villageNamesCompat;
 
+    public static int xpBaseCost;
+    public static int xpBlocksPerLevel;
+    public static int xpCrossDimCost;
+
     public static class Categories {
 
         public static final String general = "general";
@@ -172,6 +176,30 @@ public class WaystoneConfig {
             Categories.general,
             true,
             "If true, village Waystones will take their name from Village Names.");
+
+        xpBaseCost = config.getInt(
+            "Teleport Base XP Cost",
+            Categories.general,
+            5,
+            -1,
+            Integer.MAX_VALUE,
+            "The minimum amount of XP levels consumed when using a Waystone. Set to -1 to disable cost altogether.");
+
+        xpBlocksPerLevel = config.getInt(
+            "Teleport XP Cost per X Blocks",
+            Categories.general,
+            100,
+            0,
+            Integer.MAX_VALUE,
+            "Each how many blocks consume one XP level.");
+
+        xpCrossDimCost = config.getInt(
+            "Cross-dim Teleport XP Cost",
+            Categories.general,
+            5,
+            0,
+            Integer.MAX_VALUE,
+            "How many XP levels are consumed for teleporting to another dimension.");
     }
 
     public static void storeServerWaystones(Configuration config, Collection<WaystoneEntry> entries) {
@@ -215,6 +243,9 @@ public class WaystoneConfig {
         config.showNametag = buf.readBoolean();
         config.enableWorldgen = buf.readBoolean();
         config.villageNamesCompat = buf.readBoolean();
+        config.xpBaseCost = buf.readInt();
+        config.xpBlocksPerLevel = buf.readInt();
+        config.xpCrossDimCost = buf.readInt();
         return config;
     }
 
@@ -230,6 +261,9 @@ public class WaystoneConfig {
         buf.writeBoolean(showNametag);
         buf.writeBoolean(enableWorldgen);
         buf.writeBoolean(villageNamesCompat);
+        buf.writeInt(xpBaseCost);
+        buf.writeInt(xpBlocksPerLevel);
+        buf.writeInt(xpCrossDimCost);
     }
 
     public static Configuration getRawConfig() {
