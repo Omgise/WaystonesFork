@@ -2,17 +2,14 @@ package net.blay09.mods.waystones.block;
 
 import java.util.Random;
 
-import net.blay09.mods.waystones.PlayerWaystoneData;
 import net.blay09.mods.waystones.WaystoneConfig;
 import net.blay09.mods.waystones.WaystoneManager;
 import net.blay09.mods.waystones.Waystones;
-import net.blay09.mods.waystones.client.render.WaystoneBlockRenderer;
 import net.blay09.mods.waystones.util.WaystoneEntry;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.BlockPistonBase;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -55,7 +52,7 @@ public class BlockWaystone extends BlockContainer {
 
     @Override
     public int getRenderType() {
-        return WaystoneBlockRenderer.RENDER_ID;
+        return Waystones.proxy.getWaystoneRenderId();
     }
 
     @Override
@@ -162,9 +159,10 @@ public class BlockWaystone extends BlockContainer {
             Waystones.proxy.openWaystoneNameEdit(tileWaystone);
             return true;
         }
-        if ((player.isSneaking() || WaystoneManager.playerActivatedWaystone(player, tileWaystone))
-            && (player.capabilities.isCreativeMode || !Waystones.getConfig().creativeModeOnly)) {
-            if (world.isRemote) {
+        if (world.isRemote) {
+            if ((player.isSneaking() || WaystoneManager.playerActivatedWaystone(player, tileWaystone))
+                && (player.capabilities.isCreativeMode || !Waystones.getConfig().creativeModeOnly)) {
+
                 if (tileWaystone == null) {
                     return true;
                 }
@@ -177,8 +175,6 @@ public class BlockWaystone extends BlockContainer {
                 .isEmpty()) {
                 return true;
             }
-
-            sendActivationChatMessage(player, tileWaystone);
             WaystoneManager.activateWaystone(player, tileWaystone);
 
             if (Waystones.getConfig().setSpawnPoint) {
@@ -197,31 +193,34 @@ public class BlockWaystone extends BlockContainer {
             if (tileWaystone == null) {
                 return;
             }
-            if (WaystoneManager.getKnownWaystone(tileWaystone.getWaystoneName()) != null
-                || WaystoneManager.getServerWaystone(tileWaystone.getWaystoneName()) != null) {
-                if (PlayerWaystoneData.canUseWarpStone(Minecraft.getMinecraft().thePlayer)) {
-                    world.spawnParticle(
-                        "portal",
-                        x + 0.5 + (random.nextDouble() - 0.5) * 1.5,
-                        y + 0.5,
-                        z + 0.5 + (random.nextDouble() - 0.5) * 1.5,
-                        0,
-                        0,
-                        0);
-                }
-                world.spawnParticle(
-                    "enchantmenttable",
-                    x + 0.5 + (random.nextDouble() - 0.5) * 1.5,
-                    y + 0.5,
-                    z + 0.5 + (random.nextDouble() - 0.5) * 1.5,
-                    0,
-                    0,
-                    0);
-            }
+            /*
+             * if (WaystoneManager.getKnownWaystone(tileWaystone.getWaystoneName()) != null
+             * || WaystoneManager.getServerWaystone(tileWaystone.getWaystoneName()) != null) {
+             * if (PlayerWaystoneData.canUseWarpStone(Minecraft.getMinecraft().thePlayer)) {
+             * world.spawnParticle(
+             * "portal",
+             * x + 0.5 + (random.nextDouble() - 0.5) * 1.5,
+             * y + 0.5,
+             * z + 0.5 + (random.nextDouble() - 0.5) * 1.5,
+             * 0,
+             * 0,
+             * 0);
+             * }
+             * world.spawnParticle(
+             * "enchantmenttable",
+             * x + 0.5 + (random.nextDouble() - 0.5) * 1.5,
+             * y + 0.5,
+             * z + 0.5 + (random.nextDouble() - 0.5) * 1.5,
+             * 0,
+             * 0,
+             * 0);
+             * }
+             */
+            Waystones.proxy.spawnWaystoneParticles(world, x, y, z, tileWaystone, random);
         }
     }
 
-    public TileWaystone getTileWaystone(World world, int x, int y, int z) {
+    public static TileWaystone getTileWaystone(World world, int x, int y, int z) {
         TileWaystone tileWaystone = (TileWaystone) world.getTileEntity(x, y, z);
         if (tileWaystone == null) {
             TileEntity tileBelow = world.getTileEntity(x, y - 1, z);

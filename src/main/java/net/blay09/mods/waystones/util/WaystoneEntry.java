@@ -3,9 +3,9 @@ package net.blay09.mods.waystones.util;
 import net.blay09.mods.waystones.PlayerWaystoneData;
 import net.blay09.mods.waystones.WaystoneManager;
 import net.blay09.mods.waystones.block.TileWaystone;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 
-import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import io.netty.buffer.ByteBuf;
 
@@ -89,22 +89,6 @@ public class WaystoneEntry {
         return result;
     }
 
-    public static WaystoneEntry[] getCombinedWaystones() {
-        WaystoneEntry[] playerWaystones = PlayerWaystoneData.fromPlayer(
-            FMLClientHandler.instance()
-                .getClientPlayerEntity())
-            .getWaystones();
-        WaystoneEntry[] combinedWaystones = new WaystoneEntry[WaystoneManager.getServerWaystones()
-            .size() + playerWaystones.length];
-        int i = 0;
-        for (WaystoneEntry entry : WaystoneManager.getServerWaystones()) {
-            combinedWaystones[i] = entry;
-            i++;
-        }
-        System.arraycopy(playerWaystones, 0, combinedWaystones, i, playerWaystones.length);
-        return combinedWaystones;
-    }
-
     public static boolean tileAndEntryShareCoords(WaystoneEntry entry, TileWaystone tile) {
         if (entry == null || tile == null) {
             return false;
@@ -115,5 +99,19 @@ public class WaystoneEntry {
                 .getY() == tile.yCoord
             && entry.getPos()
                 .getZ() == tile.zCoord;
+    }
+
+    public static WaystoneEntry[] getCombinedWaystones(EntityPlayer player) {
+        WaystoneEntry[] playerWaystones = PlayerWaystoneData.fromPlayer(player)
+            .getWaystones();
+        WaystoneEntry[] combinedWaystones = new WaystoneEntry[WaystoneManager.getServerWaystones()
+            .size() + playerWaystones.length];
+        int i = 0;
+        for (WaystoneEntry entry : WaystoneManager.getServerWaystones()) {
+            combinedWaystones[i] = entry;
+            i++;
+        }
+        System.arraycopy(playerWaystones, 0, combinedWaystones, i, playerWaystones.length);
+        return combinedWaystones;
     }
 }

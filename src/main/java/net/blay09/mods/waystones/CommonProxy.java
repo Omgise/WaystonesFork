@@ -1,11 +1,15 @@
 package net.blay09.mods.waystones;
 
+import java.util.Random;
+
 import net.blay09.mods.waystones.block.TileWaystone;
 import net.blay09.mods.waystones.network.NetworkHandler;
 import net.blay09.mods.waystones.network.message.MessageConfig;
+import net.blay09.mods.waystones.util.WaystoneEntry;
 import net.blay09.mods.waystones.worldgen.VillageWaystone;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.IChatComponent;
+import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.MapGenStructureIO;
 
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -69,5 +73,15 @@ public class CommonProxy {
 
     public void playSound(String soundName, float pitch) {
 
+    }
+
+    public void spawnWaystoneParticles(World world, int x, int y, int z, TileWaystone tileWaystone, Random random) {}
+
+    public int getWaystoneRenderId() {
+        return 0;
+    }
+
+    public WaystoneEntry[] getCombinedWaystones() {
+        return new WaystoneEntry[] {};
     }
 }

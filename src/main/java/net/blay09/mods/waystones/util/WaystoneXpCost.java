@@ -2,7 +2,6 @@ package net.blay09.mods.waystones.util;
 
 import net.blay09.mods.waystones.WaystoneConfig;
 import net.blay09.mods.waystones.block.TileWaystone;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 
 public class WaystoneXpCost {
@@ -34,8 +33,8 @@ public class WaystoneXpCost {
         return base + (int) Math.floor(distance / blocksPerLevel);
     }
 
-    public static WaystoneEntry entryFromTile(TileWaystone tile) {
-        WaystoneEntry[] entries = WaystoneEntry.getCombinedWaystones();
+    public static WaystoneEntry entryFromTile(TileWaystone tile, EntityPlayer player) {
+        WaystoneEntry[] entries = WaystoneEntry.getCombinedWaystones(player);
         for (WaystoneEntry w : entries) {
             if (WaystoneEntry.tileAndEntryShareCoords(w, tile)) {
                 return w;
@@ -44,12 +43,12 @@ public class WaystoneXpCost {
         return null;
     }
 
-    public static int getXpCost(TileWaystone from, WaystoneEntry to) {
+    public static int getXpCost(TileWaystone from, WaystoneEntry to, EntityPlayer player) {
         if (WaystoneConfig.xpBaseCost < 0) {
             return -1;
         }
         if (from == null) {
-            return getXpCost(Minecraft.getMinecraft().thePlayer, to);
+            return getXpCost(player, to);
         }
         int base = WaystoneConfig.xpBaseCost;
         int blocksPerLevel = WaystoneConfig.xpBlocksPerLevel;
@@ -59,7 +58,7 @@ public class WaystoneXpCost {
         }
 
         // Cross-dimension cost
-        WaystoneEntry fromEntry = entryFromTile(from);
+        WaystoneEntry fromEntry = entryFromTile(from, player);
         if (fromEntry != null) {
             if (fromEntry.getDimensionId() != to.getDimensionId()) {
                 return base + WaystoneConfig.xpCrossDimCost;

@@ -1,9 +1,11 @@
 package net.blay09.mods.waystones.client;
 
 import java.util.List;
+import java.util.Random;
 
 import net.blay09.mods.waystones.CommonProxy;
 import net.blay09.mods.waystones.PlayerWaystoneData;
+import net.blay09.mods.waystones.WaystoneManager;
 import net.blay09.mods.waystones.Waystones;
 import net.blay09.mods.waystones.block.TileWaystone;
 import net.blay09.mods.waystones.client.gui.GuiButtonWarp;
@@ -23,6 +25,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import net.minecraftforge.client.event.FOVUpdateEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -134,7 +137,7 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public void openWaystoneSelection(TileWaystone currentWaystone, boolean isFree) {
-        WaystoneEntry[] combinedWaystones = WaystoneEntry.getCombinedWaystones();
+        WaystoneEntry[] combinedWaystones = WaystoneEntry.getCombinedWaystones(Minecraft.getMinecraft().thePlayer);
         Minecraft.getMinecraft()
             .displayGuiScreen(new GuiWarpStone(currentWaystone, combinedWaystones, isFree));
     }
@@ -150,5 +153,38 @@ public class ClientProxy extends CommonProxy {
         Minecraft.getMinecraft()
             .getSoundHandler()
             .playSound(PositionedSoundRecord.func_147674_a(new ResourceLocation(soundName), pitch));
+    }
+
+    @Override
+    public void spawnWaystoneParticles(World world, int x, int y, int z, TileWaystone tileWaystone, Random random) {
+        if (tileWaystone == null) {
+            return;
+        }
+        if (WaystoneManager.getKnownWaystone(tileWaystone.getWaystoneName()) != null
+            || WaystoneManager.getServerWaystone(tileWaystone.getWaystoneName()) != null) {
+            if (PlayerWaystoneData.canUseWarpStone(Minecraft.getMinecraft().thePlayer)) {
+                world.spawnParticle(
+                    "portal",
+                    x + 0.5 + (random.nextDouble() - 0.5) * 1.5,
+                    y + 0.5,
+                    z + 0.5 + (random.nextDouble() - 0.5) * 1.5,
+                    0,
+                    0,
+                    0);
+            }
+            world.spawnParticle(
+                "enchantmenttable",
+                x + 0.5 + (random.nextDouble() - 0.5) * 1.5,
+                y + 0.5,
+                z + 0.5 + (random.nextDouble() - 0.5) * 1.5,
+                0,
+                0,
+                0);
+        }
+    }
+
+    @Override
+    public int getWaystoneRenderId() {
+        return WaystoneBlockRenderer.RENDER_ID;
     }
 }

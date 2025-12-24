@@ -80,7 +80,8 @@ public class GuiWarpStone extends GuiScreen {
                 }
                 int xpCost = -1;
                 if (!Minecraft.getMinecraft().thePlayer.capabilities.isCreativeMode) {
-                    xpCost = WaystoneXpCost.getXpCost(currentWaystone, entries[entryIndex]);
+                    xpCost = WaystoneXpCost
+                        .getXpCost(currentWaystone, entries[entryIndex], Minecraft.getMinecraft().thePlayer);
                 }
                 GuiButtonWaystone btnWaystone = new GuiButtonWaystone(
                     2 + i,
