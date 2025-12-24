@@ -2,6 +2,7 @@ package net.blay09.mods.waystones.client.render;
 
 import static org.lwjgl.opengl.GL11.*;
 
+import net.blay09.mods.waystones.PlayerWaystoneData;
 import net.blay09.mods.waystones.WaystoneConfig;
 import net.blay09.mods.waystones.WaystoneManager;
 import net.blay09.mods.waystones.Waystones;
@@ -27,6 +28,15 @@ public class RenderWaystone extends TileEntitySpecialRenderer {
         "textures/entity/waystone_active.png");
 
     private final ModelWaystone model = new ModelWaystone();
+
+    float getCooldownProgress(TileWaystone tileWaystone) {
+        if (!tileWaystone.hasWorldObj()) return 1f; // fully charged if not in world
+
+        long lastUse = PlayerWaystoneData.getLastWarpStoneUse(Minecraft.getMinecraft().thePlayer);
+        long cooldown = Waystones.getConfig().warpStoneCooldown * 1000L;
+        long timeSince = System.currentTimeMillis() - lastUse;
+        return Math.min(1f, Math.max(0f, (float) timeSince / cooldown));
+    }
 
     @Override
     public void renderTileEntityAt(TileEntity tileEntity, double x, double y, double z, float partialTicks) {
