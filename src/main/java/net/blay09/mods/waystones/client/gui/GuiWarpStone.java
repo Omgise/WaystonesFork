@@ -178,6 +178,10 @@ public class GuiWarpStone extends GuiScreen {
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        hoveringOverRemoveButtonInList = false;
+        hoveringOverPinButtonInList = false;
+        hoveringOverUnpinButtonInList = false;
+
         drawWorldBackground(0);
         super.drawScreen(mouseX, mouseY, partialTicks);
         GL11.glColor4f(1f, 1f, 1f, 1f);

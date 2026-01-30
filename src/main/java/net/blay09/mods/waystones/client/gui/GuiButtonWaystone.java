@@ -96,8 +96,7 @@ public class GuiButtonWaystone extends GuiButton {
         buttonY = this.yPosition + 2;
         crossButtonX = this.xPosition + 2;
         pinButtonX = crossButtonX + 18;
-        parentGui.hoveringOverRemoveButtonInList = false;
-        parentGui.hoveringOverRemoveButtonInList = true;
+
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)
             && ClientUtil.mouseOverArea(mouseX, mouseY, this.xPosition, this.yPosition, this.width, this.height)) {
             Minecraft.getMinecraft()
@@ -107,6 +106,7 @@ public class GuiButtonWaystone extends GuiButton {
             // Cross button
             if (ClientUtil.mouseOverArea(mouseX, mouseY, crossButtonX, buttonY, sideButtonSize, sideButtonSize)
                 && !waystone.isGlobal()) {
+                parentGui.hoveringOverRemoveButtonInList = true;
                 Gui.func_152125_a(
                     crossButtonX,
                     buttonY,
@@ -139,8 +139,6 @@ public class GuiButtonWaystone extends GuiButton {
                 }
             }
 
-            parentGui.hoveringOverPinButtonInList = false;
-            parentGui.hoveringOverUnpinButtonInList = false;
             // Pin button
             if (!this.pinned) {
                 if (ClientUtil.mouseOverArea(mouseX, mouseY, pinButtonX, buttonY, sideButtonSize, sideButtonSize)) {
