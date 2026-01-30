@@ -5,9 +5,9 @@ Minecraft Mod. Teleport back to activated waystones. For Survival, Adventure or 
 ![logo_small](src/main/resources/assets/waystones/logo_small.png)
 
 [![hub](images/badges/github.png)](https://github.com/JackOfNoneTrades/WaystonesFork/releases)
+[![curse](images/badges/curse.png)](https://www.curseforge.com/minecraft/mc-mods/waystones-x)
 ![forge](images/badges/forge.png)
-<!--![modrinth](images/badges/modrinth.png)
-![curse](images/badges/curse.png)-->
+<!--![modrinth](images/badges/modrinth.png)-->
 
 ![spawn](images/screenshots/2026-01-30_10.24.19.png)
 
