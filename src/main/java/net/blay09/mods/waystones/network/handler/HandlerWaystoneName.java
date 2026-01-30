@@ -27,11 +27,15 @@ public class HandlerWaystoneName implements IMessageHandler<MessageWaystoneName,
             public void run() {
                 EntityPlayer entityPlayer = ctx.getServerHandler().playerEntity;
                 if (Waystones.getConfig().creativeModeOnly && !entityPlayer.capabilities.isCreativeMode) {
+                    ctx.getServerHandler().playerEntity
+                        .addChatComponentMessage(new ChatComponentTranslation("waystones:waystonesCreativeOnly"));
                     return;
                 }
                 World world = entityPlayer.getEntityWorld();
                 BlockPos pos = message.getPos();
                 if (entityPlayer.getDistance(pos.getX(), pos.getY(), pos.getZ()) > 10) {
+                    ctx.getServerHandler().playerEntity
+                        .addChatComponentMessage(new ChatComponentTranslation("waystones:waystoneTooFar"));
                     return;
                 }
                 TileEntity tileEntity = world.getTileEntity(pos.getX(), pos.getY(), pos.getZ());
@@ -46,9 +50,9 @@ public class HandlerWaystoneName implements IMessageHandler<MessageWaystoneName,
                     ((TileWaystone) tileEntity).setWaystoneName(message.getName());
                     if (message.isGlobal() /* && ctx.getServerHandler().playerEntity.capabilities.isCreativeMode */) {
                         WaystoneManager.addServerWaystone(new WaystoneEntry((TileWaystone) tileEntity));
-                        for (Object obj : MinecraftServer.getServer()
+                        for (EntityPlayer obj : MinecraftServer.getServer()
                             .getConfigurationManager().playerEntityList) {
-                            WaystoneManager.sendPlayerWaystones((EntityPlayer) obj);
+                            WaystoneManager.sendPlayerWaystones(obj);
                         }
                     }
 
@@ -61,8 +65,6 @@ public class HandlerWaystoneName implements IMessageHandler<MessageWaystoneName,
                     if (Waystones.getConfig().setSpawnPoint) {
                         BlockWaystone.setSpawnPoint(world, entityPlayer, tileWaystone);
                     }
-
-                    BlockWaystone.sendActivationChatMessage(entityPlayer, tileWaystone);
                 }
             }
         });

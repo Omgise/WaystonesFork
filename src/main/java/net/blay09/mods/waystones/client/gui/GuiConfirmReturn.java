@@ -1,6 +1,7 @@
 package net.blay09.mods.waystones.client.gui;
 
 import net.blay09.mods.waystones.PlayerWaystoneData;
+import net.blay09.mods.waystones.WaystoneConfig;
 import net.blay09.mods.waystones.network.NetworkHandler;
 import net.blay09.mods.waystones.network.message.MessageWarpReturn;
 import net.blay09.mods.waystones.util.WaystoneEntry;
@@ -17,16 +18,12 @@ public class GuiConfirmReturn extends GuiYesNo implements GuiYesNoCallback {
     private final String waystoneName;
 
     public GuiConfirmReturn() {
-        super(new GuiYesNoCallback() {
-
-            @Override
-            public void confirmClicked(boolean result, int id) {
-                if (result) {
-                    NetworkHandler.channel.sendToServer(new MessageWarpReturn());
-                }
-                Minecraft.getMinecraft()
-                    .displayGuiScreen(null);
+        super((result, id) -> {
+            if (result) {
+                NetworkHandler.channel.sendToServer(new MessageWarpReturn());
             }
+            Minecraft.getMinecraft()
+                .displayGuiScreen(null);
         }, I18n.format("gui.waystones:confirmReturn"), "", 0);
         this.waystoneName = getWaystoneName();
     }
@@ -45,5 +42,10 @@ public class GuiConfirmReturn extends GuiYesNo implements GuiYesNoCallback {
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
         drawCenteredString(fontRendererObj, waystoneName, width / 2, 100, 0xFFFFFF);
+    }
+
+    @Override
+    public boolean doesGuiPauseGame() {
+        return WaystoneConfig.menusPauseGame;
     }
 }

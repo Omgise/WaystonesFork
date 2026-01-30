@@ -1,17 +1,17 @@
 package net.blay09.mods.waystones;
 
-import java.util.Collection;
-
-import net.blay09.mods.waystones.util.BlockPos;
-import net.blay09.mods.waystones.util.WaystoneEntry;
 import net.minecraftforge.common.config.Configuration;
 
 import io.netty.buffer.ByteBuf;
 
+// TODO: Clean up this mess
+
+// Static fields are not synced from the server, non-static are
 public class WaystoneConfig {
 
     private static Configuration config;
 
+    public static boolean debugMode;
     public static int teleportButtonX;
     public static int teleportButtonY;
     public static boolean disableParticles;
@@ -20,6 +20,7 @@ public class WaystoneConfig {
     public boolean teleportButton;
     public int teleportButtonCooldown;
     public boolean teleportButtonReturnOnly;
+    public static boolean showCooldownOnWaystone;
 
     public boolean allowReturnScrolls;
     public boolean allowWarpStone;
@@ -42,14 +43,21 @@ public class WaystoneConfig {
     public static int xpBlocksPerLevel;
     public static int xpCrossDimCost;
 
+    public static boolean menusPauseGame;
+
+    public static int sortingMode;
+
+    public float waystoneLightLevel;
+    public boolean disableWaystoneDrops;
+
     public static class Categories {
 
         public static final String general = "general";
         public static final String client = "client";
-        public static final String generated = "generated";
     }
 
     public void reloadLocal(Configuration config) {
+        teleportButton = config.getBoolean("Debug mode", Categories.general, false, "Additional logs");
         teleportButton = config.getBoolean(
             "Teleport Button in GUI",
             Categories.general,
@@ -97,6 +105,11 @@ public class WaystoneConfig {
             Categories.client,
             false,
             "If true, activated waystones will not emit particles.");
+        menusPauseGame = config.getBoolean(
+            "Menus Pause Game",
+            Categories.client,
+            false,
+            "If true, GUI menus pause the game in singleplayer.");
 
         warpStoneCooldown = config.getInt(
             "Teleportation Cooldown",
@@ -133,34 +146,6 @@ public class WaystoneConfig {
             Categories.general,
             true,
             "If true, waystones marked as global work inter-dimensionally.");
-
-        String[] serverWaystoneData = config.getStringList(
-            "Server Waystones",
-            Categories.generated,
-            new String[0],
-            "This option is automatically populated by the server when using the Server Hub Mode. Do not change.");
-        WaystoneEntry[] serverWaystones = new WaystoneEntry[serverWaystoneData.length];
-        for (int i = 0; i < serverWaystones.length; i++) {
-            String[] split = serverWaystoneData[i].split("\u00a7");
-            if (split.length < 3) {
-                serverWaystones[i] = new WaystoneEntry("Invalid Waystone", 0, new BlockPos(0, 0, 0));
-                serverWaystones[i].setGlobal(true);
-                continue;
-            }
-            try {
-                int dimensionId = Integer.parseInt(split[1]);
-                String[] pos = split[2].split(",");
-                serverWaystones[i] = new WaystoneEntry(
-                    split[0],
-                    dimensionId,
-                    new BlockPos(Integer.parseInt(pos[0]), Integer.parseInt(pos[1]), Integer.parseInt(pos[2])));
-                serverWaystones[i].setGlobal(true);
-            } catch (NumberFormatException e) {
-                serverWaystones[i] = new WaystoneEntry("Invalid Waystone", 0, new BlockPos(0, 0, 0));
-                serverWaystones[i].setGlobal(true);
-            }
-        }
-        WaystoneManager.setServerWaystones(serverWaystones);
 
         showNametag = config.getBoolean(
             "Show Waystone nametag",
@@ -200,34 +185,34 @@ public class WaystoneConfig {
             0,
             Integer.MAX_VALUE,
             "How many XP levels are consumed for teleporting to another dimension.");
-    }
 
-    public static void storeServerWaystones(Configuration config, Collection<WaystoneEntry> entries) {
-        String[] serverWaystones = new String[entries.size()];
-        int i = 0;
-        for (WaystoneEntry entry : entries) {
-            serverWaystones[i] = entry.getName() + "\u00a7"
-                + entry.getDimensionId()
-                + "\u00a7"
-                + entry.getPos()
-                    .getX()
-                + ","
-                + entry.getPos()
-                    .getY()
-                + ","
-                + entry.getPos()
-                    .getZ();
-            i++;
-        }
-        config
-            .get(
-                Categories.generated,
-                "Server Waystones",
-                "This option is automatically populated by the server when using the Server Hub Mode. Do not change.")
-            .set(serverWaystones);
-        if (config.hasChanged()) {
-            config.save();
-        }
+        sortingMode = config.getInt(
+            "Sorting mode",
+            Categories.client,
+            0,
+            0,
+            1,
+            "The Waystone sorting mode. Alphabetical: 0, Distance: 1.");
+
+        showCooldownOnWaystone = config.getBoolean(
+            "Show cooldown on Waystone",
+            Categories.client,
+            true,
+            "If true, Waystone glow texture will display the cooldown status.");
+
+        waystoneLightLevel = config.getFloat(
+            "Waystone Light Level",
+            Categories.general,
+            0.5f,
+            0f,
+            1f,
+            "Light level emitted by waystones. 0 = none, 1 = maximum.");
+
+        disableWaystoneDrops = config.getBoolean(
+            "Disable Waystone Drops",
+            Categories.general,
+            false,
+            "If true, waystones will not drop as an item when mined (including Silk Touch).");
     }
 
     public static WaystoneConfig read(ByteBuf buf) {
@@ -240,12 +225,16 @@ public class WaystoneConfig {
         config.globalInterDimension = buf.readBoolean();
         config.creativeModeOnly = buf.readBoolean();
         config.setSpawnPoint = buf.readBoolean();
-        config.showNametag = buf.readBoolean();
         config.enableWorldgen = buf.readBoolean();
         config.villageNamesCompat = buf.readBoolean();
         config.xpBaseCost = buf.readInt();
         config.xpBlocksPerLevel = buf.readInt();
         config.xpCrossDimCost = buf.readInt();
+        config.allowReturnScrolls = buf.readBoolean();
+        config.allowWarpStone = buf.readBoolean();
+        config.globalNoCooldown = buf.readBoolean();
+        config.waystoneLightLevel = buf.readFloat();
+        config.disableWaystoneDrops = buf.readBoolean();
         return config;
     }
 
@@ -258,12 +247,16 @@ public class WaystoneConfig {
         buf.writeBoolean(globalInterDimension);
         buf.writeBoolean(creativeModeOnly);
         buf.writeBoolean(setSpawnPoint);
-        buf.writeBoolean(showNametag);
         buf.writeBoolean(enableWorldgen);
         buf.writeBoolean(villageNamesCompat);
         buf.writeInt(xpBaseCost);
         buf.writeInt(xpBlocksPerLevel);
         buf.writeInt(xpCrossDimCost);
+        buf.writeBoolean(allowReturnScrolls);
+        buf.writeBoolean(allowWarpStone);
+        buf.writeBoolean(globalNoCooldown);
+        buf.writeFloat(waystoneLightLevel);
+        buf.writeBoolean(disableWaystoneDrops);
     }
 
     public static Configuration getRawConfig() {

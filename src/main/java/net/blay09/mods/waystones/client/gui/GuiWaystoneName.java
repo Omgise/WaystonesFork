@@ -1,8 +1,10 @@
 package net.blay09.mods.waystones.client.gui;
 
+import net.blay09.mods.waystones.WaystoneConfig;
 import net.blay09.mods.waystones.WaystoneManager;
 import net.blay09.mods.waystones.block.TileWaystone;
 import net.blay09.mods.waystones.network.NetworkHandler;
+import net.blay09.mods.waystones.network.message.MessageRenameWaystone;
 import net.blay09.mods.waystones.network.message.MessageWaystoneName;
 import net.blay09.mods.waystones.util.BlockPos;
 import net.blay09.mods.waystones.util.WaystoneEntry;
@@ -23,13 +25,16 @@ public class GuiWaystoneName extends GuiScreen {
     private GuiTextField textField;
     private GuiButton btnDone;
     private GuiCheckBox chkGlobal;
+    private final boolean renaming;
+    GuiScreen parentScreen;
 
-    public GuiWaystoneName(TileWaystone tileWaystone) {
+    public GuiWaystoneName(TileWaystone tileWaystone, boolean renaming, GuiScreen parentScreen) {
         this.tileWaystone = tileWaystone;
+        this.renaming = renaming;
+        this.parentScreen = parentScreen;
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void initGui() {
         String oldText = tileWaystone.getWaystoneName();
         if (textField != null) {
@@ -39,6 +44,7 @@ public class GuiWaystoneName extends GuiScreen {
         textField.setText(oldText);
         textField.setFocused(true);
         btnDone = new GuiButton(0, width / 2, height / 2 + 10, 100, 20, I18n.format("gui.done"));
+        btnDone.enabled = false;
         buttonList.add(btnDone);
 
         chkGlobal = new GuiCheckBox(
@@ -47,9 +53,8 @@ public class GuiWaystoneName extends GuiScreen {
             height / 2 + 15,
             " " + I18n.format("gui.waystones:editWaystone.isGlobal"),
             WaystoneManager.getServerWaystone(tileWaystone.getWaystoneName()) != null);
-        if (!Minecraft.getMinecraft().thePlayer.capabilities.isCreativeMode) {
-            chkGlobal.visible = true;
-        }
+        chkGlobal.visible = Minecraft.getMinecraft().thePlayer.capabilities.isCreativeMode && !renaming;
+
         buttonList.add(chkGlobal);
 
         Keyboard.enableRepeatEvents(true);
@@ -63,9 +68,22 @@ public class GuiWaystoneName extends GuiScreen {
     @Override
     protected void actionPerformed(GuiButton button) {
         if (button == btnDone) {
-            NetworkHandler.channel.sendToServer(
-                new MessageWaystoneName(new BlockPos(tileWaystone), textField.getText(), chkGlobal.isChecked()));
-            mc.displayGuiScreen(null);
+            if (!renaming) {
+                NetworkHandler.channel.sendToServer(
+                    new MessageWaystoneName(
+                        new BlockPos(tileWaystone),
+                        textField.getText()
+                            .trim(),
+                        chkGlobal.isChecked()));
+                mc.displayGuiScreen(null);
+            } else {
+                NetworkHandler.channel.sendToServer(
+                    new MessageRenameWaystone(
+                        new WaystoneEntry(tileWaystone),
+                        textField.getText()
+                            .trim()));
+                mc.displayGuiScreen(parentScreen);
+            }
         } else if (button == chkGlobal) {
             // Re-check the duplicate name whenever the checkbox is toggled
             String newName = textField.getText()
@@ -139,5 +157,10 @@ public class GuiWaystoneName extends GuiScreen {
             }
         }
         return false;
+    }
+
+    @Override
+    public boolean doesGuiPauseGame() {
+        return WaystoneConfig.menusPauseGame;
     }
 }

@@ -1,0 +1,1 @@
+VERSION=testerino ./gradlew build

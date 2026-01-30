@@ -1,7 +1,5 @@
 package net.blay09.mods.waystones.client.render;
 
-import static org.lwjgl.opengl.GL11.*;
-
 import net.blay09.mods.waystones.PlayerWaystoneData;
 import net.blay09.mods.waystones.WaystoneConfig;
 import net.blay09.mods.waystones.WaystoneManager;
@@ -13,6 +11,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -42,7 +41,12 @@ public class RenderWaystone extends TileEntitySpecialRenderer {
     private final ModelWaystone model = new ModelWaystone();
 
     float getCooldownProgress(TileWaystone tileWaystone) {
-        if (!tileWaystone.hasWorldObj()) return 1f; // fully charged if not in world
+        if (Minecraft.getMinecraft().thePlayer.capabilities.isCreativeMode || !WaystoneConfig.showCooldownOnWaystone) {
+            return 1f;
+        }
+        if (!tileWaystone.hasWorldObj()) {
+            return 1f; // fully charged if not in world
+        }
 
         long lastUse = PlayerWaystoneData.getLastWarpStoneUse(Minecraft.getMinecraft().thePlayer);
         long cooldown = Waystones.getConfig().warpStoneCooldown * 1000L;
@@ -59,6 +63,9 @@ public class RenderWaystone extends TileEntitySpecialRenderer {
         TileWaystone tileWaystone = (TileWaystone) tileEntity;
         boolean stoneIsKnown = WaystoneManager.getKnownWaystone(tileWaystone.getWaystoneName()) != null
             || WaystoneManager.getServerWaystone(tileWaystone.getWaystoneName()) != null;
+        boolean stoneIsGlobal = WaystoneManager.getServerWaystone(tileWaystone.getWaystoneName()) != null
+            && WaystoneManager.getServerWaystone(tileWaystone.getWaystoneName())
+                .isGlobal();
         bindTexture(texture);
 
         float angle = tileEntity.hasWorldObj()
@@ -71,8 +78,8 @@ public class RenderWaystone extends TileEntitySpecialRenderer {
         GL11.glRotatef(angle, 0f, 1f, 0f);
         GL11.glRotatef(-180f, 1f, 0f, 0f);
         GL11.glScalef(0.5f, 0.5f, 0.5f);
-        GL11.glEnable(GL_BLEND);
-        GL11.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         model.renderAll();
         if (tileWaystone.hasWorldObj() && stoneIsKnown) {
             GL11.glScalef(1.05f, 1.05f, 1.05f);
@@ -100,17 +107,17 @@ public class RenderWaystone extends TileEntitySpecialRenderer {
             GL11.glEnable(GL11.GL_CULL_FACE); // restore culling
 
         }
-        GL11.glDisable(GL_BLEND);
+        GL11.glDisable(GL11.GL_BLEND);
         GL11.glPopMatrix();
 
         if (WaystoneConfig.showNametag && tileWaystone.hasWorldObj() && stoneIsKnown) {
-            renderWaystoneName(tileWaystone, x + 0.5, y + 2.5, z + 0.5);
+            renderWaystoneName(tileWaystone, x + 0.5, y + 2.5, z + 0.5, stoneIsGlobal);
         }
     }
 
-    private void renderWaystoneName(TileWaystone tile, double x, double y, double z) {
+    private void renderWaystoneName(TileWaystone tile, double x, double y, double z, boolean isGlobal) {
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
-        String name = tile.getWaystoneName();
+        String name = (isGlobal ? EnumChatFormatting.YELLOW : "") + tile.getWaystoneName();
 
         GL11.glPushMatrix();
         GL11.glTranslated(x, y, z);
@@ -146,5 +153,4 @@ public class RenderWaystone extends TileEntitySpecialRenderer {
 
         GL11.glPopMatrix();
     }
-
 }

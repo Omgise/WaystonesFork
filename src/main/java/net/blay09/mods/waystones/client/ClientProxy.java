@@ -55,6 +55,7 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public void init(FMLInitializationEvent event) {
+        super.init(event);
         Waystones.varInstanceClient.initHook();
     }
 
@@ -138,12 +139,13 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void openWaystoneNameEdit(TileWaystone tileEntity) {
         Minecraft.getMinecraft()
-            .displayGuiScreen(new GuiWaystoneName(tileEntity));
+            .displayGuiScreen(new GuiWaystoneName(tileEntity, false, null));
     }
 
     @Override
     public void openWaystoneSelection(TileWaystone currentWaystone, boolean isFree) {
-        WaystoneEntry[] combinedWaystones = WaystoneEntry.getCombinedWaystones(Minecraft.getMinecraft().thePlayer);
+        WaystoneEntry[] combinedWaystones = WaystoneEntry
+            .getCombinedWaystones(Minecraft.getMinecraft().thePlayer, true);
         Minecraft.getMinecraft()
             .displayGuiScreen(new GuiWarpStone(currentWaystone, combinedWaystones, isFree));
     }

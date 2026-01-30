@@ -36,5 +36,4 @@ public class MessageWarpStone implements IMessage {
     public boolean isFree() {
         return isFree;
     }
-
 }

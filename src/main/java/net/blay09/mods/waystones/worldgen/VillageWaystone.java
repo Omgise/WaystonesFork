@@ -17,6 +17,9 @@ import net.minecraftforge.common.util.ForgeDirection;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.registry.VillagerRegistry;
 
+// Test seed: 6344652377971967156
+// Test coords (village names): 159 65 809
+// Test coords (vanilla): 81 79 1539
 public class VillageWaystone {
 
     public static class VillageWaystonePiece extends StructureVillagePieces.Village {
@@ -98,6 +101,11 @@ public class VillageWaystone {
     }
 
     public static class CreationHandler implements VillagerRegistry.IVillageCreationHandler {
+
+        // @Override
+        public StructureVillagePieces.PieceWeight getVillagePieceWeight_old(Random random, int size) {
+            return new StructureVillagePieces.PieceWeight(VillageWaystonePiece.class, 1, 1);
+        }
 
         @Override
         public StructureVillagePieces.PieceWeight getVillagePieceWeight(Random random, int size) {

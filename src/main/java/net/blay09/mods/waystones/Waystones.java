@@ -15,6 +15,7 @@ import net.minecraftforge.oredict.ShapedOreRecipe;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -23,6 +24,7 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
 
+// TODO: add brandyn's fixes, partially added
 @Mod(modid = Waystones.MODID, name = "Waystones-X", guiFactory = "net.blay09.mods.waystones.client.gui.GuiFactory")
 @SuppressWarnings("unused")
 public class Waystones {
@@ -49,8 +51,16 @@ public class Waystones {
 
     public static VarInstanceClient varInstanceClient = new VarInstanceClient();
 
+    public static boolean hasLwjgl3 = Loader.isModLoaded("lwjgl3ify");
+
+    public static boolean DEBUG_MODE;
+
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
+        String debugVar = System.getenv("MCMODDING_DEBUG_MODE");
+        DEBUG_MODE = debugVar != null;
+        LOG.info("Debugmode: {}", DEBUG_MODE);
+
         blockWaystone = new BlockWaystone();
         GameRegistry.registerBlock(blockWaystone, "waystone");
         GameRegistry.registerTileEntity(TileWaystone.class, MODID + ":waystone");
@@ -70,6 +80,8 @@ public class Waystones {
         if (configuration.hasChanged()) {
             configuration.save();
         }
+
+        blockWaystone.setLightLevel(config.waystoneLightLevel);
 
         proxy.preInit(event);
     }
@@ -136,4 +148,9 @@ public class Waystones {
         this.config = config;
     }
 
+    public static void debug(String message) {
+        if (DEBUG_MODE || WaystoneConfig.debugMode) {
+            LOG.info("DEBUG: " + message);
+        }
+    }
 }

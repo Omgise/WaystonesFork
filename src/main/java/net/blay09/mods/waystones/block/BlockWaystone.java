@@ -1,5 +1,6 @@
 package net.blay09.mods.waystones.block;
 
+import java.util.List;
 import java.util.Random;
 
 import net.blay09.mods.waystones.WaystoneConfig;
@@ -11,16 +12,19 @@ import net.minecraft.block.BlockContainer;
 import net.minecraft.block.BlockPistonBase;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -32,6 +36,7 @@ public class BlockWaystone extends BlockContainer {
         setBlockName(Waystones.MODID + ":waystone");
         setHardness(5f);
         setResistance(2000f);
+        setLightLevel(0.5F);
         setCreativeTab(CreativeTabs.tabDecorations);
     }
 
@@ -89,6 +94,14 @@ public class BlockWaystone extends BlockContainer {
             && (!Waystones.getConfig().creativeModeOnly || ((EntityPlayer) entityLiving).capabilities.isCreativeMode)) {
             Waystones.proxy.openWaystoneNameEdit((TileWaystone) world.getTileEntity(x, y, z));
         }
+    }
+
+    @Override
+    public void dropBlockAsItemWithChance(World world, int x, int y, int z, int meta, float chance, int fortune) {
+        if (Waystones.getConfig().disableWaystoneDrops) {
+            return;
+        }
+        super.dropBlockAsItemWithChance(world, x, y, z, meta, chance, fortune);
     }
 
     @Override
@@ -193,29 +206,6 @@ public class BlockWaystone extends BlockContainer {
             if (tileWaystone == null) {
                 return;
             }
-            /*
-             * if (WaystoneManager.getKnownWaystone(tileWaystone.getWaystoneName()) != null
-             * || WaystoneManager.getServerWaystone(tileWaystone.getWaystoneName()) != null) {
-             * if (PlayerWaystoneData.canUseWarpStone(Minecraft.getMinecraft().thePlayer)) {
-             * world.spawnParticle(
-             * "portal",
-             * x + 0.5 + (random.nextDouble() - 0.5) * 1.5,
-             * y + 0.5,
-             * z + 0.5 + (random.nextDouble() - 0.5) * 1.5,
-             * 0,
-             * 0,
-             * 0);
-             * }
-             * world.spawnParticle(
-             * "enchantmenttable",
-             * x + 0.5 + (random.nextDouble() - 0.5) * 1.5,
-             * y + 0.5,
-             * z + 0.5 + (random.nextDouble() - 0.5) * 1.5,
-             * 0,
-             * 0,
-             * 0);
-             * }
-             */
             Waystones.proxy.spawnWaystoneParticles(world, x, y, z, tileWaystone, random);
         }
     }
@@ -231,5 +221,39 @@ public class BlockWaystone extends BlockContainer {
             }
         }
         return tileWaystone;
+    }
+
+    @Override
+    public AxisAlignedBB getSelectedBoundingBoxFromPool(World world, int x, int y, int z) {
+        if (world.getBlock(x, y - 1, z) == this) {
+            return AxisAlignedBB.getBoundingBox(x, y - 1, z, x + 1, y + 1, z + 1);
+        } else {
+            return AxisAlignedBB.getBoundingBox(x, y, z, x + 1, y + 2, z + 1);
+        }
+    }
+
+    @Override
+    public void setBlockBoundsBasedOnState(IBlockAccess world, int x, int y, int z) {
+        if (world.getBlock(x, y - 1, z) == this) {
+            setBlockBounds(0f, -1f, 0f, 1f, 1f, 1f);
+        } else {
+            setBlockBounds(0f, 0f, 0f, 1f, 2f, 1f);
+        }
+    }
+
+    @Override
+    public void addCollisionBoxesToList(World world, int x, int y, int z, AxisAlignedBB mask, List list,
+        Entity entity) {
+        if (world.getBlock(x, y - 1, z) == this) {
+            AxisAlignedBB boundingBox = AxisAlignedBB.getBoundingBox(x, y - 1, z, x + 1, y + 1, z + 1);
+            if (boundingBox != null && mask.intersectsWith(boundingBox)) {
+                list.add(boundingBox);
+            }
+        } else {
+            AxisAlignedBB boundingBox = AxisAlignedBB.getBoundingBox(x, y, z, x + 1, y + 2, z + 1);
+            if (boundingBox != null && mask.intersectsWith(boundingBox)) {
+                list.add(boundingBox);
+            }
+        }
     }
 }

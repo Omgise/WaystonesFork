@@ -16,7 +16,7 @@ public class EarlyMixinLoader extends FentEarlyMixinLoader {
     public enum Side {
         CLIENT,
         SERVER,
-        BOTH;
+        BOTH
     }
 
     public static boolean isServer() {
@@ -58,7 +58,8 @@ public class EarlyMixinLoader extends FentEarlyMixinLoader {
             .addMixin("AccessorGuiContainer", Side.CLIENT)
             .addMixin("AccessorGuiScreen", Side.BOTH)
             // Rest
-
+            .addMixin("AccessorDimensionManager", Side.BOTH, "minecraftforge")
+            .addMixin("MixinStructureVillagePieces", Side.BOTH)
             .build();
     }
 }

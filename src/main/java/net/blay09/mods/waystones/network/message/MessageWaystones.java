@@ -13,16 +13,18 @@ public class MessageWaystones implements IMessage {
     private String lastServerWaystoneName;
     private long lastFreeWarp;
     private long lastWarpStoneUse;
+    private String[] pinnedWaystones;
 
     public MessageWaystones() {}
 
     public MessageWaystones(WaystoneEntry[] entries, WaystoneEntry[] serverEntries, String lastServerWaystoneName,
-        long lastFreeWarp, long lastWarpStoneUse) {
+        long lastFreeWarp, long lastWarpStoneUse, String[] pinnedWaystones) {
         this.entries = entries;
         this.serverEntries = serverEntries;
         this.lastFreeWarp = lastFreeWarp;
         this.lastWarpStoneUse = lastWarpStoneUse;
         this.lastServerWaystoneName = lastServerWaystoneName;
+        this.pinnedWaystones = pinnedWaystones;
     }
 
     @Override
@@ -39,6 +41,10 @@ public class MessageWaystones implements IMessage {
         lastServerWaystoneName = ByteBufUtils.readUTF8String(buf);
         lastFreeWarp = buf.readLong();
         lastWarpStoneUse = buf.readLong();
+        pinnedWaystones = new String[buf.readByte()];
+        for (int i = 0; i < pinnedWaystones.length; i++) {
+            pinnedWaystones[i] = ByteBufUtils.readUTF8String(buf);
+        }
     }
 
     @Override
@@ -54,6 +60,10 @@ public class MessageWaystones implements IMessage {
         ByteBufUtils.writeUTF8String(buf, lastServerWaystoneName);
         buf.writeLong(lastFreeWarp);
         buf.writeLong(lastWarpStoneUse);
+        buf.writeByte(pinnedWaystones.length);
+        for (String s : pinnedWaystones) {
+            ByteBufUtils.writeUTF8String(buf, s);
+        }
     }
 
     public WaystoneEntry[] getEntries() {
@@ -74,5 +84,9 @@ public class MessageWaystones implements IMessage {
 
     public long getLastWarpStoneUse() {
         return lastWarpStoneUse;
+    }
+
+    public String[] getPinnedWaystones() {
+        return pinnedWaystones;
     }
 }

@@ -26,7 +26,8 @@ public class HandlerWaystones implements IMessageHandler<MessageWaystones, IMess
                     message.getEntries(),
                     message.getLastServerWaystoneName(),
                     message.getLastFreeWarp(),
-                    message.getLastWarpStoneUse());
+                    message.getLastWarpStoneUse(),
+                    message.getPinnedWaystones());
             }
         });
         return null;

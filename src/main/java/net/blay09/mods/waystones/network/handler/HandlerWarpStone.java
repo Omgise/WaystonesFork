@@ -29,13 +29,18 @@ public class HandlerWarpStone implements IMessageHandler<MessageWarpStone, IMess
                 }
             }
 
-            // XP cost enforcement
+            // XP cost and cooldown enforcement
             if (!message.isFree() && !player.capabilities.isCreativeMode) {
                 WaystoneEntry target = message.getWaystone();
+                if (!PlayerWaystoneData.canUseWarpStone(player)) {
+                    player.addChatMessage(new ChatComponentTranslation("gui.waystones:warpStone.cantWarpWaystone"));
+                    return;
+                }
+
                 if (WaystoneConfig.xpBaseCost > -1) {
                     int cost = WaystoneXpCost.getXpCost(player, target);
 
-                    if (player.experienceLevel < cost) { // TODO make this red
+                    if (player.experienceLevel < cost) {
                         player.addChatMessage(new ChatComponentTranslation("gui.waystones:notEnoughXp", cost));
                         return;
                     }

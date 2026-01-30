@@ -34,9 +34,10 @@
  * For more details, see https://docs.gradle.org/8.0.1/userguide/java_library_plugin.html#sec:java_library_configurations_graph
  */
 dependencies {
-    //runtimeOnlyNonPublishable("com.github.GTNewHorizons:NotEnoughItems:2.8.44-GTNH:dev")
+    // runtimeOnlyNonPublishable("com.github.GTNewHorizons:NotEnoughItems:2.8.44-GTNH:dev")
 
-    //implementation "mcp.mobius.waila:Waila:1.5.10_1.7.10"
+    // implementation "mcp.mobius.waila:Waila:1.5.10_1.7.10"
     compileOnly(rfg.deobf("curse.maven:waila-73488:2230518"))
     compileOnly(rfg.deobf("maven.modrinth:village-names:dbqnvxNP"))
+    // implementation(rfg.deobf("maven.modrinth:village-names:dbqnvxNP"))
 }

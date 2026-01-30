@@ -5,12 +5,15 @@ import java.util.Random;
 import net.blay09.mods.waystones.block.TileWaystone;
 import net.blay09.mods.waystones.network.NetworkHandler;
 import net.blay09.mods.waystones.network.message.MessageConfig;
+import net.blay09.mods.waystones.network.message.MessageDimensionNames;
 import net.blay09.mods.waystones.util.WaystoneEntry;
 import net.blay09.mods.waystones.worldgen.VillageWaystone;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.MapGenStructureIO;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.world.WorldEvent;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -25,6 +28,7 @@ public class CommonProxy {
         FMLCommonHandler.instance()
             .bus()
             .register(this);
+        MinecraftForge.EVENT_BUS.register(this);
 
         if (WaystoneConfig.enableWorldgen) {
             MapGenStructureIO
@@ -34,6 +38,7 @@ public class CommonProxy {
 
     public void init(FMLInitializationEvent event) {
         if (WaystoneConfig.enableWorldgen) {
+            Waystones.debug("Registering VillageWaystone CreationHandler");
             VillagerRegistry.instance()
                 .registerVillageCreationHandler(new VillageWaystone.CreationHandler());
         }
@@ -46,6 +51,7 @@ public class CommonProxy {
     @SubscribeEvent
     public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         NetworkHandler.channel.sendTo(new MessageConfig(Waystones.getConfig()), (EntityPlayerMP) event.player);
+        NetworkHandler.channel.sendTo(new MessageDimensionNames(), (EntityPlayerMP) event.player);
         WaystoneManager.sendPlayerWaystones(event.player);
     }
 
@@ -57,6 +63,21 @@ public class CommonProxy {
     @SubscribeEvent
     public void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
         WaystoneManager.sendPlayerWaystones(event.player);
+    }
+
+    @SubscribeEvent
+    public void onWorldLoad(WorldEvent.Load event) {
+        if (!event.world.isRemote && event.world.provider.dimensionId == 0) {
+            GlobalWaystoneData.get(event.world);
+        }
+    }
+
+    @SubscribeEvent
+    public void onWorldUnload(WorldEvent.Unload event) {
+        // Prevents global waystones to carry over in-memory when switching worlds
+        if (!event.world.isRemote && event.world.provider.dimensionId == 0) {
+            WaystoneManager.setServerWaystones(new WaystoneEntry[0]);
+        }
     }
 
     public void openWaystoneNameEdit(TileWaystone tileEntity) {

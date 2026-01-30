@@ -34,7 +34,7 @@ public class WaystoneXpCost {
     }
 
     public static WaystoneEntry entryFromTile(TileWaystone tile, EntityPlayer player) {
-        WaystoneEntry[] entries = WaystoneEntry.getCombinedWaystones(player);
+        WaystoneEntry[] entries = WaystoneEntry.getCombinedWaystones(player, false);
         for (WaystoneEntry w : entries) {
             if (WaystoneEntry.tileAndEntryShareCoords(w, tile)) {
                 return w;
