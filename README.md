@@ -50,6 +50,7 @@ Minecraft Mod. Teleport back to activated waystones. For Survival, Adventure or 
 * kuzuanpa for some bugfixes.
 * Textures and ideas from [BetterWaystonesMenu](https://github.com/Loxoz/BetterWaystonesMenu/tree/1.18.2).
 * brandyyn for some fixes.
+* Omgise for Chinese translation.
 * [GT:NH buildscript](https://github.com/GTNewHorizons/ExampleMod1.7.10).
 
 ## License
