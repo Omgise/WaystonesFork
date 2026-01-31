@@ -3,7 +3,7 @@
 	"modList": [{
 		"modid": "${modId}",
 		"name": "${modName}",
-		"description": "Teleport back to activated waystones. For Survival, Adventure or Servers.",
+		"description": "Teleport back to activated waystones. For Survival, Adventure or Servers. This project is distributed under LGPLv3 + SNEED license. The original MIT-licensed portions remain available under MIT terms.",
 		"version": "${modVersion}",
 		"mcversion": "${minecraftVersion}",
 		"url": "https://github.com/JackOfNoneTrades/WaystonesFork",
