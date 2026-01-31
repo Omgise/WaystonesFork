@@ -6,6 +6,7 @@ import java.util.Random;
 import net.blay09.mods.waystones.WaystoneConfig;
 import net.blay09.mods.waystones.WaystoneManager;
 import net.blay09.mods.waystones.Waystones;
+import net.blay09.mods.waystones.client.gui.GuiWarpStone;
 import net.blay09.mods.waystones.util.WaystoneEntry;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
@@ -179,7 +180,7 @@ public class BlockWaystone extends BlockContainer {
                 if (tileWaystone == null) {
                     return true;
                 }
-                Waystones.proxy.openWaystoneSelection(tileWaystone, false);
+                Waystones.proxy.openWaystoneSelection(tileWaystone, false, GuiWarpStone.TeleportSource.WAYSTONE);
             }
             return true;
         }

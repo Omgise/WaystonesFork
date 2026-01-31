@@ -5,6 +5,7 @@ import java.util.List;
 import net.blay09.mods.waystones.PlayerWaystoneData;
 import net.blay09.mods.waystones.WaystoneManager;
 import net.blay09.mods.waystones.Waystones;
+import net.blay09.mods.waystones.client.gui.GuiWarpStone;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -42,7 +43,7 @@ public class ItemWarpStone extends Item {
     @Override
     public ItemStack onEaten(ItemStack itemStack, World world, EntityPlayer player) {
         if (world.isRemote) {
-            Waystones.proxy.openWaystoneSelection(null, false);
+            Waystones.proxy.openWaystoneSelection(null, false, GuiWarpStone.TeleportSource.WARPSTONE);
         }
         return itemStack;
     }

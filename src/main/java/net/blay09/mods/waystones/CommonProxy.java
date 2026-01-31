@@ -3,6 +3,7 @@ package net.blay09.mods.waystones;
 import java.util.Random;
 
 import net.blay09.mods.waystones.block.TileWaystone;
+import net.blay09.mods.waystones.client.gui.GuiWarpStone;
 import net.blay09.mods.waystones.network.NetworkHandler;
 import net.blay09.mods.waystones.network.message.MessageConfig;
 import net.blay09.mods.waystones.network.message.MessageDimensionNames;
@@ -84,7 +85,8 @@ public class CommonProxy {
 
     }
 
-    public void openWaystoneSelection(TileWaystone currentWaystone, boolean isFree) {
+    public void openWaystoneSelection(TileWaystone currentWaystone, boolean isFree,
+        GuiWarpStone.TeleportSource source) {
 
     }
 

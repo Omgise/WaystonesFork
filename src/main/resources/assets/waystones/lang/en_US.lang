@@ -15,6 +15,8 @@ waystones:waystoneTooFar=§cThis Waystone is too far!
 waystones:renameCreativeOnly=§cRenaming Waystones is reserved for creative players.
 
 gui.waystones:warpStone.selectDestination=Select your destination:
+gui.waystones:warpStone.title=§5Warp Stone
+gui.waystones:guiButton.title=§bWarp Scroll
 gui.waystones:warpStone.cantWarpWaystone=§cYou cannot warp yet!
 gui.waystones:warpStone.nextPage=Next
 gui.waystones:warpStone.previousPage=Previous

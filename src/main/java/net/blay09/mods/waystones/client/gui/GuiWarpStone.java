@@ -33,6 +33,7 @@ import org.lwjgl.opengl.GL11;
 public class GuiWarpStone extends GuiScreen {
 
     public final TileWaystone currentWaystone;
+    public final TeleportSource source;
     private boolean isGlobal;
     private WaystoneEntry[] entries;
     private final boolean isFree;
@@ -68,18 +69,28 @@ public class GuiWarpStone extends GuiScreen {
         Waystones.MODID,
         "textures/gui/menu.png");
 
-    public GuiWarpStone(TileWaystone currentWaystone, WaystoneEntry[] entries, boolean isFree) {
+    public enum TeleportSource {
+        WAYSTONE,
+        GUI_BUTTON,
+        WARPSTONE
+    }
+
+    public GuiWarpStone(TileWaystone currentWaystone, WaystoneEntry[] entries, boolean isFree, TeleportSource source) {
         this.currentWaystone = currentWaystone;
         this.isGlobal = false;
-        // We need this, because only WaystoneEntries we get from the server are marked with global
-        WaystoneEntry tmp = new WaystoneEntry(currentWaystone);
-        for (WaystoneEntry entry : WaystoneManager.getServerWaystones()) {
-            if (tmp.equals(entry)) {
-                this.isGlobal = entry.isGlobal();
+        // currentWaystone is null when invoked from scroll or warpstone
+        if (currentWaystone != null) {
+            // We need this, because only WaystoneEntries we get from the server are marked with global
+            WaystoneEntry tmp = new WaystoneEntry(currentWaystone);
+            for (WaystoneEntry entry : WaystoneManager.getServerWaystones()) {
+                if (tmp.equals(entry)) {
+                    this.isGlobal = entry.isGlobal();
+                }
             }
         }
         this.entries = entries;
         this.isFree = isFree;
+        this.source = source;
         lstEntries = new ArrayList<>();
     }
 
@@ -187,11 +198,11 @@ public class GuiWarpStone extends GuiScreen {
         GL11.glColor4f(1f, 1f, 1f, 1f);
         boolean hoveringDeleteButton = false;
         boolean hoveringRenameButton = false;
-        if (currentWaystone != null) {
-            GL11.glPushMatrix();
-            GL11.glTranslatef((float) width / 2, (float) height / 2 - 110, 0);
-            float scale = 1.5f;
-            GL11.glScalef(scale, scale, scale);
+        GL11.glPushMatrix();
+        GL11.glTranslatef((float) width / 2, (float) height / 2 - 110, 0);
+        float scale = 1.5f;
+        GL11.glScalef(scale, scale, scale);
+        if (this.source == TeleportSource.WAYSTONE && currentWaystone != null) {
             drawCenteredString(
                 fontRendererObj,
                 (isGlobal ? EnumChatFormatting.YELLOW.toString() : "") + EnumChatFormatting.UNDERLINE
@@ -290,9 +301,13 @@ public class GuiWarpStone extends GuiScreen {
                         256.0F);
                 }
             }
-
-            GL11.glPopMatrix();
+        } else if (this.source == TeleportSource.WARPSTONE) {
+            drawCenteredString(fontRendererObj, I18n.format("gui.waystones:warpStone.title"), 3, 0, 0xFFFFFF);
+        } else if (this.source == TeleportSource.GUI_BUTTON) {
+            drawCenteredString(fontRendererObj, I18n.format("gui.waystones:guiButton.title"), 3, 0, 0xFFFFFF);
         }
+        GL11.glPopMatrix();
+
         drawRect(width / 2 - 50, height / 2 - 50, width / 2 + 50, height / 2 + 50, 0xFFFFFF);
         if (PlayerWaystoneData.canUseWarpStone(Minecraft.getMinecraft().thePlayer)) {
             drawCenteredString(
@@ -469,7 +484,7 @@ public class GuiWarpStone extends GuiScreen {
             drawHoveringText(
                 Arrays.asList(
                     I18n.format("gui.waystones:helpTooltip")
-                        .split("\n")),
+                        .split("\\R")),
                 mouseX,
                 mouseY,
                 fontRendererObj);

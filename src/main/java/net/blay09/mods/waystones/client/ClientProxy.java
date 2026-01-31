@@ -78,7 +78,7 @@ public class ClientProxy extends CommonProxy {
                 if (Waystones.getConfig().teleportButtonReturnOnly) {
                     event.gui.mc.displayGuiScreen(new GuiConfirmReturn());
                 } else {
-                    Waystones.proxy.openWaystoneSelection(null, true);
+                    Waystones.proxy.openWaystoneSelection(null, true, GuiWarpStone.TeleportSource.GUI_BUTTON);
                 }
             } else {
                 event.gui.mc.getSoundHandler()
@@ -143,11 +143,12 @@ public class ClientProxy extends CommonProxy {
     }
 
     @Override
-    public void openWaystoneSelection(TileWaystone currentWaystone, boolean isFree) {
+    public void openWaystoneSelection(TileWaystone currentWaystone, boolean isFree,
+        GuiWarpStone.TeleportSource source) {
         WaystoneEntry[] combinedWaystones = WaystoneEntry
             .getCombinedWaystones(Minecraft.getMinecraft().thePlayer, true);
         Minecraft.getMinecraft()
-            .displayGuiScreen(new GuiWarpStone(currentWaystone, combinedWaystones, isFree));
+            .displayGuiScreen(new GuiWarpStone(currentWaystone, combinedWaystones, isFree, source));
     }
 
     @Override
