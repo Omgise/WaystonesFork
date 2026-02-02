@@ -110,10 +110,10 @@ public class GuiButtonWaystone extends GuiButton {
                 Gui.func_152125_a(
                     crossButtonX,
                     buttonY,
-                    20,
-                    172,
-                    20,
-                    20,
+                    116,
+                    168,
+                    16,
+                    16,
                     sideButtonSize,
                     sideButtonSize,
                     256.0F,
@@ -126,10 +126,10 @@ public class GuiButtonWaystone extends GuiButton {
                 Gui.func_152125_a(
                     crossButtonX,
                     buttonY,
-                    0,
-                    172,
-                    20,
-                    20,
+                    100,
+                    168,
+                    16,
+                    16,
                     sideButtonSize,
                     sideButtonSize,
                     256.0F,
@@ -146,10 +146,10 @@ public class GuiButtonWaystone extends GuiButton {
                     Gui.func_152125_a(
                         pinButtonX,
                         buttonY,
-                        20,
+                        116,
                         152,
-                        20,
-                        20,
+                        16,
+                        16,
                         sideButtonSize,
                         sideButtonSize,
                         256.0F,
@@ -158,10 +158,10 @@ public class GuiButtonWaystone extends GuiButton {
                     Gui.func_152125_a(
                         pinButtonX,
                         buttonY,
-                        0,
+                        100,
                         152,
-                        20,
-                        20,
+                        16,
+                        16,
                         sideButtonSize,
                         sideButtonSize,
                         256.0F,
@@ -173,10 +173,10 @@ public class GuiButtonWaystone extends GuiButton {
                     Gui.func_152125_a(
                         pinButtonX,
                         buttonY,
-                        60,
+                        148,
                         152,
-                        20,
-                        20,
+                        16,
+                        16,
                         sideButtonSize,
                         sideButtonSize,
                         256.0F,
@@ -185,10 +185,10 @@ public class GuiButtonWaystone extends GuiButton {
                     Gui.func_152125_a(
                         pinButtonX,
                         buttonY,
-                        40,
+                        132,
                         152,
-                        20,
-                        20,
+                        16,
+                        16,
                         sideButtonSize,
                         sideButtonSize,
                         256.0F,
@@ -203,7 +203,7 @@ public class GuiButtonWaystone extends GuiButton {
             Minecraft.getMinecraft()
                 .getTextureManager()
                 .bindTexture(GuiWarpStone.menuResourceLocation);
-            Gui.func_152125_a(crossButtonX, buttonY, 80, 152, 20, 20, sideButtonSize, sideButtonSize, 256.0F, 256.0F);
+            Gui.func_152125_a(crossButtonX, buttonY, 164, 152, 16, 16, sideButtonSize, sideButtonSize, 256.0F, 256.0F);
         }
     }
 

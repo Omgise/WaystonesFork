@@ -14,6 +14,11 @@ public class ModelWaystone extends ModelBase {
     private ModelRenderer baseMid;
     private ModelRenderer baseBottom;
 
+    /*
+     * Firstly, you have to change the texture of the bottom to 3 pixels instead of 4, and you have to change the
+     * texture
+     * of the middle pillar thing to 15 instead of 14 pixels. The mapping was just wholesale fucked up
+     */
     public ModelWaystone() {
         textureWidth = 256;
         textureHeight = 256;
@@ -30,17 +35,21 @@ public class ModelWaystone extends ModelBase {
         topBottom = new ModelRenderer(this, 0, 24);
         topBottom.addBox(-12f, -52f, -12f, 24, 4, 24);
 
-        pillar = new ModelRenderer(this, 144, 0);
-        pillar.addBox(-10f, -48f, -10f, 20, 28, 20);
+        pillar = new ModelRenderer(this, 144, -2);
+        // pillar.addBox(-10f, -48f, -10f, 20, 28, 20);
+        pillar.addBox(-10f, -48f, -10f, 20, 30, 20);
 
         baseTop = new ModelRenderer(this, 96, 48);
-        baseTop.addBox(-12f, -20f, -12f, 24, 4, 24);
+        // baseTop.addBox(-12f, -20f, -12f, 24, 4, 24);
+        baseTop.addBox(-12f, -18f, -12f, 24, 4, 24);
 
         baseMid = new ModelRenderer(this, 112, 76);
-        baseMid.addBox(-14f, -16f, -14f, 28, 8, 28);
+        // baseMid.addBox(-14f, -16f, -14f, 28, 8, 28);
+        baseMid.addBox(-14f, -14f, -14f, 28, 8, 28);
 
         baseBottom = new ModelRenderer(this, 0, 112);
-        baseBottom.addBox(-16f, -8f, -16f, 32, 8, 32);
+        // baseBottom.addBox(-16f, -8f, -16f, 32, 8, 32);
+        baseBottom.addBox(-16f, -6f, -16f, 32, 6, 32);
     }
 
     public void renderAll() {

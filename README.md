@@ -1,21 +1,23 @@
 # Waystones-X (Unofficial Waystones Fork)
+
+![title_combined](images/waystones_title_combined.png)
+
 Teleport back to activated waystones. For Survival, Adventure or Servers.
 ([Waystones](https://github.com/TwelveIterations/Waystones) mod fork.)
-
-![logo_small](src/main/resources/assets/waystones/logo_small.png)
 
 [![hub](images/badges/github.png)](https://github.com/JackOfNoneTrades/WaystonesFork/releases)
 [![modrinth](images/badges/modrinth.png)](https://modrinth.com/mod/waystones-x)
 [![curse](images/badges/curse.png)](https://www.curseforge.com/minecraft/mc-mods/waystones-x)
 ![forge](images/badges/forge.png)
 
-![spawn](images/screenshots/2026-01-30_10.24.19.png)
+![pretty](images/screenshots/pretty.png)
 
 ### Fixes:
 * Nether portals aren't generated when teleporting to the Nether (@kuzuanpa)
 * Fixed some rendering bugs (@kuzuanpa)
 
 ### New features:
+* New textures by DarkBum.
 * Clicking an activated Waystone will open the teleport menu, instead of needing to shift-click it (much more intuitive)
 * If configured, Waystones show nametags with their name.
 * Duplicate Waystone names are disallowed.
@@ -37,9 +39,9 @@ Teleport back to activated waystones. For Survival, Adventure or Servers.
 * [UniMixins](https://modrinth.com/mod/unimixins) [![curse](images/icons/curse.png)](https://www.curseforge.com/minecraft/mc-mods/unimixins)  [![modrinth](images/icons/modrinth.png)](https://modrinth.com/mod/unimixins/versions) [![git](images/icons/git.png)](https://github.com/LegacyModdingMC/UniMixins/releases)
 
 
-![vn](images/screenshots/2026-01-30_10.13.19.png)
-![gui](images/screenshots/2026-01-30_10.22.35.png)
-![survival](images/screenshots/2026-01-30_10.23.45.png)
+![village](images/screenshots/village.png)
+![buttons](images/screenshots/buttons.png)
+![cant_warp](images/screenshots/cant_warp.png)
 
 ## Building
 
@@ -47,6 +49,7 @@ Teleport back to activated waystones. For Survival, Adventure or Servers.
 
 ## Credits
 * BlayTheNinth for the original mod.
+* New textures by DarkBum.
 * kuzuanpa for some bugfixes.
 * Textures and ideas from [BetterWaystonesMenu](https://github.com/Loxoz/BetterWaystonesMenu/tree/1.18.2).
 * brandyyn for some fixes.

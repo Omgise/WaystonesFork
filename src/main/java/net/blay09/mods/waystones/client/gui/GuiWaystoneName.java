@@ -24,6 +24,7 @@ public class GuiWaystoneName extends GuiScreen {
     private final TileWaystone tileWaystone;
     private GuiTextField textField;
     private GuiButton btnDone;
+    private GuiButton btnCancel;
     private GuiCheckBox chkGlobal;
     private final boolean renaming;
     GuiScreen parentScreen;
@@ -43,17 +44,19 @@ public class GuiWaystoneName extends GuiScreen {
         textField = new GuiTextField(fontRendererObj, width / 2 - 100, height / 2 - 20, 200, 20);
         textField.setText(oldText);
         textField.setFocused(true);
-        btnDone = new GuiButton(0, width / 2, height / 2 + 10, 100, 20, I18n.format("gui.done"));
-        btnDone.enabled = false;
-        buttonList.add(btnDone);
-
         chkGlobal = new GuiCheckBox(
             1,
             width / 2 - 100,
-            height / 2 + 15,
+            height / 2 + 5,
             " " + I18n.format("gui.waystones:editWaystone.isGlobal"),
             WaystoneManager.getServerWaystone(tileWaystone.getWaystoneName()) != null);
         chkGlobal.visible = Minecraft.getMinecraft().thePlayer.capabilities.isCreativeMode && !renaming;
+
+        btnCancel = new GuiButton(2, width / 2 - 102, height / 2 + 25, 100, 20, I18n.format("gui.cancel"));
+        buttonList.add(btnCancel);
+        btnDone = new GuiButton(0, width / 2 + 2, height / 2 + 25, 100, 20, I18n.format("gui.done"));
+        btnDone.enabled = false;
+        buttonList.add(btnDone);
 
         buttonList.add(chkGlobal);
 
@@ -67,7 +70,13 @@ public class GuiWaystoneName extends GuiScreen {
 
     @Override
     protected void actionPerformed(GuiButton button) {
-        if (button == btnDone) {
+        if (button == btnCancel) {
+            if (renaming) {
+                mc.displayGuiScreen(parentScreen);
+            } else {
+                mc.displayGuiScreen(null);
+            }
+        } else if (button == btnDone) {
             if (!renaming) {
                 NetworkHandler.channel.sendToServer(
                     new MessageWaystoneName(
@@ -140,7 +149,7 @@ public class GuiWaystoneName extends GuiScreen {
             fontRendererObj.drawString(
                 EnumChatFormatting.RED + I18n.format("gui.waystones:nameTaken"),
                 width / 2 - 100,
-                height / 2 + 40,
+                height / 2 + 50,
                 0xFF0000);
         }
     }

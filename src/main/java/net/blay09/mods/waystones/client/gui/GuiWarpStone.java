@@ -47,11 +47,11 @@ public class GuiWarpStone extends GuiScreen {
 
     private int deleteButtonX;
     private int deleteButtonY;
-    private final int deleteButtonSize = 12;
+    private final int deleteButtonSize = 16;
 
     private int renameButtonX;
     private int renameButtonY;
-    private final int renameButtonSize = 12;
+    private final int renameButtonSize = 16;
 
     private int configButtonX;
     private int configButtonY;
@@ -223,23 +223,35 @@ public class GuiWarpStone extends GuiScreen {
             if (isGlobal || !Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
                 // Waystone icon
                 Gui.func_152125_a(-strWidth / 2 - 7, -2, 19, 75, 20, 17, 15, 12, 256.0F, 256.0F);
-            } else if (!isGlobal) {
-                this.deleteButtonX = -strWidth / 2 - 12;
-                this.deleteButtonY = -2;
+            }
+
+            // Switch to 1x scale for buttons
+            GL11.glScalef(1.0f / scale, 1.0f / scale, 1.0f / scale);
+
+            // Hover size in 1.5x coord system (matches 16px button at 1x scale)
+            int hoverSize = (int) (deleteButtonSize / scale);
+
+            if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) && !isGlobal) { // remove button
+                // Position in 1.5x coord system (for hover detection)
+                this.deleteButtonX = -strWidth / 2 - 10;
+                this.deleteButtonY = 0;
+                // Draw position multiplied by scale (converts to 1x space)
+                int drawDeleteX = (int) (this.deleteButtonX * scale);
+                int drawDeleteY = (int) (this.deleteButtonY * scale);
                 if (!ClientUtil.mouseOverArea(
                     (int) transformedMouseX,
                     (int) transformedMouseY,
                     this.deleteButtonX,
                     this.deleteButtonY,
-                    this.deleteButtonSize,
-                    this.deleteButtonSize)) {
+                    hoverSize,
+                    hoverSize)) {
                     Gui.func_152125_a(
-                        this.deleteButtonX,
-                        this.deleteButtonY,
-                        0,
-                        172,
-                        20,
-                        20,
+                        drawDeleteX,
+                        drawDeleteY,
+                        100,
+                        168,
+                        16,
+                        16,
                         deleteButtonSize,
                         deleteButtonSize,
                         256.0F,
@@ -247,12 +259,12 @@ public class GuiWarpStone extends GuiScreen {
                 } else {
                     hoveringDeleteButton = true;
                     Gui.func_152125_a(
-                        this.deleteButtonX,
-                        this.deleteButtonY,
-                        20,
-                        172,
-                        20,
-                        20,
+                        drawDeleteX,
+                        drawDeleteY,
+                        116,
+                        168,
+                        16,
+                        16,
                         deleteButtonSize,
                         deleteButtonSize,
                         256.0F,
@@ -262,26 +274,30 @@ public class GuiWarpStone extends GuiScreen {
 
             // Edit name button
             if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
-                this.renameButtonX = -strWidth / 2 - 26;
+                // Position in 1.5x coord system (for hover detection)
+                this.renameButtonX = -strWidth / 2 - 22;
                 if (isGlobal) {
-                    this.renameButtonX = -strWidth / 2 - 12;
+                    this.renameButtonX = -strWidth / 2 - 10;
                 }
-                this.renameButtonY = -2;
+                this.renameButtonY = 0;
+                // Draw position multiplied by scale (converts to 1x space)
+                int drawRenameX = (int) (this.renameButtonX * scale);
+                int drawRenameY = (int) (this.renameButtonY * scale);
 
                 if (!ClientUtil.mouseOverArea(
                     (int) transformedMouseX,
                     (int) transformedMouseY,
                     this.renameButtonX,
                     this.renameButtonY,
-                    this.renameButtonSize,
-                    this.renameButtonSize)) {
+                    hoverSize,
+                    hoverSize)) {
                     Gui.func_152125_a(
-                        this.renameButtonX,
-                        this.renameButtonY,
-                        20,
-                        0,
-                        20,
-                        20,
+                        drawRenameX,
+                        drawRenameY,
+                        36,
+                        40,
+                        16,
+                        16,
                         renameButtonSize,
                         renameButtonSize,
                         256.0F,
@@ -289,12 +305,12 @@ public class GuiWarpStone extends GuiScreen {
                 } else {
                     hoveringRenameButton = true;
                     Gui.func_152125_a(
-                        this.renameButtonX,
-                        this.renameButtonY,
-                        100,
-                        0,
-                        20,
-                        20,
+                        drawRenameX,
+                        drawRenameY,
+                        52,
+                        40,
+                        16,
+                        16,
                         renameButtonSize,
                         renameButtonSize,
                         256.0F,
@@ -571,14 +587,15 @@ public class GuiWarpStone extends GuiScreen {
         float scale = 1.5f;
         float transformedMouseX = (mouseX - width / 2f) / scale;
         float transformedMouseY = (mouseY - (height / 2f - 110)) / scale;
+        int hoverSize = (int) (deleteButtonSize / scale);
         if (!isGlobal && Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
             if (ClientUtil.mouseOverArea(
                 (int) transformedMouseX,
                 (int) transformedMouseY,
                 this.deleteButtonX,
                 this.deleteButtonY,
-                this.deleteButtonSize,
-                this.deleteButtonSize)) {
+                hoverSize,
+                hoverSize)) {
                 openRemoveDialog(new WaystoneEntry(currentWaystone), true);
             }
         }
@@ -588,8 +605,8 @@ public class GuiWarpStone extends GuiScreen {
                 (int) transformedMouseY,
                 this.renameButtonX,
                 this.renameButtonY,
-                this.renameButtonSize,
-                this.renameButtonSize)) {
+                hoverSize,
+                hoverSize)) {
                 Waystones.debug("Clicked rename button");
                 Minecraft.getMinecraft()
                     .displayGuiScreen(new GuiWaystoneName(currentWaystone, true, this));
