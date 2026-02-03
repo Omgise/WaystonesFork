@@ -8,6 +8,7 @@ Teleport back to activated waystones. For Survival, Adventure or Servers.
 [![hub](images/badges/github.png)](https://github.com/JackOfNoneTrades/WaystonesFork/releases)
 [![modrinth](images/badges/modrinth.png)](https://modrinth.com/mod/waystones-x)
 [![curse](images/badges/curse.png)](https://www.curseforge.com/minecraft/mc-mods/waystones-x)
+[![maven](images/badges/maven.png)](https://maven.fentanylsolutions.org/#/releases/net/blay09/mods/waystones)
 ![forge](images/badges/forge.png)
 
 ![pretty](images/screenshots/pretty.png)
