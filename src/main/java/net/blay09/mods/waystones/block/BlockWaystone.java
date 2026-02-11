@@ -31,14 +31,29 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 public class BlockWaystone extends BlockContainer {
 
+    private final int defaultVariant;
+
     public BlockWaystone() {
+        this(TileWaystone.VARIANT_STONE, "waystone");
+    }
+
+    public BlockWaystone(int defaultVariant, String registryName) {
         super(Material.rock);
 
-        setBlockName(Waystones.MODID + ":waystone");
+        this.defaultVariant = defaultVariant;
+        setBlockName(Waystones.MODID + ":" + registryName);
         setHardness(5f);
         setResistance(2000f);
         setLightLevel(0.5F);
         setCreativeTab(CreativeTabs.tabDecorations);
+    }
+
+    public int getDefaultVariant() {
+        return defaultVariant;
+    }
+
+    private static boolean isWaystoneBlock(Block block) {
+        return block instanceof BlockWaystone;
     }
 
     @Override
@@ -77,11 +92,11 @@ public class BlockWaystone extends BlockContainer {
     @Override
     public boolean canPlaceBlockAt(World world, int x, int y, int z) {
         Block blockBelow = world.getBlock(x, y - 1, z);
-        if (blockBelow == this) {
+        if (isWaystoneBlock(blockBelow)) {
             return false;
         }
         Block blockAbove = world.getBlock(x, y + 2, z);
-        return blockAbove != this && super.canPlaceBlockAt(world, x, y, z)
+        return !isWaystoneBlock(blockAbove) && super.canPlaceBlockAt(world, x, y, z)
             && world.getBlock(x, y + 1, z)
                 .isReplaceable(world, x, y + 1, z);
     }
@@ -91,9 +106,14 @@ public class BlockWaystone extends BlockContainer {
         int orientation = BlockPistonBase.determineOrientation(world, x, y, z, entityLiving);
         world.setBlockMetadataWithNotify(x, y, z, orientation, 1 | 2);
         world.setBlock(x, y + 1, z, this, ForgeDirection.UNKNOWN.ordinal(), 1 | 2);
-        if (world.isRemote && entityLiving instanceof EntityPlayer
+        TileWaystone tileWaystone = getTileWaystone(world, x, y, z);
+        if (tileWaystone != null) {
+            tileWaystone.setVariant(defaultVariant);
+        }
+        if (tileWaystone != null && world.isRemote
+            && entityLiving instanceof EntityPlayer
             && (!Waystones.getConfig().creativeModeOnly || ((EntityPlayer) entityLiving).capabilities.isCreativeMode)) {
-            Waystones.proxy.openWaystoneNameEdit((TileWaystone) world.getTileEntity(x, y, z));
+            Waystones.proxy.openWaystoneNameEdit(tileWaystone);
         }
     }
 
@@ -112,9 +132,9 @@ public class BlockWaystone extends BlockContainer {
             WaystoneManager.removeServerWaystone(new WaystoneEntry(tileWaystone));
         }
         super.breakBlock(world, x, y, z, block, metadata);
-        if (world.getBlock(x, y + 1, z) == this) {
+        if (isWaystoneBlock(world.getBlock(x, y + 1, z))) {
             world.setBlockToAir(x, y + 1, z);
-        } else if (world.getBlock(x, y - 1, z) == this) {
+        } else if (isWaystoneBlock(world.getBlock(x, y - 1, z))) {
             world.setBlockToAir(x, y - 1, z);
         }
     }
@@ -226,7 +246,7 @@ public class BlockWaystone extends BlockContainer {
 
     @Override
     public AxisAlignedBB getSelectedBoundingBoxFromPool(World world, int x, int y, int z) {
-        if (world.getBlock(x, y - 1, z) == this) {
+        if (isWaystoneBlock(world.getBlock(x, y - 1, z))) {
             return AxisAlignedBB.getBoundingBox(x, y - 1, z, x + 1, y + 1, z + 1);
         } else {
             return AxisAlignedBB.getBoundingBox(x, y, z, x + 1, y + 2, z + 1);
@@ -235,7 +255,7 @@ public class BlockWaystone extends BlockContainer {
 
     @Override
     public void setBlockBoundsBasedOnState(IBlockAccess world, int x, int y, int z) {
-        if (world.getBlock(x, y - 1, z) == this) {
+        if (isWaystoneBlock(world.getBlock(x, y - 1, z))) {
             setBlockBounds(0f, -1f, 0f, 1f, 1f, 1f);
         } else {
             setBlockBounds(0f, 0f, 0f, 1f, 2f, 1f);
@@ -245,7 +265,7 @@ public class BlockWaystone extends BlockContainer {
     @Override
     public void addCollisionBoxesToList(World world, int x, int y, int z, AxisAlignedBB mask, List list,
         Entity entity) {
-        if (world.getBlock(x, y - 1, z) == this) {
+        if (isWaystoneBlock(world.getBlock(x, y - 1, z))) {
             AxisAlignedBB boundingBox = AxisAlignedBB.getBoundingBox(x, y - 1, z, x + 1, y + 1, z + 1);
             if (boundingBox != null && mask.intersectsWith(boundingBox)) {
                 list.add(boundingBox);

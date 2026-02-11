@@ -9,18 +9,28 @@ import net.minecraft.util.AxisAlignedBB;
 
 public class TileWaystone extends TileEntity {
 
+    public static final int VARIANT_STONE = 0;
+    public static final int VARIANT_SANDSTONE = 1;
+
     private String waystoneName = "";
+    private int variant = VARIANT_STONE;
 
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setString("WaystoneName", waystoneName);
+        tagCompound.setInteger("Variant", variant);
     }
 
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         waystoneName = tagCompound.getString("WaystoneName");
+        if (tagCompound.hasKey("Variant")) {
+            setVariant(tagCompound.getInteger("Variant"));
+        } else {
+            variant = VARIANT_STONE;
+        }
     }
 
     @Override
@@ -43,6 +53,18 @@ public class TileWaystone extends TileEntity {
     public void setWaystoneName(String waystoneName) {
         this.waystoneName = waystoneName;
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+        markDirty();
+    }
+
+    public int getVariant() {
+        return variant;
+    }
+
+    public void setVariant(int variant) {
+        this.variant = variant == VARIANT_SANDSTONE ? VARIANT_SANDSTONE : VARIANT_STONE;
+        if (worldObj != null) {
+            worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+        }
         markDirty();
     }
 

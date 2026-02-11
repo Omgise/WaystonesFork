@@ -1,5 +1,6 @@
 package net.blay09.mods.waystones.client.render;
 
+import net.blay09.mods.waystones.block.BlockWaystone;
 import net.blay09.mods.waystones.block.TileWaystone;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
@@ -18,6 +19,11 @@ public class WaystoneBlockRenderer implements ISimpleBlockRenderingHandler {
 
     @Override
     public void renderInventoryBlock(Block block, int metadata, int modelId, RenderBlocks renderer) {
+        if (block instanceof BlockWaystone) {
+            tileEntity.setVariant(((BlockWaystone) block).getDefaultVariant());
+        } else {
+            tileEntity.setVariant(TileWaystone.VARIANT_STONE);
+        }
         GL11.glPushMatrix();
         GL11.glTranslatef(0f, -0.3f, 0f);
         GL11.glScalef(0.7f, 0.7f, 0.7f);

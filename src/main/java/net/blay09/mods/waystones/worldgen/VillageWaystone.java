@@ -86,30 +86,28 @@ public class VillageWaystone {
             int waystoneX = xMin + 2;
             int waystoneY = yMin + 1;
             int waystoneZ = zMin + 2;
+            Block waystoneBlock = platformBlock == Blocks.sandstone ? Waystones.blockWaystoneSandstone
+                : Waystones.blockWaystone;
 
             // Lower block
-            world.setBlock(waystoneX, waystoneY, waystoneZ, Waystones.blockWaystone, 2, 2);
+            world.setBlock(waystoneX, waystoneY, waystoneZ, waystoneBlock, 2, 2);
             // Upper block
-            world.setBlock(
-                waystoneX,
-                waystoneY + 1,
-                waystoneZ,
-                Waystones.blockWaystone,
-                ForgeDirection.UNKNOWN.ordinal(),
-                2);
+            world.setBlock(waystoneX, waystoneY + 1, waystoneZ, waystoneBlock, ForgeDirection.UNKNOWN.ordinal(), 2);
 
             // Initialize TileEntity
             TileWaystone tile = (TileWaystone) world.getTileEntity(waystoneX, waystoneY, waystoneZ);
 
-            if (tile != null && !world.isRemote
-                && WaystoneConfig.villageNamesCompat
-                && Loader.isModLoaded("VillageNames")) {
-                // tile.setWaystoneName("Village Waystone");
+            if (tile != null && !world.isRemote) {
+                tile.setVariant(
+                    platformBlock == Blocks.sandstone ? TileWaystone.VARIANT_SANDSTONE : TileWaystone.VARIANT_STONE);
 
-                String name = VillageNamesCompat.ensureVillageName(world, waystoneX, waystoneY, waystoneZ);
+                if (WaystoneConfig.villageNamesCompat && Loader.isModLoaded("VillageNames")) {
+                    // tile.setWaystoneName("Village Waystone");
+                    String name = VillageNamesCompat.ensureVillageName(world, waystoneX, waystoneY, waystoneZ);
 
-                if (name != null) {
-                    tile.setWaystoneName(name);
+                    if (name != null) {
+                        tile.setWaystoneName(name);
+                    }
                 }
             }
 

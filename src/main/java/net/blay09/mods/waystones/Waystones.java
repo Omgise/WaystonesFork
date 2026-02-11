@@ -40,6 +40,7 @@ public class Waystones {
     public static CommonProxy proxy;
 
     public static BlockWaystone blockWaystone;
+    public static BlockWaystone blockWaystoneSandstone;
     public static ItemReturnScroll itemReturnScroll;
     public static ItemWarpStone itemWarpStone;
 
@@ -63,6 +64,8 @@ public class Waystones {
 
         blockWaystone = new BlockWaystone();
         GameRegistry.registerBlock(blockWaystone, "waystone");
+        blockWaystoneSandstone = new BlockWaystone(TileWaystone.VARIANT_SANDSTONE, "waystone_sandstone");
+        GameRegistry.registerBlock(blockWaystoneSandstone, "waystone_sandstone");
         GameRegistry.registerTileEntity(TileWaystone.class, MODID + ":waystone");
 
         itemReturnScroll = new ItemReturnScroll();
@@ -82,6 +85,7 @@ public class Waystones {
         }
 
         blockWaystone.setLightLevel(config.waystoneLightLevel);
+        blockWaystoneSandstone.setLightLevel(config.waystoneLightLevel);
 
         proxy.preInit(event);
     }
@@ -133,6 +137,18 @@ public class Waystones {
                     "OOO",
                     'S',
                     Blocks.stonebrick,
+                    'W',
+                    itemWarpStone,
+                    'O',
+                    Blocks.obsidian));
+            GameRegistry.addRecipe(
+                new ShapedOreRecipe(
+                    new ItemStack(blockWaystoneSandstone),
+                    " S ",
+                    "SWS",
+                    "OOO",
+                    'S',
+                    Blocks.sandstone,
                     'W',
                     itemWarpStone,
                     'O',
