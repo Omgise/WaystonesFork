@@ -230,7 +230,7 @@ public class WaystoneConfig {
             "structureWaystoneRules",
             Categories.worldgen,
             new String[] { "structure=village;chance=1;type=auto", "structure=temple_desert;chance=1;type=sandy",
-                "structure=temple_jungle;chance=1;type=auto" },
+                "structure=temple_jungle;chance=1;type=auto", "structure=stronghold;chance=1;type=auto" },
             "How waystones generate in structures. One rule per structure id. "
                 + "Format: structure=<id>;chance=<0..1>;type=<auto|stone|sandy|mossy>;"
                 + "name=<override>;forceGlobal=<true|false>;autoActivateGlobal=<true|false>;"
