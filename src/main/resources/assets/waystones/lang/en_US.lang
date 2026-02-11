@@ -1,5 +1,6 @@
 tile.waystones:waystone.name=Waystone
 tile.waystones:waystone_sandstone.name=Sandy Waystone
+tile.waystones:waystone_mossy.name=Mossy Waystone
 
 item.waystones:returnScroll.name=Return Scroll
 item.waystones:warpStone.name=Warp Stone

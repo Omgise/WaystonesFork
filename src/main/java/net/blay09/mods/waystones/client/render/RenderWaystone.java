@@ -25,6 +25,9 @@ public class RenderWaystone extends TileEntitySpecialRenderer {
     private static final ResourceLocation textureSandstone = new ResourceLocation(
         Waystones.MODID,
         "textures/entity/sandstone.png");
+    private static final ResourceLocation textureMossy = new ResourceLocation(
+        Waystones.MODID,
+        "textures/entity/mossy.png");
     private static final ResourceLocation textureActive = new ResourceLocation(
         Waystones.MODID,
         "textures/entity/waystone_active.png");
@@ -69,7 +72,13 @@ public class RenderWaystone extends TileEntitySpecialRenderer {
         boolean stoneIsGlobal = WaystoneManager.getServerWaystone(tileWaystone.getWaystoneName()) != null
             && WaystoneManager.getServerWaystone(tileWaystone.getWaystoneName())
                 .isGlobal();
-        bindTexture(tileWaystone.getVariant() == TileWaystone.VARIANT_SANDSTONE ? textureSandstone : texture);
+        if (tileWaystone.getVariant() == TileWaystone.VARIANT_SANDSTONE) {
+            bindTexture(textureSandstone);
+        } else if (tileWaystone.getVariant() == TileWaystone.VARIANT_MOSSY) {
+            bindTexture(textureMossy);
+        } else {
+            bindTexture(texture);
+        }
 
         float angle = tileEntity.hasWorldObj()
             ? WaystoneManager.getRotationYaw(ForgeDirection.getOrientation(tileEntity.getBlockMetadata()))

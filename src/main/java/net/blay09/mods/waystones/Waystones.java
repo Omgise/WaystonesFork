@@ -41,6 +41,7 @@ public class Waystones {
 
     public static BlockWaystone blockWaystone;
     public static BlockWaystone blockWaystoneSandstone;
+    public static BlockWaystone blockWaystoneMossy;
     public static ItemReturnScroll itemReturnScroll;
     public static ItemWarpStone itemWarpStone;
 
@@ -66,6 +67,8 @@ public class Waystones {
         GameRegistry.registerBlock(blockWaystone, "waystone");
         blockWaystoneSandstone = new BlockWaystone(TileWaystone.VARIANT_SANDSTONE, "waystone_sandstone");
         GameRegistry.registerBlock(blockWaystoneSandstone, "waystone_sandstone");
+        blockWaystoneMossy = new BlockWaystone(TileWaystone.VARIANT_MOSSY, "waystone_mossy");
+        GameRegistry.registerBlock(blockWaystoneMossy, "waystone_mossy");
         GameRegistry.registerTileEntity(TileWaystone.class, MODID + ":waystone");
 
         itemReturnScroll = new ItemReturnScroll();
@@ -86,6 +89,7 @@ public class Waystones {
 
         blockWaystone.setLightLevel(config.waystoneLightLevel);
         blockWaystoneSandstone.setLightLevel(config.waystoneLightLevel);
+        blockWaystoneMossy.setLightLevel(config.waystoneLightLevel);
 
         proxy.preInit(event);
     }
@@ -149,6 +153,18 @@ public class Waystones {
                     "OOO",
                     'S',
                     Blocks.sandstone,
+                    'W',
+                    itemWarpStone,
+                    'O',
+                    Blocks.obsidian));
+            GameRegistry.addRecipe(
+                new ShapedOreRecipe(
+                    new ItemStack(blockWaystoneMossy),
+                    " S ",
+                    "SWS",
+                    "OOO",
+                    'S',
+                    Blocks.mossy_cobblestone,
                     'W',
                     itemWarpStone,
                     'O',
