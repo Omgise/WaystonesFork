@@ -7,6 +7,7 @@ import net.blay09.mods.waystones.WaystoneConfig;
 import net.blay09.mods.waystones.Waystones;
 import net.blay09.mods.waystones.block.TileWaystone;
 import net.blay09.mods.waystones.compat.VillageNamesCompat;
+import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
@@ -61,8 +62,25 @@ public class VillageWaystone {
             // Clear area above platform
             this.fillWithAir(world, box, 0, 1, 0, 4, 5, 4);
 
+            // Match vanilla village path replacement logic (for example sandstone in desert villages)
+            Block platformBlock = this.func_151558_b(Blocks.gravel, 0);
+            int platformMeta = this.func_151557_c(Blocks.gravel, 0);
+
             // Platform (1 block high)
-            this.fillWithBlocks(world, box, 0, 0, 0, 4, 0, 4, Blocks.cobblestone, Blocks.cobblestone, false);
+            this.fillWithMetadataBlocks(
+                world,
+                box,
+                0,
+                0,
+                0,
+                4,
+                0,
+                4,
+                platformBlock,
+                platformMeta,
+                platformBlock,
+                platformMeta,
+                false);
 
             // Waystone position (sit on top of platform)
             int waystoneX = xMin + 2;
