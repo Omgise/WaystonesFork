@@ -24,6 +24,7 @@ import cpw.mods.fml.common.registry.VillagerRegistry;
 // Test coords (village names): 159 65 809
 // Test coords (vanilla): 81 79 1539
 // vanilla desert village: 1660196624
+// vanilla jungle temple: -5136872554856456624, 16 100 -480
 public class VillageWaystone {
 
     private static final String STRUCTURE_ID = "village";

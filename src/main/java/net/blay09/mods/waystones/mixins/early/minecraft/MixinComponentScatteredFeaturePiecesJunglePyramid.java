@@ -1,0 +1,84 @@
+package net.blay09.mods.waystones.mixins.early.minecraft;
+
+import java.util.Random;
+
+import net.blay09.mods.waystones.WaystoneManager;
+import net.blay09.mods.waystones.Waystones;
+import net.blay09.mods.waystones.block.TileWaystone;
+import net.blay09.mods.waystones.util.WaystoneEntry;
+import net.minecraft.world.World;
+import net.minecraft.world.gen.structure.ComponentScatteredFeaturePieces;
+import net.minecraft.world.gen.structure.StructureBoundingBox;
+import net.minecraftforge.common.util.ForgeDirection;
+
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+@Mixin(ComponentScatteredFeaturePieces.JunglePyramid.class)
+public abstract class MixinComponentScatteredFeaturePiecesJunglePyramid {
+
+    private static final String STRUCTURE_ID = "temple_jungle";
+
+    @Inject(method = "addComponentParts", at = @At("TAIL"))
+    private void addWaystoneAboveStairs(World world, Random rand, StructureBoundingBox box,
+        CallbackInfoReturnable<Boolean> cir) {
+        if (!cir.getReturnValue()) {
+            return;
+        }
+
+        AccessorStructureComponent structureAccessor = (AccessorStructureComponent) this;
+
+        int localX = rand.nextBoolean() ? 2 : 9;
+        int localY = 4;
+        int localZ = 12;
+
+        int x = structureAccessor.callGetXWithOffset(localX, localZ);
+        int y = structureAccessor.callGetYWithOffset(localY);
+        int z = structureAccessor.callGetZWithOffset(localX, localZ);
+        int biomeId = world.getBiomeGenForCoords(x, z).biomeID;
+
+        int variant = Waystones.varInstanceCommon
+            .resolveStructureWaystoneVariant(STRUCTURE_ID, TileWaystone.VARIANT_MOSSY, world, biomeId, rand);
+        if (variant < 0) {
+            return;
+        }
+
+        if (!box.isVecInside(x, y, z) || !box.isVecInside(x, y + 1, z)) {
+            return;
+        }
+
+        if (variant == TileWaystone.VARIANT_MOSSY) {
+            world.setBlock(x, y, z, Waystones.blockWaystoneMossy, 2, 2);
+            world.setBlock(x, y + 1, z, Waystones.blockWaystoneMossy, ForgeDirection.UNKNOWN.ordinal(), 2);
+        } else if (variant == TileWaystone.VARIANT_SANDSTONE) {
+            world.setBlock(x, y, z, Waystones.blockWaystoneSandstone, 2, 2);
+            world.setBlock(x, y + 1, z, Waystones.blockWaystoneSandstone, ForgeDirection.UNKNOWN.ordinal(), 2);
+        } else {
+            world.setBlock(x, y, z, Waystones.blockWaystone, 2, 2);
+            world.setBlock(x, y + 1, z, Waystones.blockWaystone, ForgeDirection.UNKNOWN.ordinal(), 2);
+        }
+
+        TileWaystone tile = (TileWaystone) world.getTileEntity(x, y, z);
+        if (tile != null && !world.isRemote) {
+            tile.setVariant(variant);
+
+            String resolvedName = Waystones.varInstanceCommon.resolveStructureWaystoneName(STRUCTURE_ID, null);
+            if (resolvedName != null && !resolvedName.isEmpty()) {
+                tile.setWaystoneName(resolvedName);
+            }
+
+            if (Waystones.varInstanceCommon.shouldForceGlobalStructureWaystone(STRUCTURE_ID)
+                && tile.getWaystoneName() != null
+                && !tile.getWaystoneName()
+                    .isEmpty()) {
+                if (Waystones.varInstanceCommon.shouldAutoActivateGlobalStructureWaystone(STRUCTURE_ID)) {
+                    WaystoneManager.addServerWaystone(new WaystoneEntry(tile));
+                } else {
+                    tile.setForceGlobalOnActivation(true);
+                }
+            }
+        }
+    }
+}

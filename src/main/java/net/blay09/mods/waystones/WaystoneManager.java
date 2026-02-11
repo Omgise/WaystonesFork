@@ -1,6 +1,7 @@
 package net.blay09.mods.waystones;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import net.blay09.mods.waystones.block.BlockWaystone;
@@ -19,6 +20,7 @@ import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
@@ -212,8 +214,7 @@ public class WaystoneManager {
         int z = waystone.getPos()
             .getZ();
         ForgeDirection facing = ForgeDirection.getOrientation(targetWorld.getBlockMetadata(x, y, z));
-        BlockPos targetPos = waystone.getPos()
-            .offset(facing);
+        BlockPos targetPos = getSafeTeleportPosition(targetWorld, player, waystone.getPos(), facing);
         boolean dimensionWarp = waystone.getDimensionId() != player.getEntityWorld().provider.dimensionId;
         if (!player.capabilities.isCreativeMode && dimensionWarp && !isDimensionWarpAllowed(waystone)) {
             player.addChatComponentMessage(new ChatComponentTranslation("waystones:noDimensionWarp"));
@@ -232,9 +233,46 @@ public class WaystoneManager {
                         net.minecraftforge.common.DimensionManager.getWorld(waystone.getDimensionId())));
         }
         player.rotationYaw = getRotationYaw(facing);
-        player.setPositionAndUpdate(targetPos.getX() + 0.5, targetPos.getY() + 0.5, targetPos.getZ() + 0.5);
+        player.setPositionAndUpdate(targetPos.getX() + 0.5, targetPos.getY(), targetPos.getZ() + 0.5);
         sendTeleportEffect(player.worldObj, targetPos);
         return true;
+    }
+
+    private static BlockPos getSafeTeleportPosition(World world, EntityPlayer player, BlockPos waystonePos,
+        ForgeDirection preferredFacing) {
+        BlockPos preferred = waystonePos.offset(preferredFacing);
+        if (canStandWithoutColliding(world, player, preferred)) {
+            return preferred;
+        }
+
+        ForgeDirection[] sides = new ForgeDirection[] { ForgeDirection.NORTH, ForgeDirection.SOUTH, ForgeDirection.WEST,
+            ForgeDirection.EAST };
+        for (ForgeDirection side : sides) {
+            if (side == preferredFacing) {
+                continue;
+            }
+            BlockPos candidate = waystonePos.offset(side);
+            if (canStandWithoutColliding(world, player, candidate)) {
+                return candidate;
+            }
+        }
+
+        return preferred;
+    }
+
+    private static boolean canStandWithoutColliding(World world, EntityPlayer player, BlockPos pos) {
+        double x = pos.getX() + 0.5;
+        double y = pos.getY();
+        double z = pos.getZ() + 0.5;
+        AxisAlignedBB bb = AxisAlignedBB.getBoundingBox(
+            x - player.width / 2.0,
+            y,
+            z - player.width / 2.0,
+            x + player.width / 2.0,
+            y + player.height,
+            z + player.width / 2.0);
+        List<?> collisions = world.getCollidingBoundingBoxes(player, bb);
+        return collisions == null || collisions.isEmpty();
     }
 
     public static void sendTeleportEffect(World world, BlockPos pos) {
