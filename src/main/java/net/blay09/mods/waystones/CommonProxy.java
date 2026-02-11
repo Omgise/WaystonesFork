@@ -19,6 +19,7 @@ import net.minecraftforge.event.world.WorldEvent;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
 import cpw.mods.fml.common.registry.VillagerRegistry;
@@ -43,6 +44,10 @@ public class CommonProxy {
             VillagerRegistry.instance()
                 .registerVillageCreationHandler(new VillageWaystone.CreationHandler());
         }
+    }
+
+    public void serverStarting(FMLServerStartingEvent event) {
+        event.registerServerCommand(new net.blay09.mods.waystones.command.CommandWaystoneDebugDim());
     }
 
     public void addScheduledTask(Runnable runnable) {

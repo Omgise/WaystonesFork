@@ -23,6 +23,7 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
 
 // TODO: add brandyn's fixes, partially added
@@ -173,6 +174,13 @@ public class Waystones {
                     itemWarpStone,
                     'O',
                     Blocks.obsidian));
+        }
+    }
+
+    @Mod.EventHandler
+    public void serverStarting(FMLServerStartingEvent event) {
+        if (WaystoneConfig.debugMode) {
+            proxy.serverStarting(event);
         }
     }
 
