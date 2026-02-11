@@ -12,6 +12,7 @@ Teleport back to activated waystones. For Survival, Adventure or Servers.
 ![forge](images/badges/forge.png)
 
 ![pretty](images/screenshots/pretty.png)
+![variants](images/screenshots/variants.png)
 
 ### Fixes:
 * Nether portals aren't generated when teleporting to the Nether (@kuzuanpa)
@@ -35,6 +36,7 @@ Teleport back to activated waystones. For Survival, Adventure or Servers.
 * Waystone renaming.
 * Pinned Waystones which appear at the top of the list.
 * Global Waystones are stored in the save NBT, no more conflicts.
+* Sandy and Mossy Waystones.
 
 ## Dependencies
 * [UniMixins](https://modrinth.com/mod/unimixins) [![curse](images/icons/curse.png)](https://www.curseforge.com/minecraft/mc-mods/unimixins)  [![modrinth](images/icons/modrinth.png)](https://modrinth.com/mod/unimixins/versions) [![git](images/icons/git.png)](https://github.com/LegacyModdingMC/UniMixins/releases)
