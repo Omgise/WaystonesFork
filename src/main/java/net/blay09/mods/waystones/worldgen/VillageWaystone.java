@@ -4,9 +4,11 @@ import java.util.List;
 import java.util.Random;
 
 import net.blay09.mods.waystones.WaystoneConfig;
+import net.blay09.mods.waystones.WaystoneManager;
 import net.blay09.mods.waystones.Waystones;
 import net.blay09.mods.waystones.block.TileWaystone;
 import net.blay09.mods.waystones.compat.VillageNamesCompat;
+import net.blay09.mods.waystones.util.WaystoneEntry;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
@@ -23,6 +25,8 @@ import cpw.mods.fml.common.registry.VillagerRegistry;
 // Test coords (vanilla): 81 79 1539
 // vanilla desert village: 1660196624
 public class VillageWaystone {
+
+    private static final String STRUCTURE_ID = "village";
 
     public static class VillageWaystonePiece extends StructureVillagePieces.Village {
 
@@ -87,10 +91,21 @@ public class VillageWaystone {
             int waystoneX = xMin + 2;
             int waystoneY = yMin + 1;
             int waystoneZ = zMin + 2;
-            boolean mossyVariant = Waystones.varInstanceCommon.isMossyWaystonePathBlock(platformBlock);
-            boolean sandyVariant = Waystones.varInstanceCommon.isSandyWaystonePathBlock(platformBlock);
-            Block waystoneBlock = mossyVariant ? Waystones.blockWaystoneMossy
-                : (sandyVariant ? Waystones.blockWaystoneSandstone : Waystones.blockWaystone);
+            int biomeId = world.getBiomeGenForCoords(waystoneX, waystoneZ).biomeID;
+
+            int autoVariant = Waystones.varInstanceCommon.isMossyWaystonePathBlock(platformBlock)
+                ? TileWaystone.VARIANT_MOSSY
+                : (Waystones.varInstanceCommon.isSandyWaystonePathBlock(platformBlock) ? TileWaystone.VARIANT_SANDSTONE
+                    : TileWaystone.VARIANT_STONE);
+            int variant = Waystones.varInstanceCommon
+                .resolveStructureWaystoneVariant(STRUCTURE_ID, autoVariant, world, biomeId, rand);
+            if (variant < 0) {
+                return true;
+            }
+
+            Block waystoneBlock = variant == TileWaystone.VARIANT_MOSSY ? Waystones.blockWaystoneMossy
+                : (variant == TileWaystone.VARIANT_SANDSTONE ? Waystones.blockWaystoneSandstone
+                    : Waystones.blockWaystone);
 
             // Lower block
             world.setBlock(waystoneX, waystoneY, waystoneZ, waystoneBlock, 2, 2);
@@ -101,16 +116,27 @@ public class VillageWaystone {
             TileWaystone tile = (TileWaystone) world.getTileEntity(waystoneX, waystoneY, waystoneZ);
 
             if (tile != null && !world.isRemote) {
-                tile.setVariant(
-                    mossyVariant ? TileWaystone.VARIANT_MOSSY
-                        : (sandyVariant ? TileWaystone.VARIANT_SANDSTONE : TileWaystone.VARIANT_STONE));
+                tile.setVariant(variant);
+
+                String autoName = null;
 
                 if (WaystoneConfig.villageNamesCompat && Loader.isModLoaded("VillageNames")) {
-                    // tile.setWaystoneName("Village Waystone");
-                    String name = VillageNamesCompat.ensureVillageName(world, waystoneX, waystoneY, waystoneZ);
+                    autoName = VillageNamesCompat.ensureVillageName(world, waystoneX, waystoneY, waystoneZ);
+                }
 
-                    if (name != null) {
-                        tile.setWaystoneName(name);
+                String resolvedName = Waystones.varInstanceCommon.resolveStructureWaystoneName(STRUCTURE_ID, autoName);
+                if (resolvedName != null && !resolvedName.isEmpty()) {
+                    tile.setWaystoneName(resolvedName);
+                }
+
+                if (Waystones.varInstanceCommon.shouldForceGlobalStructureWaystone(STRUCTURE_ID)
+                    && tile.getWaystoneName() != null
+                    && !tile.getWaystoneName()
+                        .isEmpty()) {
+                    if (Waystones.varInstanceCommon.shouldAutoActivateGlobalStructureWaystone(STRUCTURE_ID)) {
+                        WaystoneManager.addServerWaystone(new WaystoneEntry(tile));
+                    } else {
+                        tile.setForceGlobalOnActivation(true);
                     }
                 }
             }

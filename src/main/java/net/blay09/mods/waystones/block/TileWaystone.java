@@ -15,12 +15,14 @@ public class TileWaystone extends TileEntity {
 
     private String waystoneName = "";
     private int variant = VARIANT_STONE;
+    private boolean forceGlobalOnActivation;
 
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setString("WaystoneName", waystoneName);
         tagCompound.setInteger("Variant", variant);
+        tagCompound.setBoolean("ForceGlobalOnActivation", forceGlobalOnActivation);
     }
 
     @Override
@@ -32,6 +34,7 @@ public class TileWaystone extends TileEntity {
         } else {
             variant = VARIANT_STONE;
         }
+        forceGlobalOnActivation = tagCompound.getBoolean("ForceGlobalOnActivation");
     }
 
     @Override
@@ -69,6 +72,18 @@ public class TileWaystone extends TileEntity {
         } else {
             this.variant = VARIANT_STONE;
         }
+        if (worldObj != null) {
+            worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+        }
+        markDirty();
+    }
+
+    public boolean shouldForceGlobalOnActivation() {
+        return forceGlobalOnActivation;
+    }
+
+    public void setForceGlobalOnActivation(boolean forceGlobalOnActivation) {
+        this.forceGlobalOnActivation = forceGlobalOnActivation;
         if (worldObj != null) {
             worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
         }

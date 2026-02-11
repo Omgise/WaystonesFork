@@ -57,9 +57,12 @@ public class EarlyMixinLoader extends FentEarlyMixinLoader {
             // Accessors
             .addMixin("AccessorGuiContainer", Side.CLIENT)
             .addMixin("AccessorGuiScreen", Side.BOTH)
-            // Rest
+            .addMixin("AccessorStructureComponent", Side.BOTH)
             .addMixin("AccessorDimensionManager", Side.BOTH, "minecraftforge")
+
+            // Rest
             .addMixin("MixinStructureVillagePieces", Side.BOTH)
+            .addMixin("MixinComponentScatteredFeaturePiecesDesertPyramid", Side.BOTH)
             .build();
     }
 }

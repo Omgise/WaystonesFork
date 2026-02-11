@@ -52,6 +52,7 @@ public class WaystoneConfig {
     public boolean disableWaystoneDrops;
     public String[] sandyWaystonePathBlocks;
     public String[] mossyWaystonePathBlocks;
+    public String[] structureWaystoneRules;
 
     public static class Categories {
 
@@ -227,6 +228,14 @@ public class WaystoneConfig {
             Categories.general,
             new String[] {},
             "List of path/surface blocks that should make village-generated Waystones use the mossy variant.");
+        structureWaystoneRules = config.getStringList(
+            "Structure Waystone Rules",
+            Categories.general,
+            new String[] { "structure=village;chance=1;type=auto", "structure=temple_desert;chance=1;type=sandy" },
+            "How waystones generate in structures. One rule per structure id. "
+                + "Format: structure=<id>;chance=<0..1>;type=<auto|stone|sandy|mossy>;"
+                + "name=<override>;forceGlobal=<true|false>;autoActivateGlobal=<true|false>;"
+                + "dimensionWhitelist=<*|0,-1,1>;biomeWhitelist=<*|2,17,21>");
     }
 
     public static WaystoneConfig read(ByteBuf buf) {
@@ -259,6 +268,11 @@ public class WaystoneConfig {
         for (int i = 0; i < mossyPathBlockCount; i++) {
             config.mossyWaystonePathBlocks[i] = ByteBufUtils.readUTF8String(buf);
         }
+        int structureRuleCount = buf.readInt();
+        config.structureWaystoneRules = new String[structureRuleCount];
+        for (int i = 0; i < structureRuleCount; i++) {
+            config.structureWaystoneRules[i] = ByteBufUtils.readUTF8String(buf);
+        }
         return config;
     }
 
@@ -290,6 +304,11 @@ public class WaystoneConfig {
         buf.writeInt(mossyBlocks.length);
         for (String mossyPathBlock : mossyBlocks) {
             ByteBufUtils.writeUTF8String(buf, mossyPathBlock);
+        }
+        String[] structureRules = structureWaystoneRules != null ? structureWaystoneRules : new String[0];
+        buf.writeInt(structureRules.length);
+        for (String structureRule : structureRules) {
+            ByteBufUtils.writeUTF8String(buf, structureRule);
         }
     }
 

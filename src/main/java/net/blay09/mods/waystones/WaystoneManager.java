@@ -72,6 +72,12 @@ public class WaystoneManager {
     }
 
     public static void activateWaystone(EntityPlayer player, TileWaystone waystone) {
+        if (waystone.shouldForceGlobalOnActivation() && !waystone.getWaystoneName()
+            .isEmpty()) {
+            addServerWaystone(new WaystoneEntry(waystone));
+            waystone.setForceGlobalOnActivation(false);
+        }
+
         WaystoneEntry serverWaystone = getServerWaystone(waystone.getWaystoneName());
         if (serverWaystone != null) {
             PlayerWaystoneData.setLastServerWaystone(player, serverWaystone);

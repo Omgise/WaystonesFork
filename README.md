@@ -25,7 +25,7 @@ Teleport back to activated waystones. For Survival, Adventure or Servers.
 * Duplicate Waystone names are disallowed.
 * If a player exits the Waystone creation menu without properly naming it, the creation/naming menu will be shown upon next interaction (instead of creating an empty-named Waystone).
 * GUI Configuration.
-* Configurable worldgen inside of Villages.
+* Configurable worldgen.
 * Automatic activation upon naming.
 * Configurable [Village Names](https://modrinth.com/mod/village-names) mod compatibility.
 * Configurable teleportation XP level cost. Flat cost, distance cost, flat cross-dim cost.
@@ -37,6 +37,20 @@ Teleport back to activated waystones. For Survival, Adventure or Servers.
 * Pinned Waystones which appear at the top of the list.
 * Global Waystones are stored in the save NBT, no more conflicts.
 * Sandy and Mossy Waystones.
+
+### Worldgen configuration system:
+You can define a list of rules under the `structureWaystoneRules` key in the config. Each rule can have the following properties:
+* `structure`: Vanilla or modded structure id this rule applies to (for example village, temple_desert).
+* `chance`: Spawn probability from `0` to `1` (`0` = never, `1` = always).
+* `type`: Waystone variant override: `auto`, `stone`, `sandy`, or `mossy`. `auto` keeps structure/default logic.
+* `name`: Optional fixed name override. If duplicates exist, a number suffix is appended automatically. Makes the most sense for unique structures.
+* `forceGlobal`: `true`/`false`. If `true`, the Waystone is forced to become global. Requires name to be set.
+* `autoActivateGlobal`: `true`/`false`. Only relevant when `forceGlobal=true`. `true` immediately registers as global, false waits until player activation.
+* `dimensionWhitelist`: Allowed dimension IDs, comma-separated (for example `0,-1,1`) or `*` for all.
+* `biomeWhitelist`: Allowed biome IDs, comma-separated (for example `2,17,21`) or `*` for all.
+
+Example: `structure=village;chance=0.35;type=auto;dimensionWhitelist=0;biomeWhitelist=2,17,35
+`
 
 ## Dependencies
 * [UniMixins](https://modrinth.com/mod/unimixins) [![curse](images/icons/curse.png)](https://www.curseforge.com/minecraft/mc-mods/unimixins)  [![modrinth](images/icons/modrinth.png)](https://modrinth.com/mod/unimixins/versions) [![git](images/icons/git.png)](https://github.com/LegacyModdingMC/UniMixins/releases)
