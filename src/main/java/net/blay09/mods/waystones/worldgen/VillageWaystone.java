@@ -21,6 +21,7 @@ import cpw.mods.fml.common.registry.VillagerRegistry;
 // Test seed: 6344652377971967156
 // Test coords (village names): 159 65 809
 // Test coords (vanilla): 81 79 1539
+// vanilla desert village: 1660196624
 public class VillageWaystone {
 
     public static class VillageWaystonePiece extends StructureVillagePieces.Village {
@@ -86,8 +87,10 @@ public class VillageWaystone {
             int waystoneX = xMin + 2;
             int waystoneY = yMin + 1;
             int waystoneZ = zMin + 2;
-            Block waystoneBlock = platformBlock == Blocks.sandstone ? Waystones.blockWaystoneSandstone
-                : Waystones.blockWaystone;
+            boolean mossyVariant = Waystones.varInstanceCommon.isMossyWaystonePathBlock(platformBlock);
+            boolean sandyVariant = Waystones.varInstanceCommon.isSandyWaystonePathBlock(platformBlock);
+            Block waystoneBlock = mossyVariant ? Waystones.blockWaystoneMossy
+                : (sandyVariant ? Waystones.blockWaystoneSandstone : Waystones.blockWaystone);
 
             // Lower block
             world.setBlock(waystoneX, waystoneY, waystoneZ, waystoneBlock, 2, 2);
@@ -99,7 +102,8 @@ public class VillageWaystone {
 
             if (tile != null && !world.isRemote) {
                 tile.setVariant(
-                    platformBlock == Blocks.sandstone ? TileWaystone.VARIANT_SANDSTONE : TileWaystone.VARIANT_STONE);
+                    mossyVariant ? TileWaystone.VARIANT_MOSSY
+                        : (sandyVariant ? TileWaystone.VARIANT_SANDSTONE : TileWaystone.VARIANT_STONE));
 
                 if (WaystoneConfig.villageNamesCompat && Loader.isModLoaded("VillageNames")) {
                     // tile.setWaystoneName("Village Waystone");

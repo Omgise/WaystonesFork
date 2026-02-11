@@ -16,6 +16,7 @@ public class HandlerConfig implements IMessageHandler<MessageConfig, IMessage> {
             @Override
             public void run() {
                 Waystones.instance.setConfig(message.getConfig());
+                Waystones.varInstanceCommon.rebuildWaystonePathBlockCaches();
             }
         });
         return null;

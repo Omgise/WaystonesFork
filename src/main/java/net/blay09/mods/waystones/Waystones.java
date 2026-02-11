@@ -6,6 +6,7 @@ import net.blay09.mods.waystones.item.ItemReturnScroll;
 import net.blay09.mods.waystones.item.ItemWarpStone;
 import net.blay09.mods.waystones.network.NetworkHandler;
 import net.blay09.mods.waystones.varinstances.VarInstanceClient;
+import net.blay09.mods.waystones.varinstances.VarInstanceCommon;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -52,6 +53,7 @@ public class Waystones {
     public static final Logger LOG = LogManager.getLogger(MODID);
 
     public static VarInstanceClient varInstanceClient = new VarInstanceClient();
+    public static VarInstanceCommon varInstanceCommon = new VarInstanceCommon();
 
     public static boolean hasLwjgl3 = Loader.isModLoaded("lwjgl3ify");
 
@@ -82,6 +84,8 @@ public class Waystones {
         configuration = new Configuration(event.getSuggestedConfigurationFile());
         config = new WaystoneConfig();
         config.reloadLocal(configuration);
+        setConfig(config);
+        varInstanceCommon.preInitHook();
         WaystoneConfig.setConfig(configuration);
         if (configuration.hasChanged()) {
             configuration.save();

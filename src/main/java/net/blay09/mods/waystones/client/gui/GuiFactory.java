@@ -74,6 +74,7 @@ public class GuiFactory implements IModGuiFactory {
                 /* Syncing config */
                 Waystones.getConfig()
                     .reloadLocal(Waystones.configuration);
+                Waystones.varInstanceCommon.rebuildWaystonePathBlockCaches();
                 Waystones.configuration.save();
             }
         }

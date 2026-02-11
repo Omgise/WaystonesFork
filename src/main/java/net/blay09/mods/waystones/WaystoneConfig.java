@@ -2,6 +2,7 @@ package net.blay09.mods.waystones;
 
 import net.minecraftforge.common.config.Configuration;
 
+import cpw.mods.fml.common.network.ByteBufUtils;
 import io.netty.buffer.ByteBuf;
 
 // TODO: Clean up this mess
@@ -49,6 +50,8 @@ public class WaystoneConfig {
 
     public float waystoneLightLevel;
     public boolean disableWaystoneDrops;
+    public String[] sandyWaystonePathBlocks;
+    public String[] mossyWaystonePathBlocks;
 
     public static class Categories {
 
@@ -213,6 +216,17 @@ public class WaystoneConfig {
             Categories.general,
             false,
             "If true, waystones will not drop as an item when mined (including Silk Touch).");
+
+        sandyWaystonePathBlocks = config.getStringList(
+            "Sandy Waystone Path Blocks",
+            Categories.general,
+            new String[] { "minecraft:sandstone" },
+            "List of path/surface blocks that should make village-generated Waystones use the sandy variant.");
+        mossyWaystonePathBlocks = config.getStringList(
+            "Mossy Waystone Path Blocks",
+            Categories.general,
+            new String[] {},
+            "List of path/surface blocks that should make village-generated Waystones use the mossy variant.");
     }
 
     public static WaystoneConfig read(ByteBuf buf) {
@@ -235,6 +249,16 @@ public class WaystoneConfig {
         config.globalNoCooldown = buf.readBoolean();
         config.waystoneLightLevel = buf.readFloat();
         config.disableWaystoneDrops = buf.readBoolean();
+        int sandyPathBlockCount = buf.readInt();
+        config.sandyWaystonePathBlocks = new String[sandyPathBlockCount];
+        for (int i = 0; i < sandyPathBlockCount; i++) {
+            config.sandyWaystonePathBlocks[i] = ByteBufUtils.readUTF8String(buf);
+        }
+        int mossyPathBlockCount = buf.readInt();
+        config.mossyWaystonePathBlocks = new String[mossyPathBlockCount];
+        for (int i = 0; i < mossyPathBlockCount; i++) {
+            config.mossyWaystonePathBlocks[i] = ByteBufUtils.readUTF8String(buf);
+        }
         return config;
     }
 
@@ -257,6 +281,16 @@ public class WaystoneConfig {
         buf.writeBoolean(globalNoCooldown);
         buf.writeFloat(waystoneLightLevel);
         buf.writeBoolean(disableWaystoneDrops);
+        String[] sandyBlocks = sandyWaystonePathBlocks != null ? sandyWaystonePathBlocks : new String[0];
+        buf.writeInt(sandyBlocks.length);
+        for (String sandyPathBlock : sandyBlocks) {
+            ByteBufUtils.writeUTF8String(buf, sandyPathBlock);
+        }
+        String[] mossyBlocks = mossyWaystonePathBlocks != null ? mossyWaystonePathBlocks : new String[0];
+        buf.writeInt(mossyBlocks.length);
+        for (String mossyPathBlock : mossyBlocks) {
+            ByteBufUtils.writeUTF8String(buf, mossyPathBlock);
+        }
     }
 
     public static Configuration getRawConfig() {
