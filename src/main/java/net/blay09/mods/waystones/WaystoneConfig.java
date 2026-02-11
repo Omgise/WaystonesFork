@@ -58,65 +58,66 @@ public class WaystoneConfig {
 
         public static final String general = "general";
         public static final String client = "client";
+        public static final String worldgen = "worldgen";
     }
 
     public void reloadLocal(Configuration config) {
-        teleportButton = config.getBoolean("Debug mode", Categories.general, false, "Additional logs");
+        debugMode = config.getBoolean("debugMode", Categories.general, false, "Additional logs");
         teleportButton = config.getBoolean(
-            "Teleport Button in GUI",
+            "teleportButton",
             Categories.general,
             false,
             "Should there be a button in the inventory to access the waystone menu?");
         teleportButtonCooldown = config.getInt(
-            "Teleport Button Cooldown",
+            "teleportButtonCooldown",
             Categories.general,
             300,
             0,
             86400,
             "The cooldown between usages of the teleport button in seconds.");
         teleportButtonReturnOnly = config.getBoolean(
-            "Teleport Button Return Only",
+            "teleportButtonReturnOnly",
             Categories.general,
             false,
             "If true, the teleport button will only let you return to the last activated waystone, instead of allowing to choose.");
 
         allowReturnScrolls = config
-            .getBoolean("Allow Return Scrolls", Categories.general, true, "If true, return scrolls will be craftable.");
+            .getBoolean("allowReturnScrolls", Categories.general, true, "If true, return scrolls will be craftable.");
         allowWarpStone = config
-            .getBoolean("Allow Warp Stone", Categories.general, true, "If true, the warp stone will be craftable.");
+            .getBoolean("allowWarpStone", Categories.general, true, "If true, the warp stone will be craftable.");
 
         teleportButtonX = config.getInt(
-            "Teleport Button GUI X",
+            "teleportButtonX",
             Categories.client,
             60,
             -100,
             250,
             "The x position of the warp button in the inventory.");
         teleportButtonY = config.getInt(
-            "Teleport Button GUI Y",
+            "teleportButtonY",
             Categories.client,
             60,
             -100,
             250,
             "The y position of the warp button in the inventory.");
         disableTextGlow = config.getBoolean(
-            "Disable Text Glow",
+            "disableTextGlow",
             Categories.client,
             false,
             "If true, the text overlay on waystones will no longer always render at full brightness.");
         disableParticles = config.getBoolean(
-            "Disable Particles",
+            "disableParticles",
             Categories.client,
             false,
             "If true, activated waystones will not emit particles.");
         menusPauseGame = config.getBoolean(
-            "Menus Pause Game",
+            "menusPauseGame",
             Categories.client,
             false,
             "If true, GUI menus pause the game in singleplayer.");
 
         warpStoneCooldown = config.getInt(
-            "Teleportation Cooldown",
+            "warpStoneCooldown",
             Categories.general,
             300,
             0,
@@ -124,50 +125,47 @@ public class WaystoneConfig {
             "The cooldown between usages of the Warp Stone and Waystone in seconds.");
 
         setSpawnPoint = config.getBoolean(
-            "Set Spawnpoint on Activation",
+            "setSpawnPoint",
             Categories.general,
             false,
             "If true, the player's spawnpoint will be set to the last activated waystone.");
-        interDimension = config.getBoolean(
-            "Interdimensional Teleport",
-            Categories.general,
-            true,
-            "If true, all waystones work inter-dimensionally.");
+        interDimension = config
+            .getBoolean("interDimension", Categories.general, true, "If true, all waystones work inter-dimensionally.");
 
         creativeModeOnly = config.getBoolean(
-            "Creative Mode Only",
+            "creativeModeOnly",
             Categories.general,
             false,
             "If true, waystones can only be placed in creative mode.");
 
         globalNoCooldown = config.getBoolean(
-            "No Cooldown on Global Waystones",
+            "globalNoCooldown",
             Categories.general,
             true,
             "If true, waystones marked as global have no cooldown.");
         globalInterDimension = config.getBoolean(
-            "Interdimensional Teleport on Global Waystones",
+            "globalInterDimension",
             Categories.general,
             true,
             "If true, waystones marked as global work inter-dimensionally.");
 
         showNametag = config.getBoolean(
-            "Show Waystone nametag",
+            "showNametag",
             Categories.client,
             false,
             "If true, show a floating nametag with the Waystone's name, above it.");
 
         enableWorldgen = config
-            .getBoolean("Enable Worldgen", Categories.general, true, "If true, generate a Waystone in each village.");
+            .getBoolean("enableWorldgen", Categories.worldgen, true, "If true, generate a Waystone in each village.");
 
         villageNamesCompat = config.getBoolean(
-            "Enable Village Names Compat",
-            Categories.general,
+            "villageNamesCompat",
+            Categories.worldgen,
             true,
             "If true, village Waystones will take their name from Village Names.");
 
         xpBaseCost = config.getInt(
-            "Teleport Base XP Cost",
+            "xpBaseCost",
             Categories.general,
             5,
             -1,
@@ -175,7 +173,7 @@ public class WaystoneConfig {
             "The minimum amount of XP levels consumed when using a Waystone. Set to -1 to disable cost altogether.");
 
         xpBlocksPerLevel = config.getInt(
-            "Teleport XP Cost per X Blocks",
+            "xpBlocksPerLevel",
             Categories.general,
             100,
             0,
@@ -183,7 +181,7 @@ public class WaystoneConfig {
             "Each how many blocks consume one XP level.");
 
         xpCrossDimCost = config.getInt(
-            "Cross-dim Teleport XP Cost",
+            "xpCrossDimCost",
             Categories.general,
             5,
             0,
@@ -191,7 +189,7 @@ public class WaystoneConfig {
             "How many XP levels are consumed for teleporting to another dimension.");
 
         sortingMode = config.getInt(
-            "Sorting mode",
+            "sortingMode",
             Categories.client,
             0,
             0,
@@ -199,13 +197,13 @@ public class WaystoneConfig {
             "The Waystone sorting mode. Alphabetical: 0, Distance: 1.");
 
         showCooldownOnWaystone = config.getBoolean(
-            "Show cooldown on Waystone",
+            "showCooldownOnWaystone",
             Categories.client,
             true,
             "If true, Waystone glow texture will display the cooldown status.");
 
         waystoneLightLevel = config.getFloat(
-            "Waystone Light Level",
+            "waystoneLightLevel",
             Categories.general,
             0.5f,
             0f,
@@ -213,24 +211,24 @@ public class WaystoneConfig {
             "Light level emitted by waystones. 0 = none, 1 = maximum.");
 
         disableWaystoneDrops = config.getBoolean(
-            "Disable Waystone Drops",
+            "disableWaystoneDrops",
             Categories.general,
             false,
             "If true, waystones will not drop as an item when mined (including Silk Touch).");
 
         sandyWaystonePathBlocks = config.getStringList(
-            "Sandy Waystone Path Blocks",
-            Categories.general,
+            "sandyWaystonePathBlocks",
+            Categories.worldgen,
             new String[] { "minecraft:sandstone" },
             "List of path/surface blocks that should make village-generated Waystones use the sandy variant.");
         mossyWaystonePathBlocks = config.getStringList(
-            "Mossy Waystone Path Blocks",
-            Categories.general,
+            "mossyWaystonePathBlocks",
+            Categories.worldgen,
             new String[] {},
             "List of path/surface blocks that should make village-generated Waystones use the mossy variant.");
         structureWaystoneRules = config.getStringList(
-            "Structure Waystone Rules",
-            Categories.general,
+            "structureWaystoneRules",
+            Categories.worldgen,
             new String[] { "structure=village;chance=1;type=auto", "structure=temple_desert;chance=1;type=sandy" },
             "How waystones generate in structures. One rule per structure id. "
                 + "Format: structure=<id>;chance=<0..1>;type=<auto|stone|sandy|mossy>;"
