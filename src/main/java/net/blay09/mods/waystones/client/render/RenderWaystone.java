@@ -1,5 +1,7 @@
 package net.blay09.mods.waystones.client.render;
 
+import java.nio.DoubleBuffer;
+
 import net.blay09.mods.waystones.PlayerWaystoneData;
 import net.blay09.mods.waystones.WaystoneConfig;
 import net.blay09.mods.waystones.WaystoneManager;
@@ -16,6 +18,7 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 
 public class RenderWaystone extends TileEntitySpecialRenderer {
@@ -44,6 +47,8 @@ public class RenderWaystone extends TileEntitySpecialRenderer {
     private static final ResourceLocation textureNonActive = new ResourceLocation(
         Waystones.MODID,
         "textures/entity/waystone_nonactive.png");
+
+    private static final DoubleBuffer clipPlaneBuffer = BufferUtils.createDoubleBuffer(4);
 
     private final ModelWaystone model = new ModelWaystone();
 
@@ -109,19 +114,43 @@ public class RenderWaystone extends TileEntitySpecialRenderer {
                 Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
                 model.renderPillar();
 
-                // Render active pillar with glow (lighting off)
-                if (!WaystoneConfig.disableTextGlow) {
-                    GL11.glDisable(GL11.GL_LIGHTING);
-                    Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
-                }
-                bindTexture(activeTextures[normalizeToFive(getCooldownProgress(tileWaystone))]);
-                model.renderPillar();
-                if (!WaystoneConfig.disableTextGlow) {
-                    GL11.glEnable(GL11.GL_LIGHTING);
-                    Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
+                // Render active pillar with glow (lighting off), clipped by cooldown progress
+                float progress = getCooldownProgress(tileWaystone);
+                if (progress > 0f) {
+                    if (!WaystoneConfig.disableTextGlow) {
+                        GL11.glDisable(GL11.GL_LIGHTING);
+                        Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
+                    }
+                    bindTexture(textureActive);
+                    GL11.glEnable(GL11.GL_POLYGON_OFFSET_FILL);
+                    GL11.glPolygonOffset(-1.0f, -1.0f);
+
+                    // Pillar model Y ranges from -3.0 (visual top) to -1.125 (visual bottom)
+                    // Clip plane reveals from bottom to top as progress goes 0 -> 1
+                    float pillarBottom = -18f * 0.0625f;
+                    float pillarTop = -48f * 0.0625f;
+                    float clipY = pillarBottom + progress * (pillarTop - pillarBottom);
+
+                    clipPlaneBuffer.clear();
+                    clipPlaneBuffer.put(0.0)
+                        .put(1.0)
+                        .put(0.0)
+                        .put((double) -clipY);
+                    clipPlaneBuffer.flip();
+                    GL11.glClipPlane(GL11.GL_CLIP_PLANE0, clipPlaneBuffer);
+                    GL11.glEnable(GL11.GL_CLIP_PLANE0);
+
+                    model.renderPillar();
+
+                    GL11.glDisable(GL11.GL_CLIP_PLANE0);
+                    GL11.glDisable(GL11.GL_POLYGON_OFFSET_FILL);
+                    if (!WaystoneConfig.disableTextGlow) {
+                        GL11.glEnable(GL11.GL_LIGHTING);
+                        Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
+                    }
                 }
 
-                GL11.glEnable(GL11.GL_CULL_FACE); // restore culling
+                GL11.glEnable(GL11.GL_CULL_FACE);
             }
             GL11.glDisable(GL11.GL_BLEND);
         } finally {
