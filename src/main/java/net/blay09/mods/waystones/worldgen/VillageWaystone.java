@@ -25,6 +25,8 @@ import cpw.mods.fml.common.registry.VillagerRegistry;
 // Test coords (vanilla): 81 79 1539
 // vanilla desert village: 1660196624
 // vanilla jungle temple: -5136872554856456624, 16 100 -480
+// stronghold: seed: lolol, coords: /tp @p -2108 ~ -284
+// nether fortress: seed: lolol, coords: /tp 331 ~ -693
 public class VillageWaystone {
 
     private static final String STRUCTURE_ID = "village";
