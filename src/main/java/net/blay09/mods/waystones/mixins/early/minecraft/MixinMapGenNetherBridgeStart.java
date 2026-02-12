@@ -33,39 +33,44 @@ public abstract class MixinMapGenNetherBridgeStart {
 
     @Unique
     private boolean waystones$hasPlacedWaystone = false;
+    @Unique
+    private boolean waystones$hasResolvedWaystone = false;
 
     @Inject(method = "func_143022_a", at = @At("TAIL"))
     private void waystones$writeNBT(NBTTagCompound nbt, CallbackInfo ci) {
         if (!((Object) this instanceof MapGenNetherBridge.Start)) return;
         nbt.setBoolean("WaystonePlaced", waystones$hasPlacedWaystone);
+        nbt.setBoolean("WaystoneResolved", waystones$hasResolvedWaystone);
     }
 
     @Inject(method = "func_143017_b", at = @At("TAIL"))
     private void waystones$readNBT(NBTTagCompound nbt, CallbackInfo ci) {
         if (!((Object) this instanceof MapGenNetherBridge.Start)) return;
         waystones$hasPlacedWaystone = nbt.getBoolean("WaystonePlaced");
+        waystones$hasResolvedWaystone = nbt.getBoolean("WaystoneResolved");
     }
 
     @Inject(method = "generateStructure", at = @At("TAIL"))
     private void waystones$placeWaystone(World world, Random rand, StructureBoundingBox box, CallbackInfo ci) {
         if (!((Object) this instanceof MapGenNetherBridge.Start)) return;
-        if (waystones$hasPlacedWaystone || world.isRemote) return;
+        if (waystones$hasResolvedWaystone || world.isRemote) return;
 
         for (Object obj : this.components) {
-            if (!(obj instanceof StructureNetherBridgePieces.Crossing)) {
+            if (!(obj instanceof StructureNetherBridgePieces.Start)) {
                 continue;
             }
 
-            StructureComponent crossing = (StructureComponent) obj;
-            if (!crossing.getBoundingBox().intersectsWith(box)) {
+            StructureComponent start = (StructureComponent) obj;
+            if (!start.getBoundingBox()
+                .intersectsWith(box)) {
                 continue;
             }
 
-            AccessorStructureComponent accessor = (AccessorStructureComponent) crossing;
-            // center of crossing room (7x7, floor at y=0-1, air at y=2-7)
-            int localX = 3;
-            int localY = 2;
-            int localZ = 3;
+            AccessorStructureComponent accessor = (AccessorStructureComponent) start;
+            // Center of fortress start crossing3 room.
+            int localX = 9;
+            int localY = 5;
+            int localZ = 9;
 
             int x = accessor.callGetXWithOffset(localX, localZ);
             int y = accessor.callGetYWithOffset(localY);
@@ -75,6 +80,10 @@ public abstract class MixinMapGenNetherBridgeStart {
                 continue;
             }
 
+            // We reached the definitive spawn location for this fortress start
+            // resolve once so chance isn't re-rolled on later chunk passes
+            waystones$hasResolvedWaystone = true;
+
             int biomeId = world.getBiomeGenForCoords(x, z).biomeID;
             int variant = Waystones.varInstanceCommon
                 .resolveStructureWaystoneVariant(STRUCTURE_ID, TileWaystone.VARIANT_STONE, world, biomeId, rand);
@@ -82,7 +91,15 @@ public abstract class MixinMapGenNetherBridgeStart {
                 return;
             }
 
-            Waystones.debug("Spawned fortress waystone at " + x + " " + y + " " + z);
+            int fortressHash = waystones$getFortressHash(world);
+            Waystones.debug(
+                "Spawned fortress waystone at " + x
+                    + " "
+                    + y
+                    + " "
+                    + z
+                    + " fortressHash="
+                    + Integer.toHexString(fortressHash));
 
             if (variant == TileWaystone.VARIANT_MOSSY) {
                 world.setBlock(x, y, z, Waystones.blockWaystoneMossy, 2, 2);
@@ -121,5 +138,19 @@ public abstract class MixinMapGenNetherBridgeStart {
             waystones$hasPlacedWaystone = true;
             return;
         }
+    }
+
+    @Unique
+    private int waystones$getFortressHash(World world) {
+        StructureStart start = (StructureStart) (Object) this;
+        int dim = world.provider.dimensionId;
+        int chunkX = start.func_143019_e();
+        int chunkZ = start.func_143018_f();
+
+        int hash = 17;
+        hash = 31 * hash + dim;
+        hash = 31 * hash + chunkX;
+        hash = 31 * hash + chunkZ;
+        return hash;
     }
 }

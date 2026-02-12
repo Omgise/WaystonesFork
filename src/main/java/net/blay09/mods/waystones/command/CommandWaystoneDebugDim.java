@@ -77,12 +77,15 @@ public class CommandWaystoneDebugDim extends CommandBase {
         targetY = MathHelperClamp.clamp(targetY, 5, targetWorld.getActualHeight() - 5);
 
         server.getConfigurationManager()
-            .transferPlayerToDimension(player, targetDim, new FixedPositionTeleporter(targetWorld, targetX, targetY, targetZ));
+            .transferPlayerToDimension(
+                player,
+                targetDim,
+                new FixedPositionTeleporter(targetWorld, targetX, targetY, targetZ));
 
-        player.playerNetServerHandler.setPlayerLocation(targetX + 0.5, targetY, targetZ + 0.5, player.rotationYaw,
-            player.rotationPitch);
-        player.addChatMessage(new ChatComponentText(
-            "Teleported to dim " + targetDim + " at " + targetX + " " + targetY + " " + targetZ));
+        player.playerNetServerHandler
+            .setPlayerLocation(targetX + 0.5, targetY, targetZ + 0.5, player.rotationYaw, player.rotationPitch);
+        player.addChatMessage(
+            new ChatComponentText("Teleported to dim " + targetDim + " at " + targetX + " " + targetY + " " + targetZ));
     }
 
     @SuppressWarnings("rawtypes")
