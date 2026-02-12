@@ -162,7 +162,8 @@ public class RenderWaystone extends TileEntitySpecialRenderer {
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
         String name = (isGlobal ? EnumChatFormatting.YELLOW : "") + tile.getWaystoneName();
 
-        GL11.glPushAttrib(GL11.GL_ENABLE_BIT | GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+        GL11.glPushAttrib(
+            GL11.GL_ENABLE_BIT | GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_TEXTURE_BIT);
         GL11.glPushMatrix();
         try {
             GL11.glTranslated(x, y, z);
@@ -174,25 +175,29 @@ public class RenderWaystone extends TileEntitySpecialRenderer {
             float scale = 0.01666667F * 1.6F; // adjust size
             GL11.glScalef(-scale, -scale, scale);
 
-            // Draw background
             GL11.glDisable(GL11.GL_LIGHTING);
+            GL11.glDepthMask(false);
             GL11.glDisable(GL11.GL_DEPTH_TEST);
             GL11.glEnable(GL11.GL_BLEND);
-            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            OpenGlHelper.glBlendFunc(770, 771, 1, 0);
+            GL11.glDisable(GL11.GL_TEXTURE_2D);
 
             int width = fontRenderer.getStringWidth(name) / 2;
             Tessellator tess = Tessellator.instance;
             tess.startDrawingQuads();
-            tess.setColorRGBA_F(0f, 0f, 0f, 0.5f); // semi-transparent black
+            tess.setColorRGBA_F(0f, 0f, 0f, 0.25f);
             tess.addVertex(-width - 1, -1, 0);
             tess.addVertex(-width - 1, 8, 0);
             tess.addVertex(width + 1, 8, 0);
             tess.addVertex(width + 1, -1, 0);
             tess.draw();
+            GL11.glEnable(GL11.GL_TEXTURE_2D);
 
-            // Draw text
-            fontRenderer.drawString(name, -width, 0, 0xFFFFFF); // white
+            // Vanilla-like two-pass text: through-walls darker pass, then normal pass.
+            fontRenderer.drawString(name, -width, 0, 553648127);
             GL11.glEnable(GL11.GL_DEPTH_TEST);
+            GL11.glDepthMask(true);
+            fontRenderer.drawString(name, -width, 0, 0xFFFFFF);
             GL11.glEnable(GL11.GL_LIGHTING);
             GL11.glDisable(GL11.GL_BLEND);
         } finally {
