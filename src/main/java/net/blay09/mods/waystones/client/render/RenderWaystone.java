@@ -36,14 +36,6 @@ public class RenderWaystone extends TileEntitySpecialRenderer {
         Waystones.MODID,
         "textures/entity/waystone_active.png");
 
-    private static final ResourceLocation[] activeTextures = {
-        new ResourceLocation(Waystones.MODID, "textures/entity/waystone_active_1.png"),
-        new ResourceLocation(Waystones.MODID, "textures/entity/waystone_active_2.png"),
-        new ResourceLocation(Waystones.MODID, "textures/entity/waystone_active_3.png"),
-        new ResourceLocation(Waystones.MODID, "textures/entity/waystone_active_4.png"),
-        new ResourceLocation(Waystones.MODID, "textures/entity/waystone_active_5.png"),
-        new ResourceLocation(Waystones.MODID, "textures/entity/waystone_active_6.png") };
-
     private static final ResourceLocation textureNonActive = new ResourceLocation(
         Waystones.MODID,
         "textures/entity/waystone_nonactive.png");
@@ -64,10 +56,6 @@ public class RenderWaystone extends TileEntitySpecialRenderer {
         long cooldown = Waystones.getConfig().warpStoneCooldown * 1000L;
         long timeSince = System.currentTimeMillis() - lastUse;
         return Math.min(1f, Math.max(0f, (float) timeSince / cooldown));
-    }
-
-    public static int normalizeToFive(float x) {
-        return Math.round(x * 5);
     }
 
     @Override
