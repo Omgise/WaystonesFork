@@ -141,7 +141,7 @@ public class WaystoneConfig {
         globalNoCooldown = config.getBoolean(
             "globalNoCooldown",
             Categories.general,
-            true,
+            false,
             "If true, waystones marked as global have no cooldown.");
         globalInterDimension = config.getBoolean(
             "globalInterDimension",

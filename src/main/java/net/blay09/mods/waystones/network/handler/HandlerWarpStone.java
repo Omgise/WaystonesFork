@@ -50,15 +50,17 @@ public class HandlerWarpStone implements IMessageHandler<MessageWarpStone, IMess
 
             // Teleport
             if (WaystoneManager.teleportToWaystone(player, message.getWaystone())) {
-                if (WaystoneManager.getServerWaystone(
-                    message.getWaystone()
-                        .getName())
-                    == null || !Waystones.getConfig().globalNoCooldown) {
+                if (!player.capabilities.isCreativeMode) {
+                    if (WaystoneManager.getServerWaystone(
+                        message.getWaystone()
+                            .getName())
+                        == null || !Waystones.getConfig().globalNoCooldown) {
 
-                    if (message.isFree()) {
-                        PlayerWaystoneData.setLastFreeWarp(player, System.currentTimeMillis());
-                    } else {
-                        PlayerWaystoneData.setLastWarpStoneUse(player, System.currentTimeMillis());
+                        if (message.isFree()) {
+                            PlayerWaystoneData.setLastFreeWarp(player, System.currentTimeMillis());
+                        } else {
+                            PlayerWaystoneData.setLastWarpStoneUse(player, System.currentTimeMillis());
+                        }
                     }
                 }
             }
