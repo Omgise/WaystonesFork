@@ -59,6 +59,8 @@ public class EarlyMixinLoader extends FentEarlyMixinLoader {
             .addMixin("AccessorGuiScreen", Side.BOTH)
             .addMixin("AccessorStructureComponent", Side.BOTH)
             .addMixin("AccessorDimensionManager", Side.BOTH, "minecraftforge")
+            .addMixin("AccessorResourcePackRepository", Side.CLIENT)
+            .addMixin("AccessorResourcePackRepositoryEntry", Side.CLIENT)
 
             // Rest
             .addMixin("MixinStructureVillagePieces", Side.BOTH)
@@ -67,6 +69,7 @@ public class EarlyMixinLoader extends FentEarlyMixinLoader {
             .addMixin("MixinStructureStrongholdPiecesCrossing", Side.BOTH)
             .addMixin("MixinStructureNetherBridgePiecesPiece", Side.BOTH)
             .addMixin("MixinWorldGenSpikes", Side.BOTH)
+            .addMixin("MixinResourcePackRepository", Side.CLIENT)
             .build();
     }
 }
