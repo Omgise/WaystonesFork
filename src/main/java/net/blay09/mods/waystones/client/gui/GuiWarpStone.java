@@ -159,7 +159,7 @@ public class GuiWarpStone extends GuiScreen {
                     }
                 }
 
-                if (WaystoneConfig.xpBaseCost > -1) {
+                if (Waystones.getConfig().xpBaseCost > -1) {
                     if (Minecraft.getMinecraft().thePlayer.experienceLevel < xpCost) {
                         btnWaystone.enabled = false;
                     }

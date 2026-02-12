@@ -52,6 +52,15 @@ You can define a list of rules under the `structureWaystoneRules` key in the con
 Example: `structure=village;chance=0.35;type=auto;dimensionWhitelist=0;biomeWhitelist=2,17,35
 `
 
+Currently supported `structure` ids:
+* `village`
+* `temple_desert`
+* `temple_jungle`
+* `stronghold`
+* `fortress`
+* `end_spike`
+* `world_spawn`
+
 ## Dependencies
 * [UniMixins](https://modrinth.com/mod/unimixins) [![curse](images/icons/curse.png)](https://www.curseforge.com/minecraft/mc-mods/unimixins)  [![modrinth](images/icons/modrinth.png)](https://modrinth.com/mod/unimixins/versions) [![git](images/icons/git.png)](https://github.com/LegacyModdingMC/UniMixins/releases)
 

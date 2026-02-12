@@ -10,6 +10,7 @@ import net.blay09.mods.waystones.network.message.MessageDimensionNames;
 import net.blay09.mods.waystones.util.WaystoneEntry;
 import net.blay09.mods.waystones.worldgen.FortressWaystone;
 import net.blay09.mods.waystones.worldgen.VillageWaystone;
+import net.blay09.mods.waystones.worldgen.WorldSpawnWaystone;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.world.World;
@@ -33,7 +34,7 @@ public class CommonProxy {
             .register(this);
         MinecraftForge.EVENT_BUS.register(this);
 
-        if (WaystoneConfig.enableWorldgen) {
+        if (Waystones.getConfig().enableWorldgen) {
             MapGenStructureIO
                 .func_143031_a(VillageWaystone.VillageWaystonePiece.class, Waystones.MODID + ":VillageWaystone");
             MapGenStructureIO
@@ -42,7 +43,7 @@ public class CommonProxy {
     }
 
     public void init(FMLInitializationEvent event) {
-        if (WaystoneConfig.enableWorldgen) {
+        if (Waystones.getConfig().enableWorldgen) {
             Waystones.debug("Registering VillageWaystone CreationHandler");
             VillagerRegistry.instance()
                 .registerVillageCreationHandler(new VillageWaystone.CreationHandler());
@@ -78,6 +79,7 @@ public class CommonProxy {
     public void onWorldLoad(WorldEvent.Load event) {
         if (!event.world.isRemote && event.world.provider.dimensionId == 0) {
             GlobalWaystoneData.get(event.world);
+            WorldSpawnWaystone.tryGenerate(event.world);
         }
     }
 

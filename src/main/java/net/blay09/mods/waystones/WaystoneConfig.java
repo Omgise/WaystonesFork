@@ -37,12 +37,12 @@ public class WaystoneConfig {
     public boolean globalInterDimension;
 
     public static boolean showNametag;
-    public static boolean enableWorldgen;
-    public static boolean villageNamesCompat;
+    public boolean enableWorldgen;
+    public boolean villageNamesCompat;
 
-    public static int xpBaseCost;
-    public static int xpBlocksPerLevel;
-    public static int xpCrossDimCost;
+    public int xpBaseCost;
+    public int xpBlocksPerLevel;
+    public int xpCrossDimCost;
 
     public static boolean menusPauseGame;
 
@@ -231,7 +231,8 @@ public class WaystoneConfig {
             Categories.worldgen,
             new String[] { "structure=village;chance=1;type=auto", "structure=temple_desert;chance=1;type=sandy",
                 "structure=temple_jungle;chance=1;type=auto", "structure=stronghold;chance=1;type=auto",
-                "structure=fortress;chance=1;type=stone" },
+                "structure=fortress;chance=1;type=stone", "structure=end_spike;chance=1;type=stone",
+                "structure=world_spawn;chance=1;type=stone;dimensionWhitelist=0" },
             "How waystones generate in structures. One rule per structure id. "
                 + "Format: structure=<id>;chance=<0..1>;type=<auto|stone|sandy|mossy>;"
                 + "name=<override>;forceGlobal=<true|false>;autoActivateGlobal=<true|false>;"

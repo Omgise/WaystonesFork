@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import net.blay09.mods.waystones.WaystoneConfig;
 import net.blay09.mods.waystones.WaystoneManager;
 import net.blay09.mods.waystones.Waystones;
 import net.blay09.mods.waystones.block.TileWaystone;
@@ -79,7 +78,7 @@ public class VarInstanceCommon {
 
     public int resolveStructureWaystoneVariant(String structureId, int autoVariant, World world, int biomeId,
         Random rand) {
-        if (!WaystoneConfig.enableWorldgen) {
+        if (!Waystones.getConfig().enableWorldgen) {
             return -1;
         }
 

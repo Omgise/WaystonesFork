@@ -1,17 +1,17 @@
 package net.blay09.mods.waystones.util;
 
-import net.blay09.mods.waystones.WaystoneConfig;
+import net.blay09.mods.waystones.Waystones;
 import net.blay09.mods.waystones.block.TileWaystone;
 import net.minecraft.entity.player.EntityPlayer;
 
 public class WaystoneXpCost {
 
     public static int getXpCost(EntityPlayer player, WaystoneEntry to) {
-        if (WaystoneConfig.xpBaseCost < 0) {
+        if (Waystones.getConfig().xpBaseCost < 0) {
             return -1;
         }
-        int base = WaystoneConfig.xpBaseCost;
-        int blocksPerLevel = WaystoneConfig.xpBlocksPerLevel;
+        int base = Waystones.getConfig().xpBaseCost;
+        int blocksPerLevel = Waystones.getConfig().xpBlocksPerLevel;
 
         if (blocksPerLevel <= 0) {
             return base;
@@ -19,7 +19,7 @@ public class WaystoneXpCost {
 
         // Cross-dimension cost
         if (player.worldObj.provider.dimensionId != to.getDimensionId()) {
-            return base + WaystoneConfig.xpCrossDimCost;
+            return base + Waystones.getConfig().xpCrossDimCost;
         }
 
         double dx = player.posX - to.getPos()
@@ -44,14 +44,14 @@ public class WaystoneXpCost {
     }
 
     public static int getXpCost(TileWaystone from, WaystoneEntry to, EntityPlayer player) {
-        if (WaystoneConfig.xpBaseCost < 0) {
+        if (Waystones.getConfig().xpBaseCost < 0) {
             return -1;
         }
         if (from == null) {
             return getXpCost(player, to);
         }
-        int base = WaystoneConfig.xpBaseCost;
-        int blocksPerLevel = WaystoneConfig.xpBlocksPerLevel;
+        int base = Waystones.getConfig().xpBaseCost;
+        int blocksPerLevel = Waystones.getConfig().xpBlocksPerLevel;
 
         if (blocksPerLevel <= 0) {
             return base;
@@ -61,7 +61,7 @@ public class WaystoneXpCost {
         WaystoneEntry fromEntry = entryFromTile(from, player);
         if (fromEntry != null) {
             if (fromEntry.getDimensionId() != to.getDimensionId()) {
-                return base + WaystoneConfig.xpCrossDimCost;
+                return base + Waystones.getConfig().xpCrossDimCost;
             }
         }
 

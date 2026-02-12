@@ -3,7 +3,6 @@ package net.blay09.mods.waystones.worldgen;
 import java.util.List;
 import java.util.Random;
 
-import net.blay09.mods.waystones.WaystoneConfig;
 import net.blay09.mods.waystones.WaystoneManager;
 import net.blay09.mods.waystones.Waystones;
 import net.blay09.mods.waystones.block.TileWaystone;
@@ -123,7 +122,7 @@ public class VillageWaystone {
 
                 String autoName = null;
 
-                if (WaystoneConfig.villageNamesCompat && Loader.isModLoaded("VillageNames")) {
+                if (Waystones.getConfig().villageNamesCompat && Loader.isModLoaded("VillageNames")) {
                     autoName = VillageNamesCompat.ensureVillageName(world, waystoneX, waystoneY, waystoneZ);
                 }
 

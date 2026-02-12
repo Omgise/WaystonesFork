@@ -1,7 +1,6 @@
 package net.blay09.mods.waystones.network.handler;
 
 import net.blay09.mods.waystones.PlayerWaystoneData;
-import net.blay09.mods.waystones.WaystoneConfig;
 import net.blay09.mods.waystones.WaystoneManager;
 import net.blay09.mods.waystones.Waystones;
 import net.blay09.mods.waystones.network.message.MessageWarpStone;
@@ -37,7 +36,7 @@ public class HandlerWarpStone implements IMessageHandler<MessageWarpStone, IMess
                     return;
                 }
 
-                if (WaystoneConfig.xpBaseCost > -1) {
+                if (Waystones.getConfig().xpBaseCost > -1) {
                     int cost = WaystoneXpCost.getXpCost(player, target);
 
                     if (player.experienceLevel < cost) {
