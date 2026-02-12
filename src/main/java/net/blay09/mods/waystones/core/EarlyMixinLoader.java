@@ -65,7 +65,7 @@ public class EarlyMixinLoader extends FentEarlyMixinLoader {
             .addMixin("MixinComponentScatteredFeaturePiecesDesertPyramid", Side.BOTH)
             .addMixin("MixinComponentScatteredFeaturePiecesJunglePyramid", Side.BOTH)
             .addMixin("MixinStructureStrongholdPiecesCrossing", Side.BOTH)
-            .addMixin("MixinMapGenNetherBridgeStart", Side.BOTH)
+            .addMixin("MixinStructureNetherBridgePiecesPiece", Side.BOTH)
             .build();
     }
 }

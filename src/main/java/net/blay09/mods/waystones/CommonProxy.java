@@ -8,6 +8,7 @@ import net.blay09.mods.waystones.network.NetworkHandler;
 import net.blay09.mods.waystones.network.message.MessageConfig;
 import net.blay09.mods.waystones.network.message.MessageDimensionNames;
 import net.blay09.mods.waystones.util.WaystoneEntry;
+import net.blay09.mods.waystones.worldgen.FortressWaystone;
 import net.blay09.mods.waystones.worldgen.VillageWaystone;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.IChatComponent;
@@ -35,6 +36,8 @@ public class CommonProxy {
         if (WaystoneConfig.enableWorldgen) {
             MapGenStructureIO
                 .func_143031_a(VillageWaystone.VillageWaystonePiece.class, Waystones.MODID + ":VillageWaystone");
+            MapGenStructureIO
+                .func_143031_a(FortressWaystone.FortressWaystonePiece.class, Waystones.MODID + ":FortressWaystone");
         }
     }
 
