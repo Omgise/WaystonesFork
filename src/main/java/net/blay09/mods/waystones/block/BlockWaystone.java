@@ -44,7 +44,6 @@ public class BlockWaystone extends BlockContainer {
         setBlockName(Waystones.MODID + ":" + registryName);
         setHardness(5f);
         setResistance(2000f);
-        setLightLevel(0.5F);
         setCreativeTab(CreativeTabs.tabDecorations);
     }
 
@@ -79,6 +78,19 @@ public class BlockWaystone extends BlockContainer {
     @Override
     public TileEntity createNewTileEntity(World world, int metadata) {
         return metadata != ForgeDirection.UNKNOWN.ordinal() ? new TileWaystone() : null;
+    }
+
+    @Override
+    public int getLightValue(IBlockAccess world, int x, int y, int z) {
+        float maxLight = Waystones.getConfig().waystoneLightLevel;
+        if (maxLight <= 0f) return 0;
+        if (world instanceof World) {
+            World w = (World) world;
+            if (w.isRemote) {
+                return Waystones.proxy.getWaystoneLightValue(maxLight);
+            }
+        }
+        return (int) (maxLight * 15f);
     }
 
     @Override

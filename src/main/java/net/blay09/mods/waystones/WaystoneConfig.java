@@ -16,7 +16,7 @@ public class WaystoneConfig {
     public static int teleportButtonX;
     public static int teleportButtonY;
     public static boolean disableParticles;
-    public static boolean disableTextGlow;
+    public static float overlayGlowIntensity;
 
     public boolean teleportButton;
     public int teleportButtonCooldown;
@@ -100,11 +100,13 @@ public class WaystoneConfig {
             -100,
             250,
             "The y position of the warp button in the inventory.");
-        disableTextGlow = config.getBoolean(
-            "disableTextGlow",
+        overlayGlowIntensity = config.getFloat(
+            "overlayGlowIntensity",
             Categories.client,
-            false,
-            "If true, the text overlay on waystones will no longer always render at full brightness.");
+            1f,
+            0f,
+            1f,
+            "Maximum glow intensity of the waystone overlay. 0 = no glow, 1 = full brightness.");
         disableParticles = config.getBoolean(
             "disableParticles",
             Categories.client,

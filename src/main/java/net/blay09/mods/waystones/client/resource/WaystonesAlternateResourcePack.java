@@ -24,10 +24,10 @@ import com.google.gson.JsonParser;
 
 public class WaystonesAlternateResourcePack implements IResourcePack {
 
-    private static final String PACK_NAME = "Waystones Alternate Textures";
-    private static final String PREFIX = "/waystones_alt_pack/";
+    private static final String PACK_NAME = "Waystones Modernity Textures";
+    private static final String PREFIX = "/waystones_modernity/";
     private static final String PACK_META_JSON = "{" + "\"pack\":{"
-        + "\"description\":\"Alternate textures for Waystones-X\","
+        + "\"description\":\"Modernity textures for Waystones-X, by DarkBum\","
         + "\"pack_format\":1"
         + "}"
         + "}";

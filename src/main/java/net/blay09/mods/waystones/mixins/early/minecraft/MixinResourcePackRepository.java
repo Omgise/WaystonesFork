@@ -5,7 +5,6 @@ import java.io.File;
 import java.lang.reflect.Constructor;
 import java.util.List;
 
-import net.blay09.mods.waystones.WaystoneConfig;
 import net.blay09.mods.waystones.client.resource.WaystonesAlternateResourcePack;
 import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.client.resources.ResourcePackRepository;
@@ -32,7 +31,7 @@ public class MixinResourcePackRepository {
     public IResourcePack rprDefaultResourcePack;
 
     @Unique
-    private static final String WAYSTONES_ALT_PACK_NAME = "Waystones Alternate Textures";
+    private static final String WAYSTONES_ALT_PACK_NAME = "Waystones Modernity Textures";
 
     @Unique
     private static WaystonesAlternateResourcePack waystones$alternatePack;
@@ -40,10 +39,6 @@ public class MixinResourcePackRepository {
     @SuppressWarnings("unchecked")
     @Inject(method = "updateRepositoryEntriesAll", at = @At("RETURN"))
     private void waystones$injectAlternatePack(CallbackInfo ci) {
-        if (!WaystoneConfig.debugMode) {
-            return;
-        }
-
         // Check if already present
         for (Object obj : this.repositoryEntriesAll) {
             ResourcePackRepository.Entry entry = (ResourcePackRepository.Entry) obj;
@@ -64,7 +59,7 @@ public class MixinResourcePackRepository {
                 .getDeclaredConstructor(ResourcePackRepository.class, File.class, Object.class);
             ctor.setAccessible(true);
             ResourcePackRepository.Entry entry = (ResourcePackRepository.Entry) ctor
-                .newInstance(self, new File("waystones_alternate_textures"), null);
+                .newInstance(self, new File("waystones_modernity"), null);
 
             // Populate fields via accessor instead of calling updateResourcePack()
             AccessorResourcePackRepositoryEntry accessor = (AccessorResourcePackRepositoryEntry) entry;

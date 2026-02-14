@@ -193,6 +193,19 @@ public class ClientProxy extends CommonProxy {
     }
 
     @Override
+    public int getWaystoneLightValue(float maxLightLevel) {
+        EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+        if (player == null || player.capabilities.isCreativeMode) {
+            return (int) (maxLightLevel * 15f);
+        }
+        long lastUse = PlayerWaystoneData.getLastWarpStoneUse(player);
+        long cooldown = Waystones.getConfig().warpStoneCooldown * 1000L;
+        long timeSince = System.currentTimeMillis() - lastUse;
+        float progress = Math.min(1f, Math.max(0f, (float) timeSince / cooldown));
+        return (int) (progress * maxLightLevel * 15f);
+    }
+
+    @Override
     public int getWaystoneRenderId() {
         return WaystoneBlockRenderer.RENDER_ID;
     }

@@ -109,6 +109,10 @@ public class CommonProxy {
 
     public void spawnWaystoneParticles(World world, int x, int y, int z, TileWaystone tileWaystone, Random random) {}
 
+    public int getWaystoneLightValue(float maxLightLevel) {
+        return (int) (maxLightLevel * 15f);
+    }
+
     public int getWaystoneRenderId() {
         return 0;
     }

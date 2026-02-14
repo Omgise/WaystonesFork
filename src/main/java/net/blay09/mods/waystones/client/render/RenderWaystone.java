@@ -36,10 +36,6 @@ public class RenderWaystone extends TileEntitySpecialRenderer {
         Waystones.MODID,
         "textures/entity/waystone_active.png");
 
-    private static final ResourceLocation textureNonActive = new ResourceLocation(
-        Waystones.MODID,
-        "textures/entity/waystone_nonactive.png");
-
     private static final DoubleBuffer clipPlaneBuffer = BufferUtils.createDoubleBuffer(4);
 
     private final ModelWaystone model = new ModelWaystone();
@@ -92,26 +88,26 @@ public class RenderWaystone extends TileEntitySpecialRenderer {
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
             model.renderAll();
             if (tileWaystone.hasWorldObj() && stoneIsKnown) {
-                GL11.glScalef(1.05f, 1.05f, 1.05f);
-
                 GL11.glDisable(GL11.GL_CULL_FACE); // render all faces
 
-                // Render nonactive pillar normally (with lighting)
-                bindTexture(textureNonActive);
-                GL11.glEnable(GL11.GL_LIGHTING); // ensure lighting is on
-                Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
-                model.renderPillar();
-
-                // Render active pillar with glow (lighting off), clipped by cooldown progress
+                // Render active pillar overlay with emissive glow, clipped by cooldown progress
                 float progress = getCooldownProgress(tileWaystone);
                 if (progress > 0f) {
-                    if (!WaystoneConfig.disableTextGlow) {
-                        GL11.glDisable(GL11.GL_LIGHTING);
-                        Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
-                    }
+                    float glowIntensity = progress * WaystoneConfig.overlayGlowIntensity;
+
+                    // Emissive rendering: disable lighting and lightmap so symbols
+                    // render at constant brightness regardless of ambient light
+                    GL11.glDisable(GL11.GL_LIGHTING);
+                    Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
+
                     bindTexture(textureActive);
                     GL11.glEnable(GL11.GL_POLYGON_OFFSET_FILL);
                     GL11.glPolygonOffset(-1.0f, -1.0f);
+
+                    // Glow blend: overlay adds light to the underlying stone
+                    // alpha=1 symbols add (intensity,intensity,intensity), alpha=0 areas add nothing
+                    GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+                    GL11.glColor4f(glowIntensity, glowIntensity, glowIntensity, 1f);
 
                     // Pillar model Y ranges from -3.0 (visual top) to -1.125 (visual bottom)
                     // Clip plane reveals from bottom to top as progress goes 0 -> 1
@@ -132,10 +128,10 @@ public class RenderWaystone extends TileEntitySpecialRenderer {
 
                     GL11.glDisable(GL11.GL_CLIP_PLANE0);
                     GL11.glDisable(GL11.GL_POLYGON_OFFSET_FILL);
-                    if (!WaystoneConfig.disableTextGlow) {
-                        GL11.glEnable(GL11.GL_LIGHTING);
-                        Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
-                    }
+                    GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                    GL11.glColor4f(1f, 1f, 1f, 1f);
+                    GL11.glEnable(GL11.GL_LIGHTING);
+                    Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
                 }
 
                 GL11.glEnable(GL11.GL_CULL_FACE);

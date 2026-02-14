@@ -92,10 +92,6 @@ public class Waystones {
             configuration.save();
         }
 
-        blockWaystone.setLightLevel(config.waystoneLightLevel);
-        blockWaystoneSandstone.setLightLevel(config.waystoneLightLevel);
-        blockWaystoneMossy.setLightLevel(config.waystoneLightLevel);
-
         proxy.preInit(event);
     }
 
