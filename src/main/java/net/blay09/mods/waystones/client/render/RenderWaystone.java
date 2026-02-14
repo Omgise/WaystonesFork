@@ -12,13 +12,17 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import org.lwjgl.BufferUtils;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 public class RenderWaystone extends TileEntitySpecialRenderer {
@@ -63,9 +67,14 @@ public class RenderWaystone extends TileEntitySpecialRenderer {
         Waystones.MODID,
         "textures/entity/endstone_active.png");
 
-    private static final DoubleBuffer clipPlaneBuffer = BufferUtils.createDoubleBuffer(4);
+    private static float lavaTextureScale = 1.0f;
+    private static float lavaTextureXOffset = 0f;
+    private static float lavaTextureYOffset = 0f;
+    private static long lastDebugInputTime = 0;
 
+    private static final DoubleBuffer clipPlaneBuffer = BufferUtils.createDoubleBuffer(4);
     private final ModelWaystone model = new ModelWaystone();
+    private static int waystones$stencilTag = 1;
 
     float getCooldownProgress(TileWaystone tileWaystone) {
         if (Minecraft.getMinecraft().thePlayer.capabilities.isCreativeMode || !WaystoneConfig.showCooldownOnWaystone) {
@@ -124,6 +133,7 @@ public class RenderWaystone extends TileEntitySpecialRenderer {
                     bindTexture(getOverlayTexture(tileWaystone.getVariant()));
                     GL11.glEnable(GL11.GL_POLYGON_OFFSET_FILL);
                     GL11.glPolygonOffset(-1.0f, -1.0f);
+                    GL11.glDepthFunc(GL11.GL_LEQUAL);
 
                     // Glow blend: overlay adds light to the underlying stone
                     // alpha=1 symbols add (intensity,intensity,intensity), alpha=0 areas add nothing
@@ -145,10 +155,17 @@ public class RenderWaystone extends TileEntitySpecialRenderer {
                     GL11.glClipPlane(GL11.GL_CLIP_PLANE0, clipPlaneBuffer);
                     GL11.glEnable(GL11.GL_CLIP_PLANE0);
 
-                    model.renderPillar();
+                    boolean isNetherVariant = tileWaystone.getVariant() == TileWaystone.VARIANT_NETHER;
+                    if (isNetherVariant) {
+                        handleLavaDebugInput();
+                        renderNetherLavaOverlay(glowIntensity);
+                    } else {
+                        model.renderPillar();
+                    }
 
                     GL11.glDisable(GL11.GL_CLIP_PLANE0);
                     GL11.glDisable(GL11.GL_POLYGON_OFFSET_FILL);
+                    GL11.glDepthFunc(GL11.GL_LEQUAL);
                     GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
                     GL11.glColor4f(1f, 1f, 1f, 1f);
                     GL11.glEnable(GL11.GL_LIGHTING);
@@ -222,6 +239,110 @@ public class RenderWaystone extends TileEntitySpecialRenderer {
             GL11.glColor4f(1f, 1f, 1f, 1f);
             GL11.glPopAttrib();
         }
+    }
+
+    private static void handleLavaDebugInput() {
+        if (!Waystones.DEBUG_MODE && !WaystoneConfig.debugMode) return;
+        if (Minecraft.getMinecraft().currentScreen != null) return;
+
+        long now = System.currentTimeMillis();
+        if (now - lastDebugInputTime < 50) return;
+
+        boolean shift = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
+        boolean changed = false;
+
+        if (shift && Keyboard.isKeyDown(Keyboard.KEY_UP)) {
+            lavaTextureScale += 0.001f;
+            changed = true;
+        } else if (shift && Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {
+            lavaTextureScale -= 0.001f;
+            changed = true;
+        } else if (Keyboard.isKeyDown(Keyboard.KEY_UP)) {
+            lavaTextureYOffset += 0.001f;
+            changed = true;
+        } else if (Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {
+            lavaTextureYOffset -= 0.001f;
+            changed = true;
+        } else if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) {
+            lavaTextureXOffset += 0.001f;
+            changed = true;
+        } else if (Keyboard.isKeyDown(Keyboard.KEY_LEFT)) {
+            lavaTextureXOffset -= 0.001f;
+            changed = true;
+        }
+
+        if (changed) {
+            lastDebugInputTime = now;
+            Waystones.LOG.info(
+                "Lava texture: scale={}, xOffset={}, yOffset={}",
+                lavaTextureScale,
+                lavaTextureXOffset,
+                lavaTextureYOffset);
+        }
+    }
+
+    private void renderNetherLavaOverlay(float glowIntensity) {
+        int tag = waystones$stencilTag++;
+        if (waystones$stencilTag > 255) {
+            waystones$stencilTag = 1;
+        }
+
+        // Pass 1: write overlay alpha shape into stencil using the regular overlay UVs
+        bindTexture(textureActiveNether);
+        GL11.glEnable(GL11.GL_ALPHA_TEST);
+        GL11.glAlphaFunc(GL11.GL_GREATER, 0.0f);
+        GL11.glEnable(GL11.GL_STENCIL_TEST);
+        GL11.glStencilMask(0xFF);
+        GL11.glStencilFunc(GL11.GL_ALWAYS, tag, 0xFF);
+        GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_REPLACE);
+        GL11.glColorMask(false, false, false, false);
+        GL11.glDisable(GL11.GL_BLEND);
+        model.renderPillar();
+
+        // Pass 2: draw animated lava only where the stencil mask was written
+        GL11.glColorMask(true, true, true, true);
+        GL11.glStencilMask(0x00);
+        GL11.glStencilFunc(GL11.GL_EQUAL, tag, 0xFF);
+        GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
+        GL11.glDisable(GL11.GL_ALPHA_TEST);
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+        GL11.glColor4f(glowIntensity, glowIntensity, glowIntensity, 1f);
+        setupLavaTextureUvMapping();
+        model.renderPillar();
+        cleanupLavaTextureUvMapping();
+        GL11.glDisable(GL11.GL_STENCIL_TEST);
+    }
+
+    private void setupLavaTextureUvMapping() {
+        Minecraft.getMinecraft()
+            .getTextureManager()
+            .bindTexture(TextureMap.locationBlocksTexture);
+
+        IIcon lavaIcon = Blocks.lava.getIcon(0, 0);
+        float minU = lavaIcon.getMinU();
+        float maxU = lavaIcon.getMaxU();
+        float minV = lavaIcon.getMinV();
+        float maxV = lavaIcon.getMaxV();
+        float du = maxU - minU;
+        float dv = maxV - minV;
+
+        GL11.glMatrixMode(GL11.GL_TEXTURE);
+        GL11.glPushMatrix();
+        GL11.glLoadIdentity();
+        // Use the same model UVs as the overlay, then remap to the lava atlas tile
+        GL11.glTranslatef(minU, minV, 0f);
+        GL11.glScalef(du, dv, 1f);
+        GL11.glTranslatef(lavaTextureXOffset, lavaTextureYOffset, 0f);
+        float invScale = 1.0f / Math.max(0.0001f, lavaTextureScale);
+        GL11.glScalef(invScale, invScale, 1f);
+        GL11.glMatrixMode(GL11.GL_MODELVIEW);
+    }
+
+    private static void cleanupLavaTextureUvMapping() {
+        GL11.glMatrixMode(GL11.GL_TEXTURE);
+        GL11.glPopMatrix();
+        GL11.glMatrixMode(GL11.GL_MODELVIEW);
     }
 
     private static ResourceLocation getBaseTexture(int variant) {
