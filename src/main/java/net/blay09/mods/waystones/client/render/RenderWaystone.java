@@ -22,7 +22,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import org.lwjgl.BufferUtils;
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 public class RenderWaystone extends TileEntitySpecialRenderer {
@@ -67,10 +66,9 @@ public class RenderWaystone extends TileEntitySpecialRenderer {
         Waystones.MODID,
         "textures/entity/endstone_active.png");
 
-    private static float lavaTextureScale = 1.0f;
-    private static float lavaTextureXOffset = 0f;
-    private static float lavaTextureYOffset = 0f;
-    private static long lastDebugInputTime = 0;
+    private static final float LAVA_TEXTURE_SCALE = 1.0f;
+    private static final float LAVA_TEXTURE_X_OFFSET = 0f;
+    private static final float LAVA_TEXTURE_Y_OFFSET = 0f;
 
     private static final DoubleBuffer clipPlaneBuffer = BufferUtils.createDoubleBuffer(4);
     private final ModelWaystone model = new ModelWaystone();
@@ -157,7 +155,6 @@ public class RenderWaystone extends TileEntitySpecialRenderer {
 
                     boolean isNetherVariant = tileWaystone.getVariant() == TileWaystone.VARIANT_NETHER;
                     if (isNetherVariant) {
-                        handleLavaDebugInput();
                         renderNetherLavaOverlay(glowIntensity);
                     } else {
                         model.renderPillar();
@@ -241,46 +238,6 @@ public class RenderWaystone extends TileEntitySpecialRenderer {
         }
     }
 
-    private static void handleLavaDebugInput() {
-        if (!Waystones.DEBUG_MODE && !WaystoneConfig.debugMode) return;
-        if (Minecraft.getMinecraft().currentScreen != null) return;
-
-        long now = System.currentTimeMillis();
-        if (now - lastDebugInputTime < 50) return;
-
-        boolean shift = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
-        boolean changed = false;
-
-        if (shift && Keyboard.isKeyDown(Keyboard.KEY_UP)) {
-            lavaTextureScale += 0.001f;
-            changed = true;
-        } else if (shift && Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {
-            lavaTextureScale -= 0.001f;
-            changed = true;
-        } else if (Keyboard.isKeyDown(Keyboard.KEY_UP)) {
-            lavaTextureYOffset += 0.001f;
-            changed = true;
-        } else if (Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {
-            lavaTextureYOffset -= 0.001f;
-            changed = true;
-        } else if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) {
-            lavaTextureXOffset += 0.001f;
-            changed = true;
-        } else if (Keyboard.isKeyDown(Keyboard.KEY_LEFT)) {
-            lavaTextureXOffset -= 0.001f;
-            changed = true;
-        }
-
-        if (changed) {
-            lastDebugInputTime = now;
-            Waystones.LOG.info(
-                "Lava texture: scale={}, xOffset={}, yOffset={}",
-                lavaTextureScale,
-                lavaTextureXOffset,
-                lavaTextureYOffset);
-        }
-    }
-
     private void renderNetherLavaOverlay(float glowIntensity) {
         int tag = waystones$stencilTag++;
         if (waystones$stencilTag > 255) {
@@ -333,8 +290,8 @@ public class RenderWaystone extends TileEntitySpecialRenderer {
         // Use the same model UVs as the overlay, then remap to the lava atlas tile
         GL11.glTranslatef(minU, minV, 0f);
         GL11.glScalef(du, dv, 1f);
-        GL11.glTranslatef(lavaTextureXOffset, lavaTextureYOffset, 0f);
-        float invScale = 1.0f / Math.max(0.0001f, lavaTextureScale);
+        GL11.glTranslatef(LAVA_TEXTURE_X_OFFSET, LAVA_TEXTURE_Y_OFFSET, 0f);
+        float invScale = 1.0f / Math.max(0.0001f, LAVA_TEXTURE_SCALE);
         GL11.glScalef(invScale, invScale, 1f);
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
     }
