@@ -50,9 +50,8 @@ public class CommonProxy {
         }
     }
 
-    public void serverStarting(FMLServerStartingEvent event) {
-        event.registerServerCommand(new net.blay09.mods.waystones.command.CommandWaystoneDebugDim());
-    }
+    // commands registered here
+    public void serverStarting(FMLServerStartingEvent event) {}
 
     public void addScheduledTask(Runnable runnable) {
         runnable.run();
