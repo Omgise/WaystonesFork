@@ -29,9 +29,16 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 public class BlockWaystone extends BlockContainer {
 
     private final int defaultVariant;
+    private final String iconName;
+
+    @SideOnly(Side.CLIENT)
+    private IIcon inventoryIcon;
 
     public BlockWaystone() {
         this(TileWaystone.VARIANT_STONE, "waystone");
@@ -41,6 +48,7 @@ public class BlockWaystone extends BlockContainer {
         super(Material.rock);
 
         this.defaultVariant = defaultVariant;
+        this.iconName = registryName + "_icon";
         setBlockName(Waystones.MODID + ":" + registryName);
         setHardness(5f);
         setResistance(2000f);
@@ -49,6 +57,24 @@ public class BlockWaystone extends BlockContainer {
 
     public int getDefaultVariant() {
         return defaultVariant;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public IIcon getInventoryIcon() {
+        return inventoryIcon;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void registerBlockIcons(net.minecraft.client.renderer.texture.IIconRegister register) {
+        switch (defaultVariant) {
+            case TileWaystone.VARIANT_STONE:
+                inventoryIcon = register.registerIcon(Waystones.MODID + ":" + iconName);
+                break;
+            default:
+                inventoryIcon = null;
+                break;
+        }
     }
 
     private static boolean isWaystoneBlock(Block block) {

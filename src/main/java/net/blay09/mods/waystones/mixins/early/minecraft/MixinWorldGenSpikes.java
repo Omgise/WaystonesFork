@@ -44,8 +44,25 @@ public class MixinWorldGenSpikes {
         for (int attempt = 0; attempt < 32; attempt++) {
             int dx = x + rand.nextInt(41) - 20;
             int dz = z + rand.nextInt(41) - 20;
-            int top = world.getTopSolidOrLiquidBlock(dx, dz);
             int radius = 1 + rand.nextInt(3); // 1..3 -> diameter 3..7
+
+            // Avoid loading unloaded chunks during population (causes cascading worldgen crash)
+            int chunkX = dx >> 4;
+            int chunkZ = dz >> 4;
+            if (!world.getChunkProvider()
+                .chunkExists(chunkX, chunkZ)) {
+                continue;
+            }
+
+            // Keep the entire spike footprint inside a single already-loaded chunk.
+            // Any cross-chunk getBlock/setBlock during decoration can cause recursive populate.
+            if (((dx - radius) >> 4) != chunkX || ((dx + radius) >> 4) != chunkX
+                || ((dz - radius) >> 4) != chunkZ
+                || ((dz + radius) >> 4) != chunkZ) {
+                continue;
+            }
+
+            int top = world.getTopSolidOrLiquidBlock(dx, dz);
             int height = 1 + rand.nextInt(3); // 1..3
 
             boolean valid = true;

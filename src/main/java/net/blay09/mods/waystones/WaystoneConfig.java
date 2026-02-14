@@ -47,6 +47,7 @@ public class WaystoneConfig {
     public static boolean menusPauseGame;
 
     public static int sortingMode;
+    public static boolean flatInventoryIcon;
 
     public float waystoneLightLevel;
     public boolean disableWaystoneDrops;
@@ -197,6 +198,12 @@ public class WaystoneConfig {
             0,
             1,
             "The Waystone sorting mode. Alphabetical: 0, Distance: 1.");
+
+        flatInventoryIcon = config.getBoolean(
+            "flatInventoryIcon",
+            Categories.client,
+            false,
+            "If true, render waystones as 2D icons in the inventory instead of 3D models.");
 
         showCooldownOnWaystone = config.getBoolean(
             "showCooldownOnWaystone",

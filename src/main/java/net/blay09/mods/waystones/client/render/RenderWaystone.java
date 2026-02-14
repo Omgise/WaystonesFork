@@ -1,6 +1,7 @@
 package net.blay09.mods.waystones.client.render;
 
 import java.nio.DoubleBuffer;
+import java.util.Random;
 
 import net.blay09.mods.waystones.PlayerWaystoneData;
 import net.blay09.mods.waystones.WaystoneConfig;
@@ -69,6 +70,10 @@ public class RenderWaystone extends TileEntitySpecialRenderer {
     private static final float LAVA_TEXTURE_SCALE = 1.0f;
     private static final float LAVA_TEXTURE_X_OFFSET = 0f;
     private static final float LAVA_TEXTURE_Y_OFFSET = 0f;
+
+    private static final ResourceLocation END_SKY_TEXTURE = new ResourceLocation("textures/environment/end_sky.png");
+    private static final ResourceLocation END_PORTAL_TEXTURE = new ResourceLocation("textures/entity/end_portal.png");
+    private static final Random END_PORTAL_RANDOM = new Random(31100L);
 
     private static final DoubleBuffer clipPlaneBuffer = BufferUtils.createDoubleBuffer(4);
     private final ModelWaystone model = new ModelWaystone();
@@ -153,9 +158,11 @@ public class RenderWaystone extends TileEntitySpecialRenderer {
                     GL11.glClipPlane(GL11.GL_CLIP_PLANE0, clipPlaneBuffer);
                     GL11.glEnable(GL11.GL_CLIP_PLANE0);
 
-                    boolean isNetherVariant = tileWaystone.getVariant() == TileWaystone.VARIANT_NETHER;
-                    if (isNetherVariant) {
+                    int variant = tileWaystone.getVariant();
+                    if (variant == TileWaystone.VARIANT_NETHER) {
                         renderNetherLavaOverlay(glowIntensity);
+                    } else if (variant == TileWaystone.VARIANT_END) {
+                        renderEndPortalOverlay(glowIntensity);
                     } else {
                         model.renderPillar();
                     }
@@ -300,6 +307,82 @@ public class RenderWaystone extends TileEntitySpecialRenderer {
         GL11.glMatrixMode(GL11.GL_TEXTURE);
         GL11.glPopMatrix();
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
+    }
+
+    private void renderEndPortalOverlay(float glowIntensity) {
+        int tag = waystones$stencilTag++;
+        if (waystones$stencilTag > 255) {
+            waystones$stencilTag = 1;
+        }
+
+        // Pass 1: write overlay alpha shape into stencil
+        bindTexture(textureActiveEnd);
+        GL11.glEnable(GL11.GL_ALPHA_TEST);
+        GL11.glAlphaFunc(GL11.GL_GREATER, 0.0f);
+        GL11.glEnable(GL11.GL_STENCIL_TEST);
+        GL11.glStencilMask(0xFF);
+        GL11.glStencilFunc(GL11.GL_ALWAYS, tag, 0xFF);
+        GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_REPLACE);
+        GL11.glColorMask(false, false, false, false);
+        GL11.glDisable(GL11.GL_BLEND);
+        model.renderPillar();
+
+        // Pass 2: draw end portal layers only where the stencil was written
+        GL11.glColorMask(true, true, true, true);
+        GL11.glStencilMask(0x00);
+        GL11.glStencilFunc(GL11.GL_EQUAL, tag, 0xFF);
+        GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
+        GL11.glDisable(GL11.GL_ALPHA_TEST);
+        GL11.glEnable(GL11.GL_BLEND);
+
+        END_PORTAL_RANDOM.setSeed(31100L);
+
+        for (int i = 0; i < 16; i++) {
+            float layerDepth = (float) (16 - i);
+            float scale = i == 0 ? 0.125f : 0.5f;
+            float brightness = 1.0f / (layerDepth + 1.0f);
+
+            if (i == 0) {
+                bindTexture(END_SKY_TEXTURE);
+                brightness = 0.1f;
+                GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            }
+            if (i == 1) {
+                bindTexture(END_PORTAL_TEXTURE);
+                GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);
+            }
+
+            float r = END_PORTAL_RANDOM.nextFloat() * 0.5f + 0.1f;
+            float g = END_PORTAL_RANDOM.nextFloat() * 0.5f + 0.4f;
+            float b = END_PORTAL_RANDOM.nextFloat() * 0.5f + 0.5f;
+            if (i == 0) {
+                r = g = b = 1.0f;
+            }
+
+            GL11.glColor4f(
+                r * brightness * glowIntensity,
+                g * brightness * glowIntensity,
+                b * brightness * glowIntensity,
+                1.0f);
+
+            GL11.glMatrixMode(GL11.GL_TEXTURE);
+            GL11.glPushMatrix();
+            GL11.glLoadIdentity();
+            GL11.glTranslatef(0.0f, (float) (Minecraft.getSystemTime() % 700000L) / 700000.0f, 0.0f);
+            GL11.glScalef(scale, scale, scale);
+            GL11.glTranslatef(0.5f, 0.5f, 0.0f);
+            GL11.glRotatef((float) (i * i * 4321 + i * 9) * 2.0f, 0.0f, 0.0f, 1.0f);
+            GL11.glTranslatef(-0.5f, -0.5f, 0.0f);
+            GL11.glMatrixMode(GL11.GL_MODELVIEW);
+
+            model.renderPillar();
+
+            GL11.glMatrixMode(GL11.GL_TEXTURE);
+            GL11.glPopMatrix();
+            GL11.glMatrixMode(GL11.GL_MODELVIEW);
+        }
+
+        GL11.glDisable(GL11.GL_STENCIL_TEST);
     }
 
     private static ResourceLocation getBaseTexture(int variant) {
