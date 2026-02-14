@@ -32,9 +32,36 @@ public class RenderWaystone extends TileEntitySpecialRenderer {
     private static final ResourceLocation textureMossy = new ResourceLocation(
         Waystones.MODID,
         "textures/entity/mossy.png");
+    private static final ResourceLocation textureStonebrick = new ResourceLocation(
+        Waystones.MODID,
+        "textures/entity/stonebrick.png");
+    private static final ResourceLocation textureMossyStonebrick = new ResourceLocation(
+        Waystones.MODID,
+        "textures/entity/mossystonebrick.png");
+    private static final ResourceLocation textureNether = new ResourceLocation(
+        Waystones.MODID,
+        "textures/entity/netherbrick.png");
+    private static final ResourceLocation textureEnd = new ResourceLocation(
+        Waystones.MODID,
+        "textures/entity/endstone.png");
     private static final ResourceLocation textureActive = new ResourceLocation(
         Waystones.MODID,
         "textures/entity/waystone_active.png");
+    private static final ResourceLocation textureActiveSandstone = new ResourceLocation(
+        Waystones.MODID,
+        "textures/entity/sandstone_active.png");
+    private static final ResourceLocation textureActiveMossy = new ResourceLocation(
+        Waystones.MODID,
+        "textures/entity/mossy_active.png");
+    private static final ResourceLocation textureActiveStonebrick = new ResourceLocation(
+        Waystones.MODID,
+        "textures/entity/stonebrick_active.png");
+    private static final ResourceLocation textureActiveNether = new ResourceLocation(
+        Waystones.MODID,
+        "textures/entity/netherbrick_active.png");
+    private static final ResourceLocation textureActiveEnd = new ResourceLocation(
+        Waystones.MODID,
+        "textures/entity/endstone_active.png");
 
     private static final DoubleBuffer clipPlaneBuffer = BufferUtils.createDoubleBuffer(4);
 
@@ -62,13 +89,7 @@ public class RenderWaystone extends TileEntitySpecialRenderer {
         boolean stoneIsGlobal = WaystoneManager.getServerWaystone(tileWaystone.getWaystoneName()) != null
             && WaystoneManager.getServerWaystone(tileWaystone.getWaystoneName())
                 .isGlobal();
-        if (tileWaystone.getVariant() == TileWaystone.VARIANT_SANDSTONE) {
-            bindTexture(textureSandstone);
-        } else if (tileWaystone.getVariant() == TileWaystone.VARIANT_MOSSY) {
-            bindTexture(textureMossy);
-        } else {
-            bindTexture(texture);
-        }
+        bindTexture(getBaseTexture(tileWaystone.getVariant()));
 
         float angle = tileEntity.hasWorldObj()
             ? WaystoneManager.getRotationYaw(ForgeDirection.getOrientation(tileEntity.getBlockMetadata()))
@@ -100,7 +121,7 @@ public class RenderWaystone extends TileEntitySpecialRenderer {
                     GL11.glDisable(GL11.GL_LIGHTING);
                     Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
 
-                    bindTexture(textureActive);
+                    bindTexture(getOverlayTexture(tileWaystone.getVariant()));
                     GL11.glEnable(GL11.GL_POLYGON_OFFSET_FILL);
                     GL11.glPolygonOffset(-1.0f, -1.0f);
 
@@ -200,6 +221,43 @@ public class RenderWaystone extends TileEntitySpecialRenderer {
             GL11.glPopMatrix();
             GL11.glColor4f(1f, 1f, 1f, 1f);
             GL11.glPopAttrib();
+        }
+    }
+
+    private static ResourceLocation getBaseTexture(int variant) {
+        switch (variant) {
+            case TileWaystone.VARIANT_SANDSTONE:
+                return textureSandstone;
+            case TileWaystone.VARIANT_MOSSY:
+                return textureMossy;
+            case TileWaystone.VARIANT_STONEBRICK:
+                return textureStonebrick;
+            case TileWaystone.VARIANT_MOSSY_STONEBRICK:
+                return textureMossyStonebrick;
+            case TileWaystone.VARIANT_NETHER:
+                return textureNether;
+            case TileWaystone.VARIANT_END:
+                return textureEnd;
+            default:
+                return texture;
+        }
+    }
+
+    private static ResourceLocation getOverlayTexture(int variant) {
+        switch (variant) {
+            case TileWaystone.VARIANT_SANDSTONE:
+                return textureActiveSandstone;
+            case TileWaystone.VARIANT_MOSSY:
+                return textureActiveMossy;
+            case TileWaystone.VARIANT_STONEBRICK:
+            case TileWaystone.VARIANT_MOSSY_STONEBRICK:
+                return textureActiveStonebrick;
+            case TileWaystone.VARIANT_NETHER:
+                return textureActiveNether;
+            case TileWaystone.VARIANT_END:
+                return textureActiveEnd;
+            default:
+                return textureActive;
         }
     }
 }

@@ -105,9 +105,7 @@ public class VillageWaystone {
                 return true;
             }
 
-            Block waystoneBlock = variant == TileWaystone.VARIANT_MOSSY ? Waystones.blockWaystoneMossy
-                : (variant == TileWaystone.VARIANT_SANDSTONE ? Waystones.blockWaystoneSandstone
-                    : Waystones.blockWaystone);
+            Block waystoneBlock = Waystones.getWaystoneBlock(variant);
 
             // Lower block
             world.setBlock(waystoneX, waystoneY, waystoneZ, waystoneBlock, 2, 2);

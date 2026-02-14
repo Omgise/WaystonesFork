@@ -1,6 +1,10 @@
 tile.waystones:waystone.name=传送石碑
 tile.waystones:waystone_sandstone.name=砂岩传送石碑
 tile.waystones:waystone_mossy.name=苔石传送石碑
+tile.waystones:waystone_stonebrick.name=Stone Brick Waystone
+tile.waystones:waystone_mossy_stonebrick.name=Mossy Stone Brick Waystone
+tile.waystones:waystone_nether.name=Nether Waystone
+tile.waystones:waystone_end.name=End Waystone
 
 item.waystones:returnScroll.name=回城卷轴
 item.waystones:warpStone.name=传送石

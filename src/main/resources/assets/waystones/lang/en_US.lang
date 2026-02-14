@@ -1,6 +1,10 @@
 tile.waystones:waystone.name=Waystone
 tile.waystones:waystone_sandstone.name=Sandy Waystone
 tile.waystones:waystone_mossy.name=Mossy Waystone
+tile.waystones:waystone_stonebrick.name=Stone Brick Waystone
+tile.waystones:waystone_mossy_stonebrick.name=Mossy Stone Brick Waystone
+tile.waystones:waystone_nether.name=Nether Waystone
+tile.waystones:waystone_end.name=End Waystone
 
 item.waystones:returnScroll.name=Return Scroll
 item.waystones:warpStone.name=Warp Stone

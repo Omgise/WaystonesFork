@@ -93,23 +93,9 @@ public class MixinWorldGenSpikes {
 
             int waystoneY = top + height;
 
-            if (variant == TileWaystone.VARIANT_MOSSY) {
-                world.setBlock(dx, waystoneY, dz, Waystones.blockWaystoneMossy, 2, 2);
-                world
-                    .setBlock(dx, waystoneY + 1, dz, Waystones.blockWaystoneMossy, ForgeDirection.UNKNOWN.ordinal(), 2);
-            } else if (variant == TileWaystone.VARIANT_SANDSTONE) {
-                world.setBlock(dx, waystoneY, dz, Waystones.blockWaystoneSandstone, 2, 2);
-                world.setBlock(
-                    dx,
-                    waystoneY + 1,
-                    dz,
-                    Waystones.blockWaystoneSandstone,
-                    ForgeDirection.UNKNOWN.ordinal(),
-                    2);
-            } else {
-                world.setBlock(dx, waystoneY, dz, Waystones.blockWaystone, 2, 2);
-                world.setBlock(dx, waystoneY + 1, dz, Waystones.blockWaystone, ForgeDirection.UNKNOWN.ordinal(), 2);
-            }
+            net.minecraft.block.Block waystoneBlock = Waystones.getWaystoneBlock(variant);
+            world.setBlock(dx, waystoneY, dz, waystoneBlock, 2, 2);
+            world.setBlock(dx, waystoneY + 1, dz, waystoneBlock, ForgeDirection.UNKNOWN.ordinal(), 2);
 
             TileWaystone tile = (TileWaystone) world.getTileEntity(dx, waystoneY, dz);
             if (tile != null) {

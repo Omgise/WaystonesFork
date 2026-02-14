@@ -52,16 +52,9 @@ public final class WorldSpawnWaystone {
                 continue;
             }
 
-            if (variant == TileWaystone.VARIANT_MOSSY) {
-                world.setBlock(x, y, z, Waystones.blockWaystoneMossy, 2, 2);
-                world.setBlock(x, y + 1, z, Waystones.blockWaystoneMossy, ForgeDirection.UNKNOWN.ordinal(), 2);
-            } else if (variant == TileWaystone.VARIANT_SANDSTONE) {
-                world.setBlock(x, y, z, Waystones.blockWaystoneSandstone, 2, 2);
-                world.setBlock(x, y + 1, z, Waystones.blockWaystoneSandstone, ForgeDirection.UNKNOWN.ordinal(), 2);
-            } else {
-                world.setBlock(x, y, z, Waystones.blockWaystone, 2, 2);
-                world.setBlock(x, y + 1, z, Waystones.blockWaystone, ForgeDirection.UNKNOWN.ordinal(), 2);
-            }
+            Block waystoneBlock = Waystones.getWaystoneBlock(variant);
+            world.setBlock(x, y, z, waystoneBlock, 2, 2);
+            world.setBlock(x, y + 1, z, waystoneBlock, ForgeDirection.UNKNOWN.ordinal(), 2);
 
             TileWaystone tile = (TileWaystone) world.getTileEntity(x, y, z);
             if (tile != null) {

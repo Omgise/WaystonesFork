@@ -44,6 +44,10 @@ public class Waystones {
     public static BlockWaystone blockWaystone;
     public static BlockWaystone blockWaystoneSandstone;
     public static BlockWaystone blockWaystoneMossy;
+    public static BlockWaystone blockWaystoneStonebrick;
+    public static BlockWaystone blockWaystoneMossyStonebrick;
+    public static BlockWaystone blockWaystoneNether;
+    public static BlockWaystone blockWaystoneEnd;
     public static ItemReturnScroll itemReturnScroll;
     public static ItemWarpStone itemWarpStone;
 
@@ -72,6 +76,16 @@ public class Waystones {
         GameRegistry.registerBlock(blockWaystoneSandstone, "waystone_sandstone");
         blockWaystoneMossy = new BlockWaystone(TileWaystone.VARIANT_MOSSY, "waystone_mossy");
         GameRegistry.registerBlock(blockWaystoneMossy, "waystone_mossy");
+        blockWaystoneStonebrick = new BlockWaystone(TileWaystone.VARIANT_STONEBRICK, "waystone_stonebrick");
+        GameRegistry.registerBlock(blockWaystoneStonebrick, "waystone_stonebrick");
+        blockWaystoneMossyStonebrick = new BlockWaystone(
+            TileWaystone.VARIANT_MOSSY_STONEBRICK,
+            "waystone_mossy_stonebrick");
+        GameRegistry.registerBlock(blockWaystoneMossyStonebrick, "waystone_mossy_stonebrick");
+        blockWaystoneNether = new BlockWaystone(TileWaystone.VARIANT_NETHER, "waystone_nether");
+        GameRegistry.registerBlock(blockWaystoneNether, "waystone_nether");
+        blockWaystoneEnd = new BlockWaystone(TileWaystone.VARIANT_END, "waystone_end");
+        GameRegistry.registerBlock(blockWaystoneEnd, "waystone_end");
         GameRegistry.registerTileEntity(TileWaystone.class, MODID + ":waystone");
 
         itemReturnScroll = new ItemReturnScroll();
@@ -170,6 +184,54 @@ public class Waystones {
                     itemWarpStone,
                     'O',
                     Blocks.obsidian));
+            GameRegistry.addRecipe(
+                new ShapedOreRecipe(
+                    new ItemStack(blockWaystoneStonebrick),
+                    " S ",
+                    "SWS",
+                    "OOO",
+                    'S',
+                    new ItemStack(Blocks.stonebrick, 1, 0),
+                    'W',
+                    itemWarpStone,
+                    'O',
+                    Blocks.obsidian));
+            GameRegistry.addRecipe(
+                new ShapedOreRecipe(
+                    new ItemStack(blockWaystoneMossyStonebrick),
+                    " S ",
+                    "SWS",
+                    "OOO",
+                    'S',
+                    new ItemStack(Blocks.stonebrick, 1, 1),
+                    'W',
+                    itemWarpStone,
+                    'O',
+                    Blocks.obsidian));
+            GameRegistry.addRecipe(
+                new ShapedOreRecipe(
+                    new ItemStack(blockWaystoneNether),
+                    " S ",
+                    "SWS",
+                    "OOO",
+                    'S',
+                    Blocks.nether_brick,
+                    'W',
+                    itemWarpStone,
+                    'O',
+                    Blocks.obsidian));
+            GameRegistry.addRecipe(
+                new ShapedOreRecipe(
+                    new ItemStack(blockWaystoneEnd),
+                    " S ",
+                    "SWS",
+                    "OOO",
+                    'S',
+                    Blocks.end_stone,
+                    'W',
+                    itemWarpStone,
+                    'O',
+                    Blocks.obsidian));
         }
     }
 
@@ -186,6 +248,25 @@ public class Waystones {
 
     public void setConfig(WaystoneConfig config) {
         this.config = config;
+    }
+
+    public static BlockWaystone getWaystoneBlock(int variant) {
+        switch (variant) {
+            case TileWaystone.VARIANT_SANDSTONE:
+                return blockWaystoneSandstone;
+            case TileWaystone.VARIANT_MOSSY:
+                return blockWaystoneMossy;
+            case TileWaystone.VARIANT_STONEBRICK:
+                return blockWaystoneStonebrick;
+            case TileWaystone.VARIANT_MOSSY_STONEBRICK:
+                return blockWaystoneMossyStonebrick;
+            case TileWaystone.VARIANT_NETHER:
+                return blockWaystoneNether;
+            case TileWaystone.VARIANT_END:
+                return blockWaystoneEnd;
+            default:
+                return blockWaystone;
+        }
     }
 
     public static void debug(String message) {

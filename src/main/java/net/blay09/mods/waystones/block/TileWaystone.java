@@ -14,6 +14,10 @@ public class TileWaystone extends TileEntity {
     public static final int VARIANT_STONE = 0;
     public static final int VARIANT_SANDSTONE = 1;
     public static final int VARIANT_MOSSY = 2;
+    public static final int VARIANT_STONEBRICK = 3;
+    public static final int VARIANT_NETHER = 4;
+    public static final int VARIANT_END = 5;
+    public static final int VARIANT_MOSSY_STONEBRICK = 6;
 
     private String waystoneName = "";
     private int variant = VARIANT_STONE;
@@ -99,12 +103,17 @@ public class TileWaystone extends TileEntity {
     }
 
     public void setVariant(int variant) {
-        if (variant == VARIANT_SANDSTONE) {
-            this.variant = VARIANT_SANDSTONE;
-        } else if (variant == VARIANT_MOSSY) {
-            this.variant = VARIANT_MOSSY;
-        } else {
-            this.variant = VARIANT_STONE;
+        switch (variant) {
+            case VARIANT_SANDSTONE:
+            case VARIANT_MOSSY:
+            case VARIANT_STONEBRICK:
+            case VARIANT_NETHER:
+            case VARIANT_END:
+            case VARIANT_MOSSY_STONEBRICK:
+                this.variant = variant;
+                break;
+            default:
+                this.variant = VARIANT_STONE;
         }
         if (worldObj != null) {
             worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);

@@ -316,7 +316,11 @@ public class VarInstanceCommon {
         AUTO,
         STONE,
         SANDY,
-        MOSSY;
+        MOSSY,
+        STONEBRICK,
+        MOSSY_STONEBRICK,
+        NETHER,
+        END;
 
         public static WaystoneTypeOverride fromConfig(String value) {
             if (value == null) {
@@ -333,6 +337,17 @@ public class VarInstanceCommon {
                     return SANDY;
                 case "mossy":
                     return MOSSY;
+                case "stonebrick":
+                    return STONEBRICK;
+                case "mossystonebrick":
+                case "mossy_stonebrick":
+                    return MOSSY_STONEBRICK;
+                case "nether":
+                case "netherbrick":
+                    return NETHER;
+                case "end":
+                case "endstone":
+                    return END;
                 default:
                     return AUTO;
             }
@@ -346,6 +361,14 @@ public class VarInstanceCommon {
                     return TileWaystone.VARIANT_SANDSTONE;
                 case MOSSY:
                     return TileWaystone.VARIANT_MOSSY;
+                case STONEBRICK:
+                    return TileWaystone.VARIANT_STONEBRICK;
+                case MOSSY_STONEBRICK:
+                    return TileWaystone.VARIANT_MOSSY_STONEBRICK;
+                case NETHER:
+                    return TileWaystone.VARIANT_NETHER;
+                case END:
+                    return TileWaystone.VARIANT_END;
                 default:
                     return TileWaystone.VARIANT_STONE;
             }

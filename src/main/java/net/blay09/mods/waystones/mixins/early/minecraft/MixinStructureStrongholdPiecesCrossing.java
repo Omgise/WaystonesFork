@@ -4,6 +4,7 @@ import java.util.Random;
 
 import net.blay09.mods.waystones.WaystoneManager;
 import net.blay09.mods.waystones.Waystones;
+import net.blay09.mods.waystones.block.BlockWaystone;
 import net.blay09.mods.waystones.block.TileWaystone;
 import net.blay09.mods.waystones.util.WaystoneEntry;
 import net.minecraft.block.Block;
@@ -44,8 +45,9 @@ public abstract class MixinStructureStrongholdPiecesCrossing {
         int z = structureAccessor.callGetZWithOffset(localX, localZ);
         int biomeId = world.getBiomeGenForCoords(x, z).biomeID;
 
+        int autoVariant = rand.nextBoolean() ? TileWaystone.VARIANT_MOSSY_STONEBRICK : TileWaystone.VARIANT_STONEBRICK;
         int variant = Waystones.varInstanceCommon
-            .resolveStructureWaystoneVariant(STRUCTURE_ID, TileWaystone.VARIANT_STONE, world, biomeId, rand);
+            .resolveStructureWaystoneVariant(STRUCTURE_ID, autoVariant, world, biomeId, rand);
         if (variant < 0) {
             return;
         }
@@ -73,16 +75,9 @@ public abstract class MixinStructureStrongholdPiecesCrossing {
 
         Waystones.debug("Spawned stronghold waystone at " + " " + x + " " + y + " " + z);
 
-        if (variant == TileWaystone.VARIANT_MOSSY) {
-            world.setBlock(x, y, z, Waystones.blockWaystoneMossy, 2, 2);
-            world.setBlock(x, y + 1, z, Waystones.blockWaystoneMossy, ForgeDirection.UNKNOWN.ordinal(), 2);
-        } else if (variant == TileWaystone.VARIANT_SANDSTONE) {
-            world.setBlock(x, y, z, Waystones.blockWaystoneSandstone, 2, 2);
-            world.setBlock(x, y + 1, z, Waystones.blockWaystoneSandstone, ForgeDirection.UNKNOWN.ordinal(), 2);
-        } else {
-            world.setBlock(x, y, z, Waystones.blockWaystone, 2, 2);
-            world.setBlock(x, y + 1, z, Waystones.blockWaystone, ForgeDirection.UNKNOWN.ordinal(), 2);
-        }
+        Block waystoneBlock = Waystones.getWaystoneBlock(variant);
+        world.setBlock(x, y, z, waystoneBlock, 2, 2);
+        world.setBlock(x, y + 1, z, waystoneBlock, ForgeDirection.UNKNOWN.ordinal(), 2);
 
         TileWaystone tile = (TileWaystone) world.getTileEntity(x, y, z);
         if (tile == null || world.isRemote) {
@@ -109,8 +104,7 @@ public abstract class MixinStructureStrongholdPiecesCrossing {
     }
 
     private static boolean isWaystoneBlock(Block block) {
-        return block == Waystones.blockWaystone || block == Waystones.blockWaystoneSandstone
-            || block == Waystones.blockWaystoneMossy;
+        return block instanceof BlockWaystone;
     }
 
     private static boolean hasNearbyLoadedWaystone(World world, int x, int y, int z, int radius) {

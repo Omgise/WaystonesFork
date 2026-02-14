@@ -7,6 +7,7 @@ import net.blay09.mods.waystones.WaystoneManager;
 import net.blay09.mods.waystones.Waystones;
 import net.blay09.mods.waystones.block.TileWaystone;
 import net.blay09.mods.waystones.util.WaystoneEntry;
+import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
@@ -227,16 +228,9 @@ public class FortressWaystone {
                 return true;
             }
 
-            if (resolvedVariant == TileWaystone.VARIANT_MOSSY) {
-                world.setBlock(x, y, z, Waystones.blockWaystoneMossy, 2, 2);
-                world.setBlock(x, y + 1, z, Waystones.blockWaystoneMossy, ForgeDirection.UNKNOWN.ordinal(), 2);
-            } else if (resolvedVariant == TileWaystone.VARIANT_SANDSTONE) {
-                world.setBlock(x, y, z, Waystones.blockWaystoneSandstone, 2, 2);
-                world.setBlock(x, y + 1, z, Waystones.blockWaystoneSandstone, ForgeDirection.UNKNOWN.ordinal(), 2);
-            } else {
-                world.setBlock(x, y, z, Waystones.blockWaystone, 2, 2);
-                world.setBlock(x, y + 1, z, Waystones.blockWaystone, ForgeDirection.UNKNOWN.ordinal(), 2);
-            }
+            Block waystoneBlock = Waystones.getWaystoneBlock(resolvedVariant);
+            world.setBlock(x, y, z, waystoneBlock, 2, 2);
+            world.setBlock(x, y + 1, z, waystoneBlock, ForgeDirection.UNKNOWN.ordinal(), 2);
 
             TileWaystone tile = (TileWaystone) world.getTileEntity(x, y, z);
             if (tile != null && !world.isRemote) {
