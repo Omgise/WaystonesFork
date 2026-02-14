@@ -75,7 +75,7 @@ public class WaystonesAlternateResourcePack implements IResourcePack {
     public BufferedImage getPackImage() throws IOException {
         InputStream is = getClass().getResourceAsStream(PREFIX + "pack.png");
         if (is == null) {
-            is = getClass().getResourceAsStream("/assets/waystones/logo_small.png");
+            is = getClass().getResourceAsStream("/assets/waystones/modernity_pack_logo.png");
         }
         if (is == null) {
             throw new IOException("No pack image found");
