@@ -1,5 +1,6 @@
 package net.blay09.mods.waystones.client.render;
 
+import net.blay09.mods.waystones.WaystoneConfig;
 import net.blay09.mods.waystones.block.BlockWaystone;
 import net.blay09.mods.waystones.block.TileWaystone;
 import net.minecraft.block.Block;
@@ -39,7 +40,7 @@ public class WaystoneBlockRenderer implements ISimpleBlockRenderingHandler {
 
     @Override
     public boolean shouldRender3DInInventory(int modelId) {
-        return true;
+        return !WaystoneConfig.flatInventoryIcon;
     }
 
     @Override

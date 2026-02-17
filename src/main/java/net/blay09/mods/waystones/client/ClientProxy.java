@@ -14,22 +14,18 @@ import net.blay09.mods.waystones.client.gui.GuiWarpStone;
 import net.blay09.mods.waystones.client.gui.GuiWaystoneName;
 import net.blay09.mods.waystones.client.render.RenderWaystone;
 import net.blay09.mods.waystones.client.render.WaystoneBlockRenderer;
-import net.blay09.mods.waystones.client.render.WaystoneItemRenderer;
 import net.blay09.mods.waystones.mixins.early.minecraft.AccessorGuiScreen;
 import net.blay09.mods.waystones.util.WaystoneEntry;
-import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.event.FOVUpdateEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -55,13 +51,6 @@ public class ClientProxy extends CommonProxy {
 
         ClientRegistry.bindTileEntitySpecialRenderer(TileWaystone.class, new RenderWaystone());
         RenderingRegistry.registerBlockHandler(WaystoneBlockRenderer.RENDER_ID, new WaystoneBlockRenderer());
-
-        WaystoneItemRenderer itemRenderer = new WaystoneItemRenderer();
-        for (Block b : new Block[] { Waystones.blockWaystone, Waystones.blockWaystoneSandstone,
-            Waystones.blockWaystoneMossy, Waystones.blockWaystoneStonebrick, Waystones.blockWaystoneMossyStonebrick,
-            Waystones.blockWaystoneNether, Waystones.blockWaystoneEnd }) {
-            MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(b), itemRenderer);
-        }
     }
 
     @Override

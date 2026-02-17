@@ -1,6 +1,7 @@
 package net.blay09.mods.waystones;
 
 import net.blay09.mods.waystones.block.BlockWaystone;
+import net.blay09.mods.waystones.block.ItemBlockWaystone;
 import net.blay09.mods.waystones.block.TileWaystone;
 import net.blay09.mods.waystones.item.ItemReturnScroll;
 import net.blay09.mods.waystones.item.ItemWarpStone;
@@ -71,21 +72,21 @@ public class Waystones {
         LOG.info("Debugmode: {}", DEBUG_MODE);
 
         blockWaystone = new BlockWaystone();
-        GameRegistry.registerBlock(blockWaystone, "waystone");
+        GameRegistry.registerBlock(blockWaystone, ItemBlockWaystone.class, "waystone");
         blockWaystoneSandstone = new BlockWaystone(TileWaystone.VARIANT_SANDSTONE, "waystone_sandstone");
-        GameRegistry.registerBlock(blockWaystoneSandstone, "waystone_sandstone");
+        GameRegistry.registerBlock(blockWaystoneSandstone, ItemBlockWaystone.class, "waystone_sandstone");
         blockWaystoneMossy = new BlockWaystone(TileWaystone.VARIANT_MOSSY, "waystone_mossy");
-        GameRegistry.registerBlock(blockWaystoneMossy, "waystone_mossy");
+        GameRegistry.registerBlock(blockWaystoneMossy, ItemBlockWaystone.class, "waystone_mossy");
         blockWaystoneStonebrick = new BlockWaystone(TileWaystone.VARIANT_STONEBRICK, "waystone_stonebrick");
-        GameRegistry.registerBlock(blockWaystoneStonebrick, "waystone_stonebrick");
+        GameRegistry.registerBlock(blockWaystoneStonebrick, ItemBlockWaystone.class, "waystone_stonebrick");
         blockWaystoneMossyStonebrick = new BlockWaystone(
             TileWaystone.VARIANT_MOSSY_STONEBRICK,
             "waystone_mossy_stonebrick");
-        GameRegistry.registerBlock(blockWaystoneMossyStonebrick, "waystone_mossy_stonebrick");
+        GameRegistry.registerBlock(blockWaystoneMossyStonebrick, ItemBlockWaystone.class, "waystone_mossy_stonebrick");
         blockWaystoneNether = new BlockWaystone(TileWaystone.VARIANT_NETHER, "waystone_nether");
-        GameRegistry.registerBlock(blockWaystoneNether, "waystone_nether");
+        GameRegistry.registerBlock(blockWaystoneNether, ItemBlockWaystone.class, "waystone_nether");
         blockWaystoneEnd = new BlockWaystone(TileWaystone.VARIANT_END, "waystone_end");
-        GameRegistry.registerBlock(blockWaystoneEnd, "waystone_end");
+        GameRegistry.registerBlock(blockWaystoneEnd, ItemBlockWaystone.class, "waystone_end");
         GameRegistry.registerTileEntity(TileWaystone.class, MODID + ":waystone");
 
         itemReturnScroll = new ItemReturnScroll();
