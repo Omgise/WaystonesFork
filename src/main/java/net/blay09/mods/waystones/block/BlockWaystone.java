@@ -67,14 +67,7 @@ public class BlockWaystone extends BlockContainer {
     @Override
     @SideOnly(Side.CLIENT)
     public void registerBlockIcons(net.minecraft.client.renderer.texture.IIconRegister register) {
-        switch (defaultVariant) {
-            case TileWaystone.VARIANT_STONE:
-                inventoryIcon = register.registerIcon(Waystones.MODID + ":" + iconName);
-                break;
-            default:
-                inventoryIcon = null;
-                break;
-        }
+        inventoryIcon = register.registerIcon(Waystones.MODID + ":" + iconName);
     }
 
     private static boolean isWaystoneBlock(Block block) {

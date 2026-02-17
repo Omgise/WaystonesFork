@@ -4,4 +4,7 @@ repositories {
     maven {
         url "https://maven.fentanylsolutions.org/releases"
     }
+    maven {
+        url "https://mvn.falsepattern.com/releases"
+    }
 }

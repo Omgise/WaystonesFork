@@ -42,4 +42,6 @@ dependencies {
     compileOnly(rfg.deobf("curse.maven:waila-73488:2230518"))
     compileOnly(rfg.deobf("maven.modrinth:village-names:dbqnvxNP"))
     // implementation(rfg.deobf("maven.modrinth:village-names:dbqnvxNP"))
+
+    // implementation ("com.falsepattern:falsetweaks-mc1.7.10:2.0.0:dev")
 }
