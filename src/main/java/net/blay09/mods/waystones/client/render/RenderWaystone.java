@@ -1,6 +1,5 @@
 package net.blay09.mods.waystones.client.render;
 
-import java.nio.DoubleBuffer;
 import java.util.Random;
 
 import net.blay09.mods.waystones.PlayerWaystoneData;
@@ -23,7 +22,6 @@ import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 
 public class RenderWaystone extends TileEntitySpecialRenderer {
@@ -76,8 +74,24 @@ public class RenderWaystone extends TileEntitySpecialRenderer {
     private static final ResourceLocation END_PORTAL_TEXTURE = new ResourceLocation("textures/entity/end_portal.png");
     private static final Random END_PORTAL_RANDOM = new Random(31100L);
 
-    private static final DoubleBuffer clipPlaneBuffer = BufferUtils.createDoubleBuffer(4);
     private final ModelWaystone model = new ModelWaystone();
+
+    // Pillar box in model-space units after ModelRenderer scale (0.0625f) has been applied.
+    private static final float PILLAR_X_MIN = -10f * 0.0625f;
+    private static final float PILLAR_X_MAX = 10f * 0.0625f;
+    private static final float PILLAR_Z_MIN = -10f * 0.0625f;
+    private static final float PILLAR_Z_MAX = 10f * 0.0625f;
+    private static final float PILLAR_Y_TOP = -48f * 0.0625f;
+    private static final float PILLAR_Y_BOTTOM = -18f * 0.0625f;
+
+    // UV layout for pillar sides (derived from ModelRenderer(144, -2).addBox(..., 20, 30, 20))
+    private static final float UV_U0 = 144f / 256f;
+    private static final float UV_U1 = 164f / 256f;
+    private static final float UV_U2 = 184f / 256f;
+    private static final float UV_U3 = 204f / 256f;
+    private static final float UV_U4 = 224f / 256f;
+    private static final float UV_V_TOP = 18f / 256f;
+    private static final float UV_V_BOTTOM = 48f / 256f;
 
     float getCooldownProgress(TileWaystone tileWaystone) {
         if (Minecraft.getMinecraft().thePlayer.capabilities.isCreativeMode || !WaystoneConfig.showCooldownOnWaystone) {
@@ -143,32 +157,22 @@ public class RenderWaystone extends TileEntitySpecialRenderer {
                     GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
                     GL11.glColor4f(glowIntensity, glowIntensity, glowIntensity, 1f);
 
-                    // Clip plane reveals from bottom to top as progress goes 0 -> 1
+                    // Reveal glow from bottom to top as progress goes 0 -> 1
                     VarInstanceClient.OverlayClipBounds clipBounds = Waystones.varInstanceClient
                         .getOverlayClipBounds(tileWaystone.getVariant());
                     float pillarBottom = clipBounds.lower;
                     float pillarTop = clipBounds.upper;
                     float clipY = pillarBottom + progress * (pillarTop - pillarBottom);
 
-                    clipPlaneBuffer.clear();
-                    clipPlaneBuffer.put(0.0)
-                        .put(1.0)
-                        .put(0.0)
-                        .put((double) -clipY);
-                    clipPlaneBuffer.flip();
-                    GL11.glClipPlane(GL11.GL_CLIP_PLANE0, clipPlaneBuffer);
-                    GL11.glEnable(GL11.GL_CLIP_PLANE0);
-
                     int variant = tileWaystone.getVariant();
                     if (variant == TileWaystone.VARIANT_NETHER) {
-                        renderNetherLavaOverlay(glowIntensity);
+                        renderNetherLavaOverlay(glowIntensity, clipY);
                     } else if (variant == TileWaystone.VARIANT_END) {
-                        renderEndPortalOverlay(glowIntensity);
+                        renderEndPortalOverlay(glowIntensity, clipY);
                     } else {
-                        model.renderPillar();
+                        renderPillarClipped(clipY);
                     }
 
-                    GL11.glDisable(GL11.GL_CLIP_PLANE0);
                     GL11.glDisable(GL11.GL_POLYGON_OFFSET_FILL);
                     GL11.glDepthFunc(GL11.GL_LEQUAL);
                     GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -246,7 +250,7 @@ public class RenderWaystone extends TileEntitySpecialRenderer {
         }
     }
 
-    private void renderNetherLavaOverlay(float glowIntensity) {
+    private void renderNetherLavaOverlay(float glowIntensity, float clipY) {
         // Pass 1: write overlay alpha shape into depth buffer
         // Polygon offset is already active (-1, -1) from the caller, so this writes
         // depth D_offset where overlay alpha > 0, leaving base depth D0 elsewhere.
@@ -255,7 +259,7 @@ public class RenderWaystone extends TileEntitySpecialRenderer {
         GL11.glAlphaFunc(GL11.GL_GREATER, 0.0f);
         GL11.glColorMask(false, false, false, false);
         GL11.glDisable(GL11.GL_BLEND);
-        model.renderPillar();
+        renderPillarClipped(clipY);
 
         // Pass 2: draw animated lava only where the depth mask was written
         // GL_EQUAL matches D_offset (mask pixels) but not D0 (unmasked pixels).
@@ -266,7 +270,7 @@ public class RenderWaystone extends TileEntitySpecialRenderer {
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
         GL11.glColor4f(glowIntensity, glowIntensity, glowIntensity, 1f);
         setupLavaTextureUvMapping();
-        model.renderPillar();
+        renderPillarClipped(clipY);
         cleanupLavaTextureUvMapping();
         GL11.glDepthFunc(GL11.GL_LEQUAL);
     }
@@ -302,14 +306,14 @@ public class RenderWaystone extends TileEntitySpecialRenderer {
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
     }
 
-    private void renderEndPortalOverlay(float glowIntensity) {
+    private void renderEndPortalOverlay(float glowIntensity, float clipY) {
         // Pass 1: write overlay alpha shape into depth buffer
         bindTexture(textureActiveEnd);
         GL11.glEnable(GL11.GL_ALPHA_TEST);
         GL11.glAlphaFunc(GL11.GL_GREATER, 0.0f);
         GL11.glColorMask(false, false, false, false);
         GL11.glDisable(GL11.GL_BLEND);
-        model.renderPillar();
+        renderPillarClipped(clipY);
 
         // Pass 2: draw end portal layers only where the depth mask was written
         GL11.glColorMask(true, true, true, true);
@@ -357,7 +361,7 @@ public class RenderWaystone extends TileEntitySpecialRenderer {
             GL11.glTranslatef(-0.5f, -0.5f, 0.0f);
             GL11.glMatrixMode(GL11.GL_MODELVIEW);
 
-            model.renderPillar();
+            renderPillarClipped(clipY);
 
             GL11.glMatrixMode(GL11.GL_TEXTURE);
             GL11.glPopMatrix();
@@ -365,6 +369,46 @@ public class RenderWaystone extends TileEntitySpecialRenderer {
         }
 
         GL11.glDepthFunc(GL11.GL_LEQUAL);
+    }
+
+    private static void renderPillarClipped(float clipY) {
+        float yMin = Math.max(PILLAR_Y_TOP, Math.min(PILLAR_Y_BOTTOM, clipY));
+        float yMax = PILLAR_Y_BOTTOM;
+        if (yMin >= yMax) {
+            return;
+        }
+
+        float t = (yMin - PILLAR_Y_TOP) / (PILLAR_Y_BOTTOM - PILLAR_Y_TOP);
+        float vMin = UV_V_TOP + (UV_V_BOTTOM - UV_V_TOP) * t;
+
+        Tessellator tess = Tessellator.instance;
+        tess.startDrawingQuads();
+
+        // +X face
+        tess.addVertexWithUV(PILLAR_X_MAX, yMin, PILLAR_Z_MAX, UV_U3, vMin);
+        tess.addVertexWithUV(PILLAR_X_MAX, yMin, PILLAR_Z_MIN, UV_U2, vMin);
+        tess.addVertexWithUV(PILLAR_X_MAX, yMax, PILLAR_Z_MIN, UV_U2, UV_V_BOTTOM);
+        tess.addVertexWithUV(PILLAR_X_MAX, yMax, PILLAR_Z_MAX, UV_U3, UV_V_BOTTOM);
+
+        // -X face
+        tess.addVertexWithUV(PILLAR_X_MIN, yMin, PILLAR_Z_MIN, UV_U1, vMin);
+        tess.addVertexWithUV(PILLAR_X_MIN, yMin, PILLAR_Z_MAX, UV_U0, vMin);
+        tess.addVertexWithUV(PILLAR_X_MIN, yMax, PILLAR_Z_MAX, UV_U0, UV_V_BOTTOM);
+        tess.addVertexWithUV(PILLAR_X_MIN, yMax, PILLAR_Z_MIN, UV_U1, UV_V_BOTTOM);
+
+        // -Z face
+        tess.addVertexWithUV(PILLAR_X_MAX, yMin, PILLAR_Z_MIN, UV_U2, vMin);
+        tess.addVertexWithUV(PILLAR_X_MIN, yMin, PILLAR_Z_MIN, UV_U1, vMin);
+        tess.addVertexWithUV(PILLAR_X_MIN, yMax, PILLAR_Z_MIN, UV_U1, UV_V_BOTTOM);
+        tess.addVertexWithUV(PILLAR_X_MAX, yMax, PILLAR_Z_MIN, UV_U2, UV_V_BOTTOM);
+
+        // +Z face
+        tess.addVertexWithUV(PILLAR_X_MIN, yMin, PILLAR_Z_MAX, UV_U4, vMin);
+        tess.addVertexWithUV(PILLAR_X_MAX, yMin, PILLAR_Z_MAX, UV_U3, vMin);
+        tess.addVertexWithUV(PILLAR_X_MAX, yMax, PILLAR_Z_MAX, UV_U3, UV_V_BOTTOM);
+        tess.addVertexWithUV(PILLAR_X_MIN, yMax, PILLAR_Z_MAX, UV_U4, UV_V_BOTTOM);
+
+        tess.draw();
     }
 
     private static ResourceLocation getBaseTexture(int variant) {
