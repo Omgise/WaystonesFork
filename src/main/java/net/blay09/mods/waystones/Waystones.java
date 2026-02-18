@@ -238,6 +238,8 @@ public class Waystones {
 
     @Mod.EventHandler
     public void serverStarting(FMLServerStartingEvent event) {
+        config.reloadLocal(configuration);
+        varInstanceCommon.rebuildCaches();
         if (WaystoneConfig.debugMode) {
             proxy.serverStarting(event);
         }
