@@ -36,7 +36,7 @@ Teleport back to activated waystones. For Survival, Adventure or Servers.
 * Waystone renaming.
 * Pinned Waystones which appear at the top of the list.
 * Global Waystones are stored in the save NBT, no more conflicts.
-* Sandy and Mossy Waystones.
+* Sandstone, Mossy, (Mossy) Stonebrick, Netherbrick, Endstone Waystone variants.
 
 ### Worldgen configuration system:
 You can define a list of rules under the `structureWaystoneRules` key in the config. Each rule can have the following properties:
@@ -49,8 +49,7 @@ You can define a list of rules under the `structureWaystoneRules` key in the con
 * `dimensionWhitelist`: Allowed dimension IDs, comma-separated (for example `0,-1,1`) or `*` for all.
 * `biomeWhitelist`: Allowed biome IDs, comma-separated (for example `2,17,21`) or `*` for all.
 
-Example: `structure=village;chance=0.35;type=auto;dimensionWhitelist=0;biomeWhitelist=2,17,35
-`
+Example: `structure=village;chance=0.35;type=auto;dimensionWhitelist=0;biomeWhitelist=2,17,35`
 
 Currently supported `structure` ids:
 * `village`

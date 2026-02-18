@@ -36,6 +36,53 @@ public class MixinResourcePackRepository {
     @Unique
     private static WaystonesAlternateResourcePack waystones$alternatePack;
 
+    @Unique
+    private static ResourcePackRepository.Entry waystones$createEntry(ResourcePackRepository self, File file)
+        throws Exception {
+        Constructor<?>[] constructors = ResourcePackRepository.Entry.class.getDeclaredConstructors();
+        for (Constructor<?> ctor : constructors) {
+            Class<?>[] params = ctor.getParameterTypes();
+            if (params.length < 2) {
+                continue;
+            }
+            if (!ResourcePackRepository.class.isAssignableFrom(params[0])) {
+                continue;
+            }
+            if (!File.class.isAssignableFrom(params[1])) {
+                continue;
+            }
+
+            Object[] args = new Object[params.length];
+            args[0] = self;
+            args[1] = file;
+            for (int i = 2; i < params.length; i++) {
+                args[i] = waystones$defaultArg(params[i]);
+            }
+
+            ctor.setAccessible(true);
+            return (ResourcePackRepository.Entry) ctor.newInstance(args);
+        }
+        throw new NoSuchMethodException(
+            "No compatible ResourcePackRepository.Entry constructor found in "
+                + ResourcePackRepository.Entry.class.getName());
+    }
+
+    @Unique
+    private static Object waystones$defaultArg(Class<?> type) {
+        if (!type.isPrimitive()) {
+            return null;
+        }
+        if (type == boolean.class) return false;
+        if (type == byte.class) return (byte) 0;
+        if (type == short.class) return (short) 0;
+        if (type == int.class) return 0;
+        if (type == long.class) return 0L;
+        if (type == float.class) return 0f;
+        if (type == double.class) return 0d;
+        if (type == char.class) return '\0';
+        return null;
+    }
+
     @SuppressWarnings("unchecked")
     @Inject(method = "updateRepositoryEntriesAll", at = @At("RETURN"))
     private void waystones$injectAlternatePack(CallbackInfo ci) {
@@ -53,13 +100,9 @@ public class MixinResourcePackRepository {
                 waystones$alternatePack = new WaystonesAlternateResourcePack();
             }
 
-            // Create Entry via reflection (synthetic constructor is package-private)
+            // Constructor shape differs between dev/prod bytecode (synthetic bridge may be absent/present).
             ResourcePackRepository self = (ResourcePackRepository) (Object) this;
-            Constructor<?> ctor = ResourcePackRepository.Entry.class
-                .getDeclaredConstructor(ResourcePackRepository.class, File.class, Object.class);
-            ctor.setAccessible(true);
-            ResourcePackRepository.Entry entry = (ResourcePackRepository.Entry) ctor
-                .newInstance(self, new File("waystones_modernity"), null);
+            ResourcePackRepository.Entry entry = waystones$createEntry(self, new File("waystones_modernity"));
 
             // Populate fields via accessor instead of calling updateResourcePack()
             AccessorResourcePackRepositoryEntry accessor = (AccessorResourcePackRepositoryEntry) entry;
