@@ -127,7 +127,7 @@ public class RenderWaystone extends TileEntitySpecialRenderer {
                 // Render active pillar overlay with emissive glow, clipped by cooldown progress
                 float progress = getCooldownProgress(tileWaystone);
                 if (progress > 0f) {
-                    float glowIntensity = progress * WaystoneConfig.overlayGlowIntensity;
+                    float glowIntensity = 1f;
 
                     // Emissive rendering: disable lighting and lightmap so symbols
                     // render at constant brightness regardless of ambient light
