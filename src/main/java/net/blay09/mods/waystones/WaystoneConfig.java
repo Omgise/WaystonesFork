@@ -48,6 +48,7 @@ public class WaystoneConfig {
 
     public static int sortingMode;
     public static boolean flatInventoryIcon;
+    public static String[] overlayClipBounds;
 
     public float waystoneLightLevel;
     public boolean disableWaystoneDrops;
@@ -204,6 +205,22 @@ public class WaystoneConfig {
             Categories.client,
             false,
             "If true, render waystones as 2D icons in the inventory instead of 3D models.");
+
+        // Formula to calculate those:
+        // Upper:
+        // Take the Y of the first pixel row of the overlay, multiply by 2, substract 66
+        // Lower:
+        // Take the Y of the last pixel row of the overlay, multiply by 2, substract 66
+        overlayClipBounds = config.getStringList(
+            "overlayClipBounds",
+            Categories.client,
+            new String[] { "variant=stone;lower=-22;upper=-44", "variant=sandstone;lower=-22;upper=-38",
+                "variant=mossy;lower=-24;upper=-44", "variant=stonebrick;lower=-26;upper=-44",
+                "variant=mossy_stonebrick;lower=-26;upper=-44", "variant=nether;lower=-24;upper=-44",
+                "variant=end;lower=-24;upper=-42" },
+            "Per-variant overlay clip bounds in model pixel units. "
+                + "Controls the lower and upper Y extents of the glow overlay on the pillar. "
+                + "Format: variant=<name>;lower=<Y>;upper=<Y>");
 
         showCooldownOnWaystone = config.getBoolean(
             "showCooldownOnWaystone",

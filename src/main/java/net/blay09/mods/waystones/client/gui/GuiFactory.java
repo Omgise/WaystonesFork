@@ -78,6 +78,7 @@ public class GuiFactory implements IModGuiFactory {
                 Waystones.getConfig()
                     .reloadLocal(Waystones.configuration);
                 Waystones.varInstanceCommon.rebuildCaches();
+                Waystones.varInstanceClient.rebuildOverlayClipBoundsCache();
                 Waystones.configuration.save();
             }
         }

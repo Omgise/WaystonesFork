@@ -8,6 +8,7 @@ import net.blay09.mods.waystones.WaystoneConfig;
 import net.blay09.mods.waystones.WaystoneManager;
 import net.blay09.mods.waystones.Waystones;
 import net.blay09.mods.waystones.block.TileWaystone;
+import net.blay09.mods.waystones.varinstances.VarInstanceClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -143,10 +144,11 @@ public class RenderWaystone extends TileEntitySpecialRenderer {
                     GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
                     GL11.glColor4f(glowIntensity, glowIntensity, glowIntensity, 1f);
 
-                    // Pillar model Y ranges from -3.0 (visual top) to -1.125 (visual bottom)
                     // Clip plane reveals from bottom to top as progress goes 0 -> 1
-                    float pillarBottom = -18f * 0.0625f;
-                    float pillarTop = -48f * 0.0625f;
+                    VarInstanceClient.OverlayClipBounds clipBounds = Waystones.varInstanceClient
+                        .getOverlayClipBounds(tileWaystone.getVariant());
+                    float pillarBottom = clipBounds.lower;
+                    float pillarTop = clipBounds.upper;
                     float clipY = pillarBottom + progress * (pillarTop - pillarBottom);
 
                     clipPlaneBuffer.clear();
