@@ -78,7 +78,6 @@ public class RenderWaystone extends TileEntitySpecialRenderer {
 
     private static final DoubleBuffer clipPlaneBuffer = BufferUtils.createDoubleBuffer(4);
     private final ModelWaystone model = new ModelWaystone();
-    private static int waystones$stencilTag = 1;
 
     float getCooldownProgress(TileWaystone tileWaystone) {
         if (Minecraft.getMinecraft().thePlayer.capabilities.isCreativeMode || !WaystoneConfig.showCooldownOnWaystone) {
@@ -248,28 +247,20 @@ public class RenderWaystone extends TileEntitySpecialRenderer {
     }
 
     private void renderNetherLavaOverlay(float glowIntensity) {
-        int tag = waystones$stencilTag++;
-        if (waystones$stencilTag > 255) {
-            waystones$stencilTag = 1;
-        }
-
-        // Pass 1: write overlay alpha shape into stencil using the regular overlay UVs
+        // Pass 1: write overlay alpha shape into depth buffer
+        // Polygon offset is already active (-1, -1) from the caller, so this writes
+        // depth D_offset where overlay alpha > 0, leaving base depth D0 elsewhere.
         bindTexture(textureActiveNether);
         GL11.glEnable(GL11.GL_ALPHA_TEST);
         GL11.glAlphaFunc(GL11.GL_GREATER, 0.0f);
-        GL11.glEnable(GL11.GL_STENCIL_TEST);
-        GL11.glStencilMask(0xFF);
-        GL11.glStencilFunc(GL11.GL_ALWAYS, tag, 0xFF);
-        GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_REPLACE);
         GL11.glColorMask(false, false, false, false);
         GL11.glDisable(GL11.GL_BLEND);
         model.renderPillar();
 
-        // Pass 2: draw animated lava only where the stencil mask was written
+        // Pass 2: draw animated lava only where the depth mask was written
+        // GL_EQUAL matches D_offset (mask pixels) but not D0 (unmasked pixels).
         GL11.glColorMask(true, true, true, true);
-        GL11.glStencilMask(0x00);
-        GL11.glStencilFunc(GL11.GL_EQUAL, tag, 0xFF);
-        GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
+        GL11.glDepthFunc(GL11.GL_EQUAL);
         GL11.glDisable(GL11.GL_ALPHA_TEST);
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
@@ -277,7 +268,7 @@ public class RenderWaystone extends TileEntitySpecialRenderer {
         setupLavaTextureUvMapping();
         model.renderPillar();
         cleanupLavaTextureUvMapping();
-        GL11.glDisable(GL11.GL_STENCIL_TEST);
+        GL11.glDepthFunc(GL11.GL_LEQUAL);
     }
 
     private void setupLavaTextureUvMapping() {
@@ -312,28 +303,17 @@ public class RenderWaystone extends TileEntitySpecialRenderer {
     }
 
     private void renderEndPortalOverlay(float glowIntensity) {
-        int tag = waystones$stencilTag++;
-        if (waystones$stencilTag > 255) {
-            waystones$stencilTag = 1;
-        }
-
-        // Pass 1: write overlay alpha shape into stencil
+        // Pass 1: write overlay alpha shape into depth buffer
         bindTexture(textureActiveEnd);
         GL11.glEnable(GL11.GL_ALPHA_TEST);
         GL11.glAlphaFunc(GL11.GL_GREATER, 0.0f);
-        GL11.glEnable(GL11.GL_STENCIL_TEST);
-        GL11.glStencilMask(0xFF);
-        GL11.glStencilFunc(GL11.GL_ALWAYS, tag, 0xFF);
-        GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_REPLACE);
         GL11.glColorMask(false, false, false, false);
         GL11.glDisable(GL11.GL_BLEND);
         model.renderPillar();
 
-        // Pass 2: draw end portal layers only where the stencil was written
+        // Pass 2: draw end portal layers only where the depth mask was written
         GL11.glColorMask(true, true, true, true);
-        GL11.glStencilMask(0x00);
-        GL11.glStencilFunc(GL11.GL_EQUAL, tag, 0xFF);
-        GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
+        GL11.glDepthFunc(GL11.GL_EQUAL);
         GL11.glDisable(GL11.GL_ALPHA_TEST);
         GL11.glEnable(GL11.GL_BLEND);
 
@@ -384,7 +364,7 @@ public class RenderWaystone extends TileEntitySpecialRenderer {
             GL11.glMatrixMode(GL11.GL_MODELVIEW);
         }
 
-        GL11.glDisable(GL11.GL_STENCIL_TEST);
+        GL11.glDepthFunc(GL11.GL_LEQUAL);
     }
 
     private static ResourceLocation getBaseTexture(int variant) {
