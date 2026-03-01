@@ -10,7 +10,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.common.config.ConfigElement;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 import cpw.mods.fml.client.IModGuiFactory;
 import cpw.mods.fml.client.config.GuiConfig;
@@ -41,7 +41,7 @@ public class GuiFactory implements IModGuiFactory {
         public ConfigGui(GuiScreen parentScreen) {
             super(
                 parentScreen,
-                ImmutableList.of(
+                Lists.newArrayList(
                     new ConfigElement(
                         WaystoneConfig.getRawConfig()
                             .getCategory(WaystoneConfig.Categories.general)),
