@@ -50,7 +50,10 @@ public class GuiFactory implements IModGuiFactory {
                             .getCategory(WaystoneConfig.Categories.worldgen)),
                     new ConfigElement(
                         WaystoneConfig.getRawConfig()
-                            .getCategory(WaystoneConfig.Categories.compat)),
+                            .getCategory(WaystoneConfig.Categories.journeyMap)),
+                    new ConfigElement(
+                        WaystoneConfig.getRawConfig()
+                            .getCategory(WaystoneConfig.Categories.xaeroMinimap)),
                     new ConfigElement(
                         WaystoneConfig.getRawConfig()
                             .getCategory(WaystoneConfig.Categories.client))),

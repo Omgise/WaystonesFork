@@ -52,6 +52,10 @@ public class WaystoneConfig {
     public static boolean journeyMapWaypointRandomColor;
     public static String journeyMapWaypointColor;
     public static int journeyMapWaypointYOffset;
+    public static boolean xaeroMinimapWaypoints;
+    public static boolean xaeroMinimapWaypointRandomColor;
+    public static int xaeroMinimapWaypointColor;
+    public static int xaeroMinimapWaypointYOffset;
 
     public float waystoneLightLevel;
     public boolean disableWaystoneDrops;
@@ -63,8 +67,9 @@ public class WaystoneConfig {
 
         public static final String general = "general";
         public static final String client = "client";
-        public static final String compat = "compat";
+        public static final String journeyMap = "journeymap";
         public static final String worldgen = "worldgen";
+        public static final String xaeroMinimap = "xaerominimap";
     }
 
     public void reloadLocal(Configuration config) {
@@ -227,26 +232,50 @@ public class WaystoneConfig {
 
         journeyMapWaypoints = config.getBoolean(
             "journeyMapWaypoints",
-            Categories.compat,
+            Categories.journeyMap,
             true,
             "If true, activating a Waystone adds or updates a JourneyMap waypoint for it.");
         journeyMapWaypointRandomColor = config.getBoolean(
             "journeyMapWaypointRandomColor",
-            Categories.compat,
+            Categories.journeyMap,
             true,
             "If true, JourneyMap waypoint colors are derived from the Waystone name instead of using the fixed color.");
         journeyMapWaypointColor = config.getString(
             "journeyMapWaypointColor",
-            Categories.compat,
+            Categories.journeyMap,
             "7FDBFF",
             "Fixed JourneyMap waypoint color as a hex RGB value. Accepts values like 7FDBFF or #7FDBFF.");
         journeyMapWaypointYOffset = config.getInt(
             "journeyMapWaypointYOffset",
-            Categories.compat,
+            Categories.journeyMap,
             2,
             Integer.MIN_VALUE,
             Integer.MAX_VALUE,
             "Vertical offset applied to JourneyMap waypoints relative to the Waystone base block.");
+        xaeroMinimapWaypoints = config.getBoolean(
+            "xaeroMinimapWaypoints",
+            Categories.xaeroMinimap,
+            true,
+            "If true, activating a Waystone adds or updates a Xaero's Minimap waypoint for it.");
+        xaeroMinimapWaypointRandomColor = config.getBoolean(
+            "xaeroMinimapWaypointRandomColor",
+            Categories.xaeroMinimap,
+            true,
+            "If true, Xaero's Minimap waypoint colors are derived from the Waystone name instead of using the fixed color.");
+        xaeroMinimapWaypointColor = config.getInt(
+            "xaeroMinimapWaypointColor",
+            Categories.xaeroMinimap,
+            11,
+            0,
+            15,
+            "Fixed Xaero's Minimap waypoint color index. Uses Xaero's 0-15 color palette.");
+        xaeroMinimapWaypointYOffset = config.getInt(
+            "xaeroMinimapWaypointYOffset",
+            Categories.xaeroMinimap,
+            2,
+            Integer.MIN_VALUE,
+            Integer.MAX_VALUE,
+            "Vertical offset applied to Xaero's Minimap waypoints relative to the Waystone base block.");
 
         waystoneLightLevel = config.getFloat(
             "waystoneLightLevel",

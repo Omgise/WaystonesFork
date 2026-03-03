@@ -27,8 +27,14 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
 
-// TODO: add brandyn's fixes, partially added
-@Mod(modid = Waystones.MODID, name = "Waystones-X", guiFactory = "net.blay09.mods.waystones.client.gui.GuiFactory")
+@Mod(
+    modid = Waystones.MODID,
+    name = "Waystones-X",
+    guiFactory = "net.blay09.mods.waystones.client.gui.GuiFactory",
+    customProperties = { @Mod.CustomProperty(k = "license", v = "LGPLv3+SNEED"),
+        @Mod.CustomProperty(k = "issueTrackerUrl", v = "https://github.com/JackOfNoneTrades/WaystonesFork/issues"),
+        @Mod.CustomProperty(k = "iconFile", v = "assets/waystones/logo_round.png"),
+        @Mod.CustomProperty(k = "backgroundFile", v = "assets/waystones/background.png") })
 @SuppressWarnings("unused")
 public class Waystones {
 

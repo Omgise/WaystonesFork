@@ -39,6 +39,7 @@ Teleport back to activated waystones. For Survival, Adventure or Servers.
 * Pinned Waystones which appear at the top of the list.
 * Global Waystones are stored in the save NBT, no more conflicts.
 * Sandstone, Mossy, (Mossy) Stonebrick, Netherbrick, Endstone Waystone variants.
+* Journeymap and Xaero's Minimap integration: adding waypoints upon interaction with Waystones
 
 ### Worldgen configuration system:
 You can define a list of rules under the `structureWaystoneRules` key in the config. Each rule can have the following properties:

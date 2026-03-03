@@ -2,6 +2,7 @@ package net.blay09.mods.waystones.network.handler;
 
 import net.blay09.mods.waystones.Waystones;
 import net.blay09.mods.waystones.compat.JourneyMapCompat;
+import net.blay09.mods.waystones.compat.XaeroMinimapCompat;
 import net.blay09.mods.waystones.network.message.MessageJourneyMapWaypoint;
 
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
@@ -17,6 +18,8 @@ public class HandlerJourneyMapWaypoint implements IMessageHandler<MessageJourney
             @Override
             public void run() {
                 JourneyMapCompat
+                    .addOrUpdateWaypoint(message.getWaystoneName(), message.getDimensionId(), message.getPos());
+                XaeroMinimapCompat
                     .addOrUpdateWaypoint(message.getWaystoneName(), message.getDimensionId(), message.getPos());
             }
         });
