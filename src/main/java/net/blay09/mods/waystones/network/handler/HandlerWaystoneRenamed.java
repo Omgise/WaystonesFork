@@ -4,6 +4,7 @@ import net.blay09.mods.waystones.PlayerWaystoneData;
 import net.blay09.mods.waystones.WaystoneManager;
 import net.blay09.mods.waystones.Waystones;
 import net.blay09.mods.waystones.client.gui.GuiWarpStone;
+import net.blay09.mods.waystones.compat.JourneyMapCompat;
 import net.blay09.mods.waystones.network.message.MessageWaystoneRenamed;
 import net.blay09.mods.waystones.util.WaystoneEntry;
 import net.minecraft.client.Minecraft;
@@ -77,6 +78,9 @@ public class HandlerWaystoneRenamed implements IMessageHandler<MessageWaystoneRe
                 newEntry.setGlobal(true);
                 WaystoneManager.addServerWaystoneDirectly(newEntry);
             }
+
+            JourneyMapCompat
+                .renameWaypoint(message.getOldName(), message.getNewName(), message.getDimensionId(), message.getPos());
 
             if (Minecraft.getMinecraft().currentScreen instanceof GuiWarpStone) {
                 ((GuiWarpStone) Minecraft.getMinecraft().currentScreen).refreshEntries();

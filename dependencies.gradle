@@ -45,4 +45,6 @@ dependencies {
     // implementation(rfg.deobf("maven.modrinth:village-names:dbqnvxNP"))
 
     // implementation ("com.falsepattern:falsetweaks-mc1.7.10:2.0.0:dev")
+
+    runtimeOnlyNonPublishable("curse.maven:journeymap-32274:6706112")
 }

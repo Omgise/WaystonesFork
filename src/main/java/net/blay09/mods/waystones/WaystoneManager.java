@@ -7,6 +7,7 @@ import java.util.Map;
 import net.blay09.mods.waystones.block.BlockWaystone;
 import net.blay09.mods.waystones.block.TileWaystone;
 import net.blay09.mods.waystones.network.NetworkHandler;
+import net.blay09.mods.waystones.network.message.MessageJourneyMapWaypoint;
 import net.blay09.mods.waystones.network.message.MessageTeleportEffect;
 import net.blay09.mods.waystones.network.message.MessageWaystones;
 import net.blay09.mods.waystones.util.BlockPos;
@@ -84,6 +85,7 @@ public class WaystoneManager {
         if (serverWaystone != null) {
             PlayerWaystoneData.setLastServerWaystone(player, serverWaystone);
             sendPlayerWaystones(player);
+            sendJourneyMapWaypoint(player, waystone);
             if (!playerKnowsAboutWaystone(player, serverWaystone)) {
                 BlockWaystone.sendActivationChatMessage(player, waystone);
             }
@@ -95,8 +97,20 @@ public class WaystoneManager {
         removePlayerWaystone(player, serverWaystone);
         addPlayerWaystone(player, waystone);
         sendPlayerWaystones(player);
+        sendJourneyMapWaypoint(player, waystone);
         if (!playerKnows) {
             BlockWaystone.sendActivationChatMessage(player, waystone);
+        }
+    }
+
+    private static void sendJourneyMapWaypoint(EntityPlayer player, TileWaystone waystone) {
+        if (player instanceof EntityPlayerMP && waystone.getWorldObj() != null) {
+            NetworkHandler.channel.sendTo(
+                new MessageJourneyMapWaypoint(
+                    waystone.getWaystoneName(),
+                    waystone.getWorldObj().provider.dimensionId,
+                    new BlockPos(waystone)),
+                (EntityPlayerMP) player);
         }
     }
 

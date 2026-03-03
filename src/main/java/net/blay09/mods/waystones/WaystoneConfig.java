@@ -48,6 +48,10 @@ public class WaystoneConfig {
     public static int sortingMode;
     public static boolean flatInventoryIcon;
     public static String[] overlayClipBounds;
+    public static boolean journeyMapWaypoints;
+    public static boolean journeyMapWaypointRandomColor;
+    public static String journeyMapWaypointColor;
+    public static int journeyMapWaypointYOffset;
 
     public float waystoneLightLevel;
     public boolean disableWaystoneDrops;
@@ -59,6 +63,7 @@ public class WaystoneConfig {
 
         public static final String general = "general";
         public static final String client = "client";
+        public static final String compat = "compat";
         public static final String worldgen = "worldgen";
     }
 
@@ -219,6 +224,29 @@ public class WaystoneConfig {
             Categories.client,
             true,
             "If true, Waystone glow texture will display the cooldown status.");
+
+        journeyMapWaypoints = config.getBoolean(
+            "journeyMapWaypoints",
+            Categories.compat,
+            true,
+            "If true, activating a Waystone adds or updates a JourneyMap waypoint for it.");
+        journeyMapWaypointRandomColor = config.getBoolean(
+            "journeyMapWaypointRandomColor",
+            Categories.compat,
+            true,
+            "If true, JourneyMap waypoint colors are derived from the Waystone name instead of using the fixed color.");
+        journeyMapWaypointColor = config.getString(
+            "journeyMapWaypointColor",
+            Categories.compat,
+            "7FDBFF",
+            "Fixed JourneyMap waypoint color as a hex RGB value. Accepts values like 7FDBFF or #7FDBFF.");
+        journeyMapWaypointYOffset = config.getInt(
+            "journeyMapWaypointYOffset",
+            Categories.compat,
+            2,
+            Integer.MIN_VALUE,
+            Integer.MAX_VALUE,
+            "Vertical offset applied to JourneyMap waypoints relative to the Waystone base block.");
 
         waystoneLightLevel = config.getFloat(
             "waystoneLightLevel",
