@@ -19,6 +19,7 @@ public class HandlerWarpStone implements IMessageHandler<MessageWarpStone, IMess
     public IMessage onMessage(final MessageWarpStone message, final MessageContext ctx) {
         Waystones.proxy.addScheduledTask(() -> {
             EntityPlayerMP player = ctx.getServerHandler().playerEntity;
+            WaystoneEntry target = WaystoneManager.resolveWarpTarget(player, message.getWaystone());
 
             // Free warp validation
             if (message.isFree()) {
@@ -28,10 +29,14 @@ public class HandlerWarpStone implements IMessageHandler<MessageWarpStone, IMess
                 }
             }
 
+            if (target == null) {
+                player.addChatMessage(new ChatComponentTranslation("waystones:waystoneBroken"));
+                return;
+            }
+
             // XP cost and cooldown enforcement
             if (!message.isFree() && !player.capabilities.isCreativeMode) {
-                WaystoneEntry target = message.getWaystone();
-                if (!PlayerWaystoneData.canUseWarpStone(player)) {
+                if (!PlayerWaystoneData.canUseWarpStone(player, target)) {
                     player.addChatMessage(new ChatComponentTranslation("gui.waystones:warpStone.cantWarpWaystone"));
                     return;
                 }
@@ -49,18 +54,12 @@ public class HandlerWarpStone implements IMessageHandler<MessageWarpStone, IMess
             }
 
             // Teleport
-            if (WaystoneManager.teleportToWaystone(player, message.getWaystone())) {
+            if (WaystoneManager.teleportToWaystone(player, target)) {
                 if (!player.capabilities.isCreativeMode) {
-                    if (WaystoneManager.getServerWaystone(
-                        message.getWaystone()
-                            .getName())
-                        == null || !Waystones.getConfig().globalNoCooldown) {
-
-                        if (message.isFree()) {
-                            PlayerWaystoneData.setLastFreeWarp(player, System.currentTimeMillis());
-                        } else {
-                            PlayerWaystoneData.setLastWarpStoneUse(player, System.currentTimeMillis());
-                        }
+                    if (message.isFree()) {
+                        PlayerWaystoneData.setLastFreeWarp(player, System.currentTimeMillis());
+                    } else if (!PlayerWaystoneData.shouldIgnoreWarpStoneCooldown(target)) {
+                        PlayerWaystoneData.setLastWarpStoneUse(player, System.currentTimeMillis());
                     }
                 }
             }

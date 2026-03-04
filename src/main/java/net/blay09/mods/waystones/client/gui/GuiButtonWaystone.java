@@ -1,6 +1,7 @@
 package net.blay09.mods.waystones.client.gui;
 
 import net.blay09.mods.waystones.PlayerWaystoneData;
+import net.blay09.mods.waystones.WaystoneManager;
 import net.blay09.mods.waystones.Waystones;
 import net.blay09.mods.waystones.network.NetworkHandler;
 import net.blay09.mods.waystones.network.message.MessagePinWaystone;
@@ -65,12 +66,8 @@ public class GuiButtonWaystone extends GuiButton {
 
     @Override
     public void drawButton(Minecraft mc, int mouseX, int mouseY) {
+        refreshEnabledState();
         super.drawButton(mc, mouseX, mouseY);
-
-        if (Minecraft.getMinecraft().thePlayer.experienceLevel >= xpCost
-            && PlayerWaystoneData.canUseWarpStone(Minecraft.getMinecraft().thePlayer)) {
-            this.enabled = true;
-        }
 
         if (Waystones.getConfig().xpBaseCost > -1 && !Minecraft.getMinecraft().thePlayer.capabilities.isCreativeMode) {
             // Cost
@@ -203,6 +200,28 @@ public class GuiButtonWaystone extends GuiButton {
                 .getTextureManager()
                 .bindTexture(GuiWarpStone.menuResourceLocation);
             Gui.func_152125_a(crossButtonX, buttonY, 164, 152, 16, 16, sideButtonSize, sideButtonSize, 256.0F, 256.0F);
+        }
+    }
+
+    public void refreshEnabledState() {
+        if (Minecraft.getMinecraft().thePlayer == null) {
+            return;
+        }
+
+        this.enabled = true;
+        if (!Minecraft.getMinecraft().thePlayer.capabilities.isCreativeMode) {
+            if (waystone.getDimensionId() != Minecraft.getMinecraft().theWorld.provider.dimensionId
+                && !WaystoneManager.isDimensionWarpAllowed(waystone)) {
+                this.enabled = false;
+            }
+
+            if (Waystones.getConfig().xpBaseCost > -1 && Minecraft.getMinecraft().thePlayer.experienceLevel < xpCost) {
+                this.enabled = false;
+            }
+
+            if (!PlayerWaystoneData.canUseWarpStone(Minecraft.getMinecraft().thePlayer, waystone)) {
+                this.enabled = false;
+            }
         }
     }
 

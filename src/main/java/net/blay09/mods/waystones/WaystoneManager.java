@@ -210,6 +210,27 @@ public class WaystoneManager {
         return waystone.isGlobal() ? Waystones.getConfig().globalInterDimension : Waystones.getConfig().interDimension;
     }
 
+    public static WaystoneEntry resolveWarpTarget(EntityPlayer player, WaystoneEntry waystone) {
+        if (waystone == null) {
+            return null;
+        }
+
+        WaystoneEntry serverEntry = getServerWaystone(waystone.getName());
+        if (serverEntry != null) {
+            return serverEntry;
+        }
+
+        WaystoneEntry[] playerEntries = PlayerWaystoneData.fromPlayer(player)
+            .getWaystones();
+        for (WaystoneEntry entry : playerEntries) {
+            if (entry.equals(waystone)) {
+                return entry;
+            }
+        }
+
+        return null;
+    }
+
     public static boolean teleportToWaystone(EntityPlayer player, WaystoneEntry waystone) {
         if (!checkAndUpdateWaystone(player, waystone)) {
             ChatComponentTranslation chatComponent = new ChatComponentTranslation("waystones:waystoneBroken");
@@ -218,19 +239,28 @@ public class WaystoneManager {
             player.addChatComponentMessage(chatComponent);
             return false;
         }
-        WaystoneEntry serverEntry = getServerWaystone(waystone.getName());
+
+        WaystoneEntry resolvedWaystone = resolveWarpTarget(player, waystone);
+        if (resolvedWaystone == null) {
+            ChatComponentTranslation chatComponent = new ChatComponentTranslation("waystones:waystoneBroken");
+            chatComponent.getChatStyle()
+                .setColor(EnumChatFormatting.RED);
+            player.addChatComponentMessage(chatComponent);
+            return false;
+        }
+
         World targetWorld = MinecraftServer.getServer()
-            .worldServerForDimension(waystone.getDimensionId());
-        int x = waystone.getPos()
+            .worldServerForDimension(resolvedWaystone.getDimensionId());
+        int x = resolvedWaystone.getPos()
             .getX();
-        int y = waystone.getPos()
+        int y = resolvedWaystone.getPos()
             .getY();
-        int z = waystone.getPos()
+        int z = resolvedWaystone.getPos()
             .getZ();
         ForgeDirection facing = ForgeDirection.getOrientation(targetWorld.getBlockMetadata(x, y, z));
-        BlockPos targetPos = getSafeTeleportPosition(targetWorld, player, waystone.getPos(), facing);
-        boolean dimensionWarp = waystone.getDimensionId() != player.getEntityWorld().provider.dimensionId;
-        if (!player.capabilities.isCreativeMode && dimensionWarp && !isDimensionWarpAllowed(waystone)) {
+        BlockPos targetPos = getSafeTeleportPosition(targetWorld, player, resolvedWaystone.getPos(), facing);
+        boolean dimensionWarp = resolvedWaystone.getDimensionId() != player.getEntityWorld().provider.dimensionId;
+        if (!player.capabilities.isCreativeMode && dimensionWarp && !isDimensionWarpAllowed(resolvedWaystone)) {
             player.addChatComponentMessage(new ChatComponentTranslation("waystones:noDimensionWarp"));
             return false;
         }
@@ -242,9 +272,9 @@ public class WaystoneManager {
                 .getConfigurationManager()
                 .transferPlayerToDimension(
                     (EntityPlayerMP) player,
-                    waystone.getDimensionId(),
+                    resolvedWaystone.getDimensionId(),
                     new TeleporterNoPortalSeekBlock(
-                        net.minecraftforge.common.DimensionManager.getWorld(waystone.getDimensionId())));
+                        net.minecraftforge.common.DimensionManager.getWorld(resolvedWaystone.getDimensionId())));
         }
         player.rotationYaw = getRotationYaw(facing);
         player.setPositionAndUpdate(targetPos.getX() + 0.5, targetPos.getY(), targetPos.getZ() + 0.5);

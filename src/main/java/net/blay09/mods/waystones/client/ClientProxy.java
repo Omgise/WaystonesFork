@@ -171,7 +171,9 @@ public class ClientProxy extends CommonProxy {
         }
         if (WaystoneManager.getKnownWaystone(tileWaystone.getWaystoneName()) != null
             || WaystoneManager.getServerWaystone(tileWaystone.getWaystoneName()) != null) {
-            if (PlayerWaystoneData.canUseWarpStone(Minecraft.getMinecraft().thePlayer)) {
+            if (PlayerWaystoneData
+                .shouldIgnoreWarpStoneCooldown(WaystoneManager.getServerWaystone(tileWaystone.getWaystoneName()))
+                || PlayerWaystoneData.canUseWarpStone(Minecraft.getMinecraft().thePlayer)) {
                 String particle = tileWaystone.getVariant() == TileWaystone.VARIANT_END ? "smoke" : "portal";
                 world.spawnParticle(
                     particle,

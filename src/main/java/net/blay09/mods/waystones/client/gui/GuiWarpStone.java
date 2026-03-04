@@ -165,7 +165,7 @@ public class GuiWarpStone extends GuiScreen {
                     }
                 }
 
-                if (!PlayerWaystoneData.canUseWarpStone(Minecraft.getMinecraft().thePlayer)) {
+                if (!PlayerWaystoneData.canUseWarpStone(Minecraft.getMinecraft().thePlayer, entries[i])) {
                     btnWaystone.enabled = false;
                 }
             }
@@ -325,22 +325,13 @@ public class GuiWarpStone extends GuiScreen {
         GL11.glPopMatrix();
 
         drawRect(width / 2 - 50, height / 2 - 50, width / 2 + 50, height / 2 + 50, 0xFFFFFF);
-        if (PlayerWaystoneData.canUseWarpStone(Minecraft.getMinecraft().thePlayer)) {
+        if (PlayerWaystoneData.canUseWarpStone(Minecraft.getMinecraft().thePlayer) || hasCooldownBypassWaystone()) {
             drawCenteredString(
                 fontRendererObj,
                 I18n.format("gui.waystones:warpStone.selectDestination"),
                 width / 2,
                 height / 2 - 85,
                 0xAAAAAA);
-            for (GuiButton btn : buttonList) {
-                if (btn instanceof GuiButtonWaystone) {
-                    if (WaystoneXpCost
-                        .getXpCost(Minecraft.getMinecraft().thePlayer, ((GuiButtonWaystone) btn).getWaystone())
-                        <= Minecraft.getMinecraft().thePlayer.experienceLevel) {
-                        btn.enabled = true;
-                    }
-                }
-            }
         } else {
             String cantWarpStr = I18n.format("gui.waystones:warpStone.cantWarpWaystone");
             int cantWarpStrWidth = fontRendererObj.getStringWidth(cantWarpStr);
@@ -556,6 +547,16 @@ public class GuiWarpStone extends GuiScreen {
                 mouseY,
                 fontRendererObj);
         }
+    }
+
+    private boolean hasCooldownBypassWaystone() {
+        for (GuiButton btn : buttonList) {
+            if (btn instanceof GuiButtonWaystone && PlayerWaystoneData
+                .canUseWarpStone(Minecraft.getMinecraft().thePlayer, ((GuiButtonWaystone) btn).getWaystone())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

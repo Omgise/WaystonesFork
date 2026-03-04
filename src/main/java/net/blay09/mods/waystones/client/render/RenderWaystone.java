@@ -100,6 +100,10 @@ public class RenderWaystone extends TileEntitySpecialRenderer {
         if (!tileWaystone.hasWorldObj()) {
             return 1f; // fully charged if not in world
         }
+        if (PlayerWaystoneData
+            .shouldIgnoreWarpStoneCooldown(WaystoneManager.getServerWaystone(tileWaystone.getWaystoneName()))) {
+            return 1f;
+        }
 
         long lastUse = PlayerWaystoneData.getLastWarpStoneUse(Minecraft.getMinecraft().thePlayer);
         long cooldown = Waystones.getConfig().warpStoneCooldown * 1000L;

@@ -130,6 +130,14 @@ public class PlayerWaystoneData {
             > Waystones.getConfig().warpStoneCooldown * 1000L);
     }
 
+    public static boolean shouldIgnoreWarpStoneCooldown(WaystoneEntry waystone) {
+        return waystone != null && waystone.isGlobal() && Waystones.getConfig().globalNoCooldown;
+    }
+
+    public static boolean canUseWarpStone(EntityPlayer player, WaystoneEntry waystone) {
+        return shouldIgnoreWarpStoneCooldown(waystone) || canUseWarpStone(player);
+    }
+
     public static void setLastFreeWarp(EntityPlayer player, long lastFreeWarp) {
         PlayerWaystoneData.getOrCreateWaystonesTag(player)
             .setLong(PlayerWaystoneData.LAST_FREE_WARP, lastFreeWarp);
