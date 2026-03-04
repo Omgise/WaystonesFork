@@ -16,6 +16,7 @@ public class WaystoneConfig {
     public static int teleportButtonX;
     public static int teleportButtonY;
     public static boolean disableParticles;
+    public static boolean disableTeleportSound;
 
     public boolean teleportButton;
     public int teleportButtonCooldown;
@@ -116,6 +117,11 @@ public class WaystoneConfig {
             Categories.client,
             false,
             "If true, activated waystones will not emit particles.");
+        disableTeleportSound = config.getBoolean(
+            "disableTeleportSound",
+            Categories.client,
+            false,
+            "If true, waystone teleports will not play the teleport sound.");
         menusPauseGame = config.getBoolean(
             "menusPauseGame",
             Categories.client,

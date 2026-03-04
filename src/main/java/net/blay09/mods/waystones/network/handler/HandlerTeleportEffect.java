@@ -1,5 +1,6 @@
 package net.blay09.mods.waystones.network.handler;
 
+import net.blay09.mods.waystones.WaystoneConfig;
 import net.blay09.mods.waystones.Waystones;
 import net.blay09.mods.waystones.network.message.MessageTeleportEffect;
 import net.minecraft.client.Minecraft;
@@ -19,8 +20,10 @@ public class HandlerTeleportEffect implements IMessageHandler<MessageTeleportEff
             @Override
             public void run() {
                 Minecraft mc = Minecraft.getMinecraft();
-                mc.getSoundHandler()
-                    .playSound(PositionedSoundRecord.func_147674_a(new ResourceLocation("portal.travel"), 1f));
+                if (!WaystoneConfig.disableTeleportSound) {
+                    mc.getSoundHandler()
+                        .playSound(PositionedSoundRecord.func_147674_a(new ResourceLocation("portal.travel"), 1f));
+                }
                 for (int i = 0; i < 128; i++) {
                     mc.theWorld.spawnParticle(
                         "portal",
